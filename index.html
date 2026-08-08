@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Aminata Store — Votre boutique en ligne de tissus africains premium. Wax, Basin, Lin, Coton, Soie, Dentelle et plus encore. Qualité exceptionnelle, livraison rapide.">
+    <meta name="keywords" content="tissu, wax, basin, lin, coton, soie, dentelle, tissu africain, boutique tissu, pagne, bazin, ankara, aminata store">
+    <meta name="theme-color" content="#C8A96E">
+    <title>Aminata Store — Tissus Premium & Élégance Africaine</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <!-- ===== NAVIGATION ===== -->
+    <nav class="navbar" id="navbar">
+        <div class="navbar-container">
+            <a href="#" class="navbar-logo">
+                <span class="logo-icon">✦</span>
+                <span class="logo-text">Aminata Store</span>
+            </a>
+
+            <ul class="navbar-links" id="navLinks">
+                <li><a href="#accueil" class="nav-link">Accueil</a></li>
+                <li><a href="collection.html" class="nav-link">Collection</a></li>
+                <li><a href="#apropos" class="nav-link">À Propos</a></li>
+                <li><a href="#contact" class="nav-link">Contact</a></li>
+            </ul>
+
+            <div class="navbar-actions">
+                <button class="cart-btn" id="cartBtn" aria-label="Ouvrir le panier">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"></path>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <path d="M16 10a4 4 0 01-8 0"></path>
+                    </svg>
+                    <span class="cart-badge" id="cartBadge">0</span>
+                </button>
+                <!-- Auth Button -->
+                <button class="auth-btn" id="authBtn" aria-label="Se connecter">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    <span class="auth-btn-text" id="authBtnText">Se connecter</span>
+                </button>
+
+
+                <button class="hamburger" id="hamburger" aria-label="Menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ===== HERO SECTION ===== -->
+    <section class="hero" id="accueil">
+        <div class="hero-bg" style="background-image: url('images/hero_banner.jpg');"></div>
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <div class="hero-badge">✦ Collection Exclusive 2026 ✦</div>
+            <h1 class="hero-title">L'Élégance<br><span class="hero-title-accent">au Fil du Tissu</span></h1>
+            <p class="hero-subtitle">Découvrez notre collection raffinée de tissus premium — Wax, Basin, Lin, Coton, Soie & Dentelle — sélectionnés avec passion pour sublimer vos créations.</p>
+            <div class="hero-actions">
+                <a href="collection.html" class="btn btn-primary" id="ctaExplorer">
+                    <span>Explorer la Collection Complète</span>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                        <polyline points="12 5 19 12 12 19"></polyline>
+                    </svg>
+                </a>
+                <a href="https://wa.me/22896065418" target="_blank" class="btn btn-secondary" id="ctaWhatsApp">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+                        <path d="M12 0C5.373 0 0 5.373 0 12c0 2.625.846 5.059 2.284 7.034L.789 23.492a.5.5 0 00.611.611l4.458-1.495A11.952 11.952 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-2.384 0-4.593-.693-6.46-1.886l-.452-.287-2.648.888.888-2.648-.287-.452A9.956 9.956 0 012 12C2 6.486 6.486 2 12 2s10 4.486 10 10-4.486 10-10 10z"/>
+                    </svg>
+                    <span>Nous Contacter</span>
+                </a>
+            </div>
+            <div class="hero-stats">
+                <div class="stat">
+                    <span class="stat-number">500+</span>
+                    <span class="stat-label">Clients Satisfaits</span>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat">
+                    <span class="stat-number">50+</span>
+                    <span class="stat-label">Variétés de Tissus</span>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat">
+                    <span class="stat-number">100%</span>
+                    <span class="stat-label">Qualité Premium</span>
+                </div>
+            </div>
+        </div>
+        <div class="hero-scroll-indicator">
+            <span>Défiler</span>
+            <div class="scroll-arrow">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="7 13 12 18 17 13"></polyline>
+                    <polyline points="7 6 12 11 17 6"></polyline>
+                </svg>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== FAVORITES / COUPS DE CŒUR SECTION ===== -->
+    <section class="collection" id="collection">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">✦ Notre Sélection Vedette ✦</span>
+                <h2 class="section-title">Nos Tissus Coups de Cœur</h2>
+                <p class="section-subtitle">Une sélection exclusive de nos plus belles créations textiles. Retrouvez l'intégralité de notre catalogue dans la collection complète.</p>
+                <div class="section-divider">
+                    <span class="divider-diamond">◆</span>
+                </div>
+            </div>
+
+            <!-- Category Filters for Featured Products -->
+            <div class="categories" id="categories">
+                <button class="category-tab active" data-category="all">
+                    <span class="tab-icon">✦</span>
+                    Tous les Tissus Vedettes
+                </button>
+                <button class="category-tab" data-category="Wax">
+                    <span class="tab-icon">🎨</span>
+                    Wax
+                </button>
+                <button class="category-tab" data-category="Basin">
+                    <span class="tab-icon">👑</span>
+                    Basin
+                </button>
+                <button class="category-tab" data-category="Lin">
+                    <span class="tab-icon">🌿</span>
+                    Lin
+                </button>
+                <button class="category-tab" data-category="Coton">
+                    <span class="tab-icon">☁️</span>
+                    Coton
+                </button>
+                <button class="category-tab" data-category="Soie">
+                    <span class="tab-icon">✨</span>
+                    Soie
+                </button>
+                <button class="category-tab" data-category="Dentelle">
+                    <span class="tab-icon">🌸</span>
+                    Dentelle
+                </button>
+            </div>
+
+            <!-- Favorites Products Grid -->
+            <div class="products-grid" id="productsGrid">
+                <!-- Only favorite products are rendered here by JavaScript -->
+            </div>
+
+            <!-- Direct CTA to Full Collection Page -->
+            <div class="view-all-collection-box">
+                <a href="collection.html" class="btn btn-primary btn-view-all">
+                    <span>Explorer Toute la Collection Complète</span>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                        <polyline points="12 5 19 12 12 19"></polyline>
+                    </svg>
+                </a>
+                <p style="font-size: 0.88rem; color: var(--color-text-light);">Accédez à l'intégralité du catalogue avec filtres par prix, recherche et tri personnalisé.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== ABOUT SECTION ===== -->
+    <section class="about" id="apropos">
+        <div class="container">
+            <div class="about-grid">
+                <div class="about-content">
+                    <span class="section-badge">Notre Histoire</span>
+                    <h2 class="section-title" style="text-align: left;">Un Savoir-Faire<br>d'Exception</h2>
+                    <p class="about-text">Chez <strong>Aminata Store</strong>, nous croyons que chaque tissu raconte une histoire. Notre passion pour les textiles africains nous pousse à sélectionner uniquement les meilleurs tissus — du Wax hollandais authentique au Basin brodé artisanal.</p>
+                    <p class="about-text">Nous collaborons directement avec les meilleurs artisans et fournisseurs pour vous garantir une qualité irréprochable à des prix justes.</p>
+                    <div class="about-features">
+                        <div class="feature">
+                            <div class="feature-icon">🎯</div>
+                            <div>
+                                <h4>Sélection Rigoureuse</h4>
+                                <p>Chaque tissu est inspecté et approuvé avant mise en vente.</p>
+                            </div>
+                        </div>
+                        <div class="feature">
+                            <div class="feature-icon">🚚</div>
+                            <div>
+                                <h4>Livraison Rapide</h4>
+                                <p>Livraison à domicile dans tout le Togo et en Afrique de l'Ouest.</p>
+                            </div>
+                        </div>
+                        <div class="feature">
+                            <div class="feature-icon">💬</div>
+                            <div>
+                                <h4>Service Personnalisé</h4>
+                                <p>Conseils sur mesure via WhatsApp pour trouver le tissu parfait.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="about-visual">
+                    <div class="about-image-wrapper">
+                        <img src="images/basin_riche.jpg" alt="Tissus premium de Aminata Store" loading="lazy">
+                        <div class="about-image-accent"></div>
+                    </div>
+                    <div class="about-trust-badge">
+                        <span class="trust-number">5★</span>
+                        <span class="trust-text">Évaluation Client</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== CONTACT / CTA SECTION ===== -->
+    <section class="cta-section" id="contact">
+        <div class="container">
+            <div class="cta-content">
+                <h2 class="cta-title">Besoin de Conseils ?</h2>
+                <p class="cta-text">Notre équipe est disponible sur WhatsApp pour vous aider à choisir le tissu parfait pour vos projets de couture.</p>
+                <a href="https://wa.me/22896065418" target="_blank" class="btn btn-whatsapp">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+                        <path d="M12 0C5.373 0 0 5.373 0 12c0 2.625.846 5.059 2.284 7.034L.789 23.492a.5.5 0 00.611.611l4.458-1.495A11.952 11.952 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-2.384 0-4.593-.693-6.46-1.886l-.452-.287-2.648.888.888-2.648-.287-.452A9.956 9.956 0 012 12C2 6.486 6.486 2 12 2s10 4.486 10 10-4.486 10-10 10z"/>
+                    </svg>
+                    <span>Discuter sur WhatsApp</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a href="#" class="footer-logo">
+                        <span class="logo-icon">✦</span>
+                        <span>Aminata Store</span>
+                    </a>
+                    <p class="footer-desc">Votre destination pour des tissus africains premium. Qualité, élégance et authenticité depuis 2020.</p>
+                </div>
+                <div class="footer-links">
+                    <h4>Navigation</h4>
+                    <a href="#accueil">Accueil</a>
+                    <a href="#collection">Collection</a>
+                    <a href="#apropos">À Propos</a>
+                    <a href="#contact">Contact</a>
+                </div>
+                <div class="footer-links">
+                    <h4>Catégories</h4>
+                    <a href="#collection" data-filter="Wax">Wax Africain</a>
+                    <a href="#collection" data-filter="Basin">Basin & Bazin</a>
+                    <a href="#collection" data-filter="Soie">Soie & Dentelle</a>
+                    <a href="#collection" data-filter="Coton">Coton & Lin</a>
+                </div>
+                <div class="footer-contact">
+                    <h4>Contact</h4>
+                    <a href="https://wa.me/22896065418" target="_blank" class="footer-whatsapp">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+                            <path d="M12 0C5.373 0 0 5.373 0 12c0 2.625.846 5.059 2.284 7.034L.789 23.492a.5.5 0 00.611.611l4.458-1.495A11.952 11.952 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-2.384 0-4.593-.693-6.46-1.886l-.452-.287-2.648.888.888-2.648-.287-.452A9.956 9.956 0 012 12C2 6.486 6.486 2 12 2s10 4.486 10 10-4.486 10-10 10z"/>
+                        </svg>
+                        <span>+228 96 06 54 18</span>
+                    </a>
+                    <p class="footer-hours">Disponible 7j/7 de 8h à 20h</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Aminata Store. Tous droits réservés.</p>
+                <p class="footer-credit">Créé avec ❤️ pour l'élégance africaine</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ===== CART SIDEBAR ===== -->
+    <div class="cart-overlay" id="cartOverlay"></div>
+    <aside class="cart-sidebar" id="cartSidebar">
+        <div class="cart-header">
+            <h3>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"></path>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <path d="M16 10a4 4 0 01-8 0"></path>
+                </svg>
+                Mon Panier
+                <span class="cart-header-count" id="cartHeaderCount">(0)</span>
+            </h3>
+            <button class="cart-close" id="cartClose" aria-label="Fermer le panier">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+
+        <div class="cart-items" id="cartItems">
+            <!-- Cart items rendered by JS -->
+        </div>
+
+        <div class="cart-empty" id="cartEmpty">
+            <div class="cart-empty-icon">
+                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" opacity="0.3">
+                    <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"></path>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <path d="M16 10a4 4 0 01-8 0"></path>
+                </svg>
+            </div>
+            <p class="cart-empty-text">Votre panier est vide</p>
+            <p class="cart-empty-subtext">Explorez notre collection et ajoutez vos tissus favoris !</p>
+            <button class="btn btn-outline" id="continueShopping">Continuer mes achats</button>
+        </div>
+
+        <div class="cart-footer" id="cartFooter">
+            <div class="cart-total">
+                <span>Total</span>
+                <span class="cart-total-amount" id="cartTotal">0 FCFA</span>
+            </div>
+            <button class="btn btn-checkout" id="checkoutBtn">
+                <span>Commander</span>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                    <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+            </button>
+        </div>
+    </aside>
+
+    <!-- ===== CHECKOUT MODAL ===== -->
+    <div class="modal-overlay" id="checkoutOverlay"></div>
+    <div class="checkout-modal" id="checkoutModal">
+        <button class="modal-close" id="checkoutClose" aria-label="Fermer">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+        </button>
+
+        <div class="checkout-header">
+            <h3>Finaliser la Commande</h3>
+            <p>Remplissez vos informations pour finaliser votre commande.</p>
+        </div>
+
+        <!-- Order Summary -->
+        <div class="order-summary" id="orderSummary">
+            <h4>📋 Récapitulatif</h4>
+            <div class="order-items" id="orderItems">
+                <!-- Filled by JS -->
+            </div>
+            <div class="order-total">
+                <span>Total à payer</span>
+                <span class="order-total-amount" id="orderTotal">0 FCFA</span>
+            </div>
+        </div>
+
+        <!-- Checkout Form -->
+        <form class="checkout-form" id="checkoutForm" novalidate>
+            <div class="form-group">
+                <label for="customerName">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    Prénom <span class="required">*</span>
+                </label>
+                <input type="text" id="customerName" name="customerName" placeholder="Votre prénom" required minlength="2" autocomplete="given-name">
+                <span class="form-error" id="nameError"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="customerPhone">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"></path>
+                    </svg>
+                    Numéro WhatsApp <span class="required">*</span>
+                </label>
+                <input type="tel" id="customerPhone" name="customerPhone" placeholder="Ex: 96 06 54 18 ou +228 96 06 54 18" required autocomplete="tel">
+                <span class="form-error" id="phoneError"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="customerComment">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"></path>
+                    </svg>
+                    Commentaire <span class="optional">(facultatif)</span>
+                </label>
+                <textarea id="customerComment" name="customerComment" placeholder="Précisions sur votre commande, couleurs souhaitées, quantité en yards..." rows="3"></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-whatsapp-order" id="submitOrder">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+                    <path d="M12 0C5.373 0 0 5.373 0 12c0 2.625.846 5.059 2.284 7.034L.789 23.492a.5.5 0 00.611.611l4.458-1.495A11.952 11.952 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-2.384 0-4.593-.693-6.46-1.886l-.452-.287-2.648.888.888-2.648-.287-.452A9.956 9.956 0 012 12C2 6.486 6.486 2 12 2s10 4.486 10 10-4.486 10-10 10z"/>
+                </svg>
+                <span>Commander via WhatsApp</span>
+            </button>
+        </form>
+    </div>
+
+    <!-- ===== PRODUCT QUICK VIEW MODAL ===== -->
+    <div class="modal-overlay" id="quickViewOverlay"></div>
+    <div class="quickview-modal" id="quickViewModal">
+        <button class="modal-close" id="quickViewClose" aria-label="Fermer">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+        </button>
+        <div class="quickview-content">
+            <div class="quickview-media-section">
+                <!-- Main Zoomable Media Display -->
+                <div class="quickview-main-media zoom-container" id="qvMainMediaBox">
+                    <img id="quickViewImage" class="zoom-image" src="" alt="">
+                    <video id="quickViewVideo" class="zoom-video" controls autoplay loop style="display:none;"></video>
+                    <div class="zoom-hint">🔍 Survolez pour zoomer</div>
+                </div>
+                <!-- Media Thumbnails Grid (photos & videos, max 20) -->
+                <div class="quickview-thumbnails-wrapper">
+                    <span class="media-count-label" id="qvMediaCount">Galerie (0/20)</span>
+                    <div class="quickview-thumbnails" id="qvThumbnails"></div>
+                </div>
+            </div>
+            <div class="quickview-details">
+                <span class="quickview-category" id="quickViewCategory"></span>
+                <h3 class="quickview-name" id="quickViewName"></h3>
+                <p class="quickview-description" id="quickViewDescription"></p>
+                <p class="quickview-price" id="quickViewPrice"></p>
+                
+                <!-- Color Classification & Variant Selector -->
+                <div class="quickview-colors-section" id="qvColorsSection">
+                    <label class="quickview-label">Couleurs / Variantes disponibles :</label>
+                    <div class="color-swatches-grid" id="qvColorSwatches"></div>
+                    <span class="selected-color-name" id="qvSelectedColorName"></span>
+                </div>
+
+                <div class="quickview-qty">
+                    <label class="quickview-label">Quantité (yards) :</label>
+                    <div class="qty-controls">
+                        <button class="qty-btn" id="qvQtyMinus">−</button>
+                        <input type="number" class="qty-input" id="qvQtyInput" value="1" min="1" max="99">
+                        <button class="qty-btn" id="qvQtyPlus">+</button>
+                    </div>
+                </div>
+                <button class="btn btn-primary btn-add-quickview" id="qvAddToCart">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"></path>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <path d="M16 10a4 4 0 01-8 0"></path>
+                    </svg>
+                    <span>Ajouter au Panier</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== LOGIN MODAL ===== -->
+    <div class="modal-overlay" id="loginOverlay"></div>
+    <div class="login-modal" id="loginModal">
+        <button class="modal-close" id="loginClose" aria-label="Fermer">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+        </button>
+        <div class="login-header">
+            <h3>Se connecter</h3>
+            <p>Choisissez votre type de compte</p>
+        </div>
+        <!-- Login Tabs -->
+        <div class="login-tabs">
+            <button class="login-tab active" data-tab="proprietaire">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;margin-right:4px;">
+                    <path d="M2 4l3 12h14l3-12-6 7-4-7-4 7-6-7z"></path>
+                </svg>
+                <span>Propriétaire</span>
+            </button>
+            <button class="login-tab" data-tab="client">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;margin-right:4px;">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+                <span>Client</span>
+            </button>
+        </div>
+        <!-- Proprietaire Tab -->
+        <div class="login-tab-content active" id="tabProprietaire">
+            <form id="adminLoginForm" novalidate>
+                <div class="form-group">
+                    <label for="adminUser">Nom d'utilisateur</label>
+                    <input type="text" id="adminUser" placeholder="Nom d'utilisateur" autocomplete="username">
+                </div>
+                <div class="form-group">
+                    <label for="adminPass">Mot de passe</label>
+                    <input type="password" id="adminPass" placeholder="Mot de passe" autocomplete="current-password">
+                </div>
+                <span class="form-error" id="adminLoginError"></span>
+                <button type="submit" class="btn btn-login btn-admin-login">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M2 4l3 12h14l3-12-6 7-4-7-4 7-6-7z"></path>
+                    </svg>
+                    <span>Connexion Propriétaire</span>
+                </button>
+            </form>
+        </div>
+        <!-- Client Tab -->
+        <div class="login-tab-content" id="tabClient">
+            <!-- Client Login -->
+            <div id="clientLoginView">
+                <form id="clientLoginForm" novalidate>
+                    <div class="form-group">
+                        <label for="clientLoginPhone">Numéro de téléphone</label>
+                        <input type="tel" id="clientLoginPhone" placeholder="Ex: 96 06 54 18 ou +228 96 06 54 18" autocomplete="tel">
+                    </div>
+                    <div class="form-group">
+                        <label for="clientLoginPass">Mot de passe</label>
+                        <input type="password" id="clientLoginPass" placeholder="Mot de passe" autocomplete="current-password">
+                    </div>
+                    <span class="form-error" id="clientLoginError"></span>
+                    <button type="submit" class="btn btn-login btn-client-login">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+                            <polyline points="10 17 15 12 10 7"></polyline>
+                            <line x1="15" y1="12" x2="3" y2="12"></line>
+                        </svg>
+                        <span>Se connecter au Compte</span>
+                    </button>
+                </form>
+                <div class="login-switch">
+                    <p>Pas encore de compte ? <a href="#" id="showRegister">Créer un compte</a></p>
+                </div>
+            </div>
+            <!-- Client Register -->
+            <div id="clientRegisterView" style="display:none;">
+                <form id="clientRegisterForm" novalidate>
+                    <div class="form-group">
+                        <label for="regName">Prénom</label>
+                        <input type="text" id="regName" placeholder="Votre prénom" autocomplete="given-name">
+                    </div>
+                    <div class="form-group">
+                        <label for="regPhone">Numéro de téléphone</label>
+                        <input type="tel" id="regPhone" placeholder="Ex: 96 06 54 18 ou +228 96 06 54 18" autocomplete="tel">
+                    </div>
+                    <div class="form-group">
+                        <label for="regPass">Mot de passe</label>
+                        <input type="password" id="regPass" placeholder="Choisir un mot de passe" autocomplete="new-password">
+                    </div>
+                    <span class="form-error" id="clientRegisterError"></span>
+                    <button type="submit" class="btn btn-login btn-client-login">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="8.5" cy="7" r="4"></circle>
+                            <line x1="20" y1="8" x2="20" y2="14"></line>
+                            <line x1="17" y1="11" x2="23" y2="11"></line>
+                        </svg>
+                        <span>Créer mon Compte Client</span>
+                    </button>
+                </form>
+                <div class="login-switch">
+                    <p>Déjà un compte ? <a href="#" id="showLogin">Se connecter</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== ADMIN PANEL ===== -->
+    <div class="admin-overlay" id="adminOverlay"></div>
+    <div class="admin-panel" id="adminPanel">
+        <div class="admin-header">
+            <div class="admin-header-left">
+                <h2 class="admin-title">👑 Espace Administration</h2>
+                <p class="admin-subtitle">Aminata Store — Gestion Complète</p>
+            </div>
+            <div class="admin-header-right">
+                <button class="admin-logout-btn" id="adminLogoutBtn" aria-label="Se déconnecter" title="Se déconnecter">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                        <polyline points="16 17 21 12 16 7"></polyline>
+                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg>
+                    <span>Déconnexion</span>
+                </button>
+                <button class="admin-close" id="adminClose" aria-label="Fermer">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+        </div>
+        <!-- Admin Tabs -->
+        <div class="admin-nav-tabs">
+            <button class="admin-nav-tab active" data-admin-tab="orders">📦 Commandes</button>
+            <button class="admin-nav-tab" data-admin-tab="products">🏷️ Produits</button>
+            <button class="admin-nav-tab" data-admin-tab="chat">💬 Messages <span class="admin-chat-badge" id="adminChatBadge"></span></button>
+        </div>
+        <!-- Orders Tab -->
+        <div class="admin-tab-content active" id="adminTabOrders">
+            <div class="admin-kpis">
+                <div class="kpi-card"><div class="kpi-icon">📦</div><div class="kpi-value" id="kpiTotalOrders">0</div><div class="kpi-label">Commandes Totales</div></div>
+                <div class="kpi-card kpi-revenue"><div class="kpi-icon">💰</div><div class="kpi-value" id="kpiRevenue">0 FCFA</div><div class="kpi-label">Chiffre d'Affaires</div></div>
+                <div class="kpi-card kpi-pending"><div class="kpi-icon">⏳</div><div class="kpi-value" id="kpiPending">0</div><div class="kpi-label">En Attente</div></div>
+                <div class="kpi-card kpi-delivered"><div class="kpi-icon">✅</div><div class="kpi-value" id="kpiDelivered">0</div><div class="kpi-label">Livrées</div></div>
+            </div>
+            <div class="admin-toolbar">
+                <div class="admin-search">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    <input type="text" id="adminSearchInput" placeholder="Rechercher par nom ou téléphone...">
+                </div>
+                <div class="admin-filters">
+                    <button class="admin-filter-btn active" data-status="all">Tous</button>
+                    <button class="admin-filter-btn" data-status="nouveau">🆕 Nouveau</button>
+                    <button class="admin-filter-btn" data-status="en_cours">🔄 En cours</button>
+                    <button class="admin-filter-btn" data-status="livre">✅ Livré</button>
+                    <button class="admin-filter-btn" data-status="annule">❌ Annulé</button>
+                </div>
+                <div class="admin-actions-bar">
+                    <button class="admin-action-btn" id="adminTestSound">🔔 Test Son</button>
+                    <button class="admin-action-btn" id="adminExportCSV">📊 Export CSV</button>
+                </div>
+            </div>
+            <div class="admin-orders-container">
+                <table class="admin-orders-table" id="adminOrdersTable">
+                    <thead><tr><th>ID</th><th>Date & Heure</th><th>Client</th><th>WhatsApp</th><th>Montant</th><th>Statut</th><th>Actions</th></tr></thead>
+                    <tbody id="adminOrdersBody"></tbody>
+                </table>
+                <div class="admin-empty" id="adminEmpty"><div class="admin-empty-icon">📭</div><p>Aucune commande pour le moment</p><p class="admin-empty-sub">Les nouvelles commandes apparaîtront ici automatiquement.</p></div>
+            </div>
+        </div>
+        <!-- Products Tab -->
+        <div class="admin-tab-content" id="adminTabProducts">
+            <div class="admin-products-header">
+                <h3>🏷️ Gestion des Produits</h3>
+                <button class="btn btn-primary btn-add-product" id="addProductBtn">+ Ajouter un Produit</button>
+            </div>
+            <div class="admin-products-grid" id="adminProductsGrid">
+                <!-- Rendered by JS -->
+            </div>
+        </div>
+        <!-- Chat Tab -->
+        <div class="admin-tab-content" id="adminTabChat">
+            <div class="admin-chat-layout">
+                <div class="admin-chat-list" id="adminChatList">
+                    <h4>💬 Conversations</h4>
+                    <div class="admin-chat-contacts" id="adminChatContacts">
+                        <!-- Rendered by JS -->
+                    </div>
+                </div>
+                <div class="admin-chat-window" id="adminChatWindow">
+                    <div class="admin-chat-placeholder" id="adminChatPlaceholder">
+                        <div>💬</div>
+                        <p>Sélectionnez une conversation</p>
+                    </div>
+                    <div class="admin-chat-active" id="adminChatActive" style="display:none;">
+                        <div class="admin-chat-top-bar" id="adminChatTopBar"></div>
+                        <div class="admin-chat-messages" id="adminChatMessages"></div>
+                        <div class="admin-chat-input-bar">
+                            <input type="text" id="adminChatInput" placeholder="Écrire un message...">
+                            <button class="admin-chat-send" id="adminChatSend">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== ORDER DETAIL MODAL ===== -->
+    <div class="modal-overlay" id="orderDetailOverlay"></div>
+    <div class="order-detail-modal" id="orderDetailModal">
+        <button class="modal-close" id="orderDetailClose" aria-label="Fermer">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+        <div class="order-detail-header">
+            <h3 id="orderDetailTitle">Détails Commande</h3>
+            <span class="order-detail-id" id="orderDetailId"></span>
+        </div>
+        <div class="order-detail-body" id="orderDetailBody"></div>
+    </div>
+
+    <!-- ===== PRODUCT ADD/EDIT MODAL ===== -->
+    <div class="modal-overlay" id="productModalOverlay"></div>
+    <div class="product-form-modal" id="productFormModal">
+        <button class="modal-close" id="productFormClose" aria-label="Fermer">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+        <div class="product-form-header">
+            <h3 id="productFormTitle">Ajouter un Produit</h3>
+        </div>
+        <form id="productForm" novalidate>
+            <div class="form-group">
+                <label for="prodName">Nom du produit *</label>
+                <input type="text" id="prodName" placeholder="Ex: Wax Hollandais Premium" required>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="prodCategory">Catégorie *</label>
+                    <select id="prodCategory" required>
+                        <option value="Wax">Wax</option>
+                        <option value="Basin">Basin</option>
+                        <option value="Lin">Lin</option>
+                        <option value="Coton">Coton</option>
+                        <option value="Soie">Soie</option>
+                        <option value="Dentelle">Dentelle</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="prodPrice">Prix (FCFA/yard) *</label>
+                    <input type="number" id="prodPrice" placeholder="12000" min="0" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="prodDesc">Description</label>
+                <textarea id="prodDesc" placeholder="Description du produit..." rows="3"></textarea>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="prodBadge">Badge (optionnel)</label>
+                    <input type="text" id="prodBadge" placeholder="Ex: Nouveau, Premium, Populaire">
+                </div>
+                <div class="form-group">
+                    <label for="prodBadgeType">Type de badge</label>
+                    <select id="prodBadgeType">
+                        <option value="">Standard</option>
+                        <option value="premium">Premium (doré)</option>
+                        <option value="new">Nouveau (vert)</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- Primary Photo -->
+            <div class="form-group">
+                <label>Photo Principale *</label>
+                <div class="image-upload-area" id="imageUploadArea">
+                    <input type="file" id="prodImage" accept="image/*" hidden>
+                    <div class="image-upload-placeholder" id="imageUploadPlaceholder">
+                        <div class="upload-icon">📷</div>
+                        <p>Sélectionner la photo principale</p>
+                        <p class="upload-hint">JPG, PNG — max 3 Mo</p>
+                    </div>
+                    <img id="imagePreview" class="image-preview" src="" alt="" style="display:none;">
+                </div>
+            </div>
+
+            <!-- Additional Media (Photos & Videos, max 20) -->
+            <div class="form-group">
+                <div class="media-upload-header">
+                    <label>Photos & Vidéos Supplémentaires (Max 20)</label>
+                    <span class="media-counter-badge" id="extraMediaCounter">0 / 20</span>
+                </div>
+                <div class="extra-media-uploader" id="extraMediaArea">
+                    <input type="file" id="prodExtraMedia" accept="image/*,video/*" multiple hidden>
+                    <button type="button" class="btn btn-outline btn-add-media" id="btnAddExtraMedia">
+                        📷 🎥 Ajouter Médias (Photos / Vidéos)
+                    </button>
+                    <div class="extra-media-grid" id="extraMediaGrid"></div>
+                </div>
+            </div>
+
+            <!-- Color Classification & Variants Editor -->
+            <div class="form-group">
+                <div class="colors-editor-header">
+                    <label>Classification Couleurs / Variantes</label>
+                    <button type="button" class="btn-text-action" id="btnAddColorVariant">＋ Ajouter une Couleur</button>
+                </div>
+                <div class="color-variants-list" id="colorVariantsList"></div>
+            </div>
+
+            <!-- Featured on Home Toggle -->
+            <div class="form-group admin-featured-checkbox-wrap">
+                <label class="admin-checkbox-label">
+                    <input type="checkbox" id="prodFeatured" checked>
+                    <span class="admin-checkbox-text">
+                        <strong>⭐ Afficher sur la page d'accueil (Produit Vedette)</strong>
+                        <small>Cochez pour mettre ce tissu en avant sur la page d'accueil.</small>
+                    </span>
+                </label>
+            </div>
+
+            <input type="hidden" id="prodEditId" value="">
+            <button type="submit" class="btn btn-primary btn-save-product">💾 Enregistrer le Produit</button>
+        </form>
+    </div>
+
+    <!-- ===== CLIENT PANEL ===== -->
+    <div class="admin-overlay" id="clientPanelOverlay"></div>
+    <div class="client-panel" id="clientPanel">
+        <div class="client-panel-header">
+            <div>
+                <h2 class="admin-title">👤 Mon Espace</h2>
+                <p class="admin-subtitle" id="clientWelcome">Bienvenue</p>
+            </div>
+            <div class="admin-header-right">
+                <button class="admin-logout-btn" id="clientLogoutBtn" aria-label="Se déconnecter" title="Se déconnecter">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                        <polyline points="16 17 21 12 16 7"></polyline>
+                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg>
+                    <span>Déconnexion</span>
+                </button>
+                <button class="admin-close" id="clientPanelClose" aria-label="Fermer">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+        </div>
+        <div class="client-nav-tabs">
+            <button class="admin-nav-tab active" data-client-tab="history">📦 Mes Commandes</button>
+            <button class="admin-nav-tab" data-client-tab="chat">💬 Chat <span class="client-chat-badge" id="clientChatBadge"></span></button>
+        </div>
+        <!-- Order History -->
+        <div class="client-tab-content active" id="clientTabHistory">
+            <div class="client-orders" id="clientOrders">
+                <!-- Rendered by JS -->
+            </div>
+        </div>
+        <!-- Client Chat -->
+        <div class="client-tab-content" id="clientTabChat">
+            <div class="client-chat-window">
+                <div class="client-chat-messages" id="clientChatMessages"></div>
+                <div class="admin-chat-input-bar">
+                    <input type="text" id="clientChatInput" placeholder="Écrire un message au propriétaire...">
+                    <button class="admin-chat-send" id="clientChatSend">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== CHAT FLOATING BUBBLE (for logged-in clients) ===== -->
+    <button class="chat-bubble" id="chatBubble" style="display:none;" aria-label="Ouvrir le chat">
+        💬
+        <span class="chat-bubble-badge" id="chatBubbleBadge"></span>
+    </button>
+
+    <!-- ===== TOAST CONTAINER ===== -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- ===== JavaScript ===== -->
+    <script src="app.js"></script>
+</body>
+</html>
