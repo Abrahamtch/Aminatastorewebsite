@@ -106,12 +106,29 @@ const $ = (s) => document.querySelector(s);
 const $$ = (s) => document.querySelectorAll(s);
 function genId(prefix = 'ID') { return prefix + '-' + Math.random().toString(36).substr(2, 6).toUpperCase(); }
 
+// ── Supabase Cloud Database ──
+const SUPABASE_URL = 'https://nglihypdaiyftfutjqoo.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable__wfinp2_RVVYznuD3_aMMg_L8FNgoXq';
+let supabaseClient = null;
+
+function getSupabase() {
+  if (!supabaseClient && window.supabase && typeof window.supabase.createClient === 'function') {
+    try {
+      supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    } catch (e) {
+      console.warn('Supabase client error:', e);
+    }
+  }
+  return supabaseClient;
+}
+
 // ══════════════════════════════════════════════
-//  DATABASE — IndexedDB
+//  DATABASE — Supabase Cloud (with IndexedDB fallback)
 // ══════════════════════════════════════════════
 const DB = {
   db: null,
   async init() {
+    // 1. Initialize IndexedDB as local cache
     this.db = await new Promise((resolve, reject) => {
       const req = indexedDB.open(DB_NAME, DB_VERSION);
       req.onupgradeneeded = (e) => {
@@ -124,17 +141,53 @@ const DB = {
       req.onsuccess = (e) => resolve(e.target.result);
       req.onerror = (e) => reject(e.target.error);
     });
+
+    // 2. Seed initial products if needed
     await this.seedProducts();
+
+    // 3. Setup Supabase Realtime synchronization
+    this.setupRealtime();
   },
 
-  async seedProducts() {
-    const existing = await this.getAll('products');
-    if (existing.length === 0) {
-      for (const p of DEFAULT_PRODUCTS) await this.put('products', p);
+  setupRealtime() {
+    const sb = getSupabase();
+    if (!sb) return;
+    try {
+      sb.channel('realtime_products')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'products' }, async () => {
+          console.log('🔄 Synchro Supabase en temps réel reçue');
+          products = await this.getAll('products');
+          renderAdminProducts();
+          if ($('#productsGrid')) renderProducts();
+          if ($('#collectionProductsGrid')) renderCollectionPage();
+        })
+        .subscribe();
+    } catch(e) {
+      console.warn('Realtime subscription error:', e);
     }
   },
 
-  async put(store, data) {
+  async seedProducts() {
+    const sb = getSupabase();
+    if (sb) {
+      try {
+        const { data, error } = await sb.from('products').select('*');
+        if (!error && (!data || data.length === 0)) {
+          console.log('Seeding initial products to Supabase...');
+          await sb.from('products').upsert(DEFAULT_PRODUCTS);
+        }
+      } catch (err) {
+        console.warn('Supabase seed notice:', err);
+      }
+    }
+
+    const localExisting = await this.getLocalAll('products');
+    if (localExisting.length === 0) {
+      for (const p of DEFAULT_PRODUCTS) await this.putLocal('products', p);
+    }
+  },
+
+  async putLocal(store, data) {
     return new Promise((res, rej) => {
       const tx = this.db.transaction(store, 'readwrite');
       tx.objectStore(store).put(data);
@@ -143,7 +196,46 @@ const DB = {
     });
   },
 
+  async getLocalAll(store) {
+    return new Promise((res, rej) => {
+      const tx = this.db.transaction(store, 'readonly');
+      const req = tx.objectStore(store).getAll();
+      req.onsuccess = () => res(req.result || []);
+      req.onerror = (e) => rej(e.target.error);
+    });
+  },
+
+  async put(store, data) {
+    const sb = getSupabase();
+    if (sb) {
+      try {
+        if (store === 'products') {
+          const { error } = await sb.from('products').upsert(data);
+          if (error) console.warn('Supabase put product error:', error);
+        } else if (store === 'orders') {
+          await sb.from('orders').upsert(data);
+        } else if (store === 'clients') {
+          await sb.from('clients').upsert(data);
+        } else if (store === 'messages') {
+          await sb.from('messages').upsert(data);
+        }
+      } catch (err) {
+        console.warn('Supabase put error, falling back to local:', err);
+      }
+    }
+
+    return this.putLocal(store, data);
+  },
+
   async get(store, key) {
+    const sb = getSupabase();
+    if (sb && store === 'products') {
+      try {
+        const { data, error } = await sb.from('products').select('*').eq('id', key).maybeSingle();
+        if (!error && data) return data;
+      } catch (err) {}
+    }
+
     return new Promise((res, rej) => {
       const tx = this.db.transaction(store, 'readonly');
       const req = tx.objectStore(store).get(key);
@@ -153,15 +245,34 @@ const DB = {
   },
 
   async getAll(store) {
-    return new Promise((res, rej) => {
-      const tx = this.db.transaction(store, 'readonly');
-      const req = tx.objectStore(store).getAll();
-      req.onsuccess = () => res(req.result || []);
-      req.onerror = (e) => rej(e.target.error);
-    });
+    const sb = getSupabase();
+    if (sb && store === 'products') {
+      try {
+        const { data, error } = await sb.from('products').select('*').order('id', { ascending: true });
+        if (!error && Array.isArray(data) && data.length > 0) {
+          for (const item of data) {
+            this.putLocal('products', item).catch(() => {});
+          }
+          return data;
+        }
+      } catch (err) {
+        console.warn('Supabase getAll error, fallback to local:', err);
+      }
+    }
+
+    return this.getLocalAll(store);
   },
 
   async delete(store, key) {
+    const sb = getSupabase();
+    if (sb && store === 'products') {
+      try {
+        await sb.from('products').delete().eq('id', key);
+      } catch(err) {
+        console.warn('Supabase delete error:', err);
+      }
+    }
+
     return new Promise((res, rej) => {
       const tx = this.db.transaction(store, 'readwrite');
       tx.objectStore(store).delete(key);
