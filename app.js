@@ -1297,7 +1297,7 @@ function openAdmin() {
   if (currentAuth?.role !== 'admin') { openLogin(); return; }
   Notify.requestPerm();
   $('#adminOverlay')?.classList.add('open'); $('#adminPanel')?.classList.add('open'); document.body.style.overflow = 'hidden';
-  renderAdminOrders(); renderAdminProducts(); renderAdminChatList();
+  renderAdminOrders(); renderAdminProducts(); renderAdminChatList(); renderMarketingTab();
 }
 function closeAdmin() { $('#adminOverlay')?.classList.remove('open'); $('#adminPanel')?.classList.remove('open'); document.body.style.overflow = ''; }
 
@@ -1986,16 +1986,380 @@ function stopChatPolling() {
 }
 
 // ══════════════════════════════════════════════
-//  TOAST
+//  MARKETING, META PIXEL & AI ADS ASSISTANT
 // ══════════════════════════════════════════════
-function showToast(message, type = 'success') {
-  const c = $('#toastContainer'); if (!c) return;
-  const t = document.createElement('div'); t.className = `toast toast-${type}`;
-  t.innerHTML = `<span class="toast-icon">${{ success: '✓', error: '✕', info: 'ℹ' }[type] || 'ℹ'}</span><span class="toast-message">${message}</span>`;
-  c.appendChild(t);
-  requestAnimationFrame(() => requestAnimationFrame(() => t.classList.add('show')));
-  setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 400); }, 3000);
+const DEFAULT_PIXEL_ID = '1532882571493316';
+
+function getActivePixelId() {
+  return localStorage.getItem('aminata_meta_pixel_id') || DEFAULT_PIXEL_ID;
 }
+
+function saveMetaPixelId(pixelInput) {
+  if (!pixelInput) return;
+  const match = pixelInput.match(/\d{10,20}/);
+  const cleanId = match ? match[0] : pixelInput.trim();
+  
+  localStorage.setItem('aminata_meta_pixel_id', cleanId);
+
+  if (typeof window.fbq === 'function') {
+    try {
+      window.fbq('init', cleanId);
+      window.fbq('track', 'PageView');
+    } catch (e) {
+      console.warn('Erreur fbq init:', e);
+    }
+  }
+
+  const badge = $('#pixelStatusBadge');
+  if (badge) {
+    badge.textContent = `✅ Pixel Actif (${cleanId})`;
+  }
+
+  showToast(`🎯 Meta Pixel (${cleanId}) enregistré avec succès !`, 'success');
+}
+window.saveMetaPixelId = saveMetaPixelId;
+
+async function renderMarketingTab() {
+  const pixelInput = $('#metaPixelIdInput');
+  if (pixelInput) {
+    pixelInput.value = getActivePixelId();
+  }
+
+  const badge = $('#pixelStatusBadge');
+  if (badge) {
+    badge.textContent = `✅ Pixel Actif (${getActivePixelId()})`;
+  }
+
+  const prodSelect = $('#aiProductSelect');
+  if (prodSelect) {
+    const allProds = await DB.getAll('products');
+    let html = '<option value="all">🌟 Stratégie Globale Boutique (Tous les Tissus)</option>';
+    allProds.forEach(p => {
+      html += `<option value="${p.id}">🧵 ${p.name} — ${formatPrice(p.price)}/yard (${p.category})</option>`;
+    });
+    prodSelect.innerHTML = html;
+  }
+}
+window.renderMarketingTab = renderMarketingTab;
+
+// ── AI Marketing Logic & Copywriting Generator ──
+async function runAiMarketingAction(actionType) {
+  const prodSelect = $('#aiProductSelect');
+  const goalSelect = $('#aiGoalSelect');
+  const selectedProdId = prodSelect ? prodSelect.value : 'all';
+  const selectedGoal = goalSelect ? goalSelect.value : 'whatsapp_sales';
+
+  let targetProduct = null;
+  if (selectedProdId !== 'all') {
+    targetProduct = await DB.get('products', selectedProdId);
+  }
+
+  const chatContainer = $('#aiMarketingMessages');
+  if (!chatContainer) return;
+
+  const thinkingId = 'ai_thinking_' + Date.now();
+  const thinkingHtml = `
+    <div class="ai-msg ai-msg-bot" id="${thinkingId}">
+      <div class="ai-msg-avatar">🤖</div>
+      <div class="ai-msg-content">
+        <p><em>✨ L'IA analyse votre tissu, l'audience cible et génère votre stratégie publicitaire...</em></p>
+      </div>
+    </div>
+  `;
+  chatContainer.insertAdjacentHTML('beforeend', thinkingHtml);
+  chatContainer.scrollTop = chatContainer.scrollHeight;
+
+  setTimeout(() => {
+    const thinkingEl = document.getElementById(thinkingId);
+    if (thinkingEl) thinkingEl.remove();
+
+    let responseContent = '';
+    if (actionType === 'copywriting') {
+      responseContent = generateCopywritingResponse(targetProduct, selectedGoal);
+    } else if (actionType === 'audience') {
+      responseContent = generateAudienceResponse(targetProduct, selectedGoal);
+    } else if (actionType === 'video_ideas') {
+      responseContent = generateVideoIdeasResponse(targetProduct, selectedGoal);
+    } else if (actionType === 'offer_strategy') {
+      responseContent = generateOfferStrategyResponse(targetProduct, selectedGoal);
+    }
+
+    appendAiBotMessage(responseContent);
+  }, 600);
+}
+window.runAiMarketingAction = runAiMarketingAction;
+
+function appendAiBotMessage(htmlContent) {
+  const chatContainer = $('#aiMarketingMessages');
+  if (!chatContainer) return;
+  const msgHtml = `
+    <div class="ai-msg ai-msg-bot">
+      <div class="ai-msg-avatar">🤖</div>
+      <div class="ai-msg-content">
+        ${htmlContent}
+      </div>
+    </div>
+  `;
+  chatContainer.insertAdjacentHTML('beforeend', msgHtml);
+  chatContainer.scrollTop = chatContainer.scrollHeight;
+}
+
+function appendAiUserMessage(text) {
+  const chatContainer = $('#aiMarketingMessages');
+  if (!chatContainer) return;
+  const msgHtml = `
+    <div class="ai-msg ai-msg-user">
+      <div class="ai-msg-avatar">👤</div>
+      <div class="ai-msg-content">
+        <p>${escapeHtml(text)}</p>
+      </div>
+    </div>
+  `;
+  chatContainer.insertAdjacentHTML('beforeend', msgHtml);
+  chatContainer.scrollTop = chatContainer.scrollHeight;
+}
+
+function copyAdText(btnElement, textToCopy) {
+  if (!navigator.clipboard) {
+    showToast('Texte copié !', 'success');
+    return;
+  }
+  navigator.clipboard.writeText(textToCopy).then(() => {
+    const originalText = btnElement.innerHTML;
+    btnElement.innerHTML = '✅ Copié !';
+    btnElement.style.background = '#059669';
+    setTimeout(() => {
+      btnElement.innerHTML = originalText;
+      btnElement.style.background = '';
+    }, 2000);
+    showToast('📋 Texte publicitaire copié dans le presse-papier !', 'success');
+  });
+}
+window.copyAdText = copyAdText;
+
+function escapeHtml(string) {
+  const str = String(string || '');
+  return str.replace(/[&<>"']/g, function(match) {
+    return {
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#39;'
+    }[match];
+  });
+}
+
+function generateCopywritingResponse(product, goal) {
+  const prodName = product ? product.name : 'Nos Tissus Wax & Basin de Luxe';
+  const prodPrice = product ? `${formatPrice(product.price)} / yard` : 'Prix direct atelier';
+  const category = product ? product.category : 'Wax, Basin & Soie';
+  const waLink = 'https://wa.me/22896065418';
+
+  const text1 = `👑 FAITES TOURNER TOUS LES REGARDS LORS DE VOTRE PROCHAINE CÉRÉMONIE ! 👑\n\nVous cherchez un tissu d'une brillance et d'une tenue irréprochable qui sublimera votre modèle de couture ? ✨\n\nDécouvrez notre collection exclusive : "${prodName}" (${category}) !\n\n💎 100% Qualité Supérieure — Ne déteint pas au lavage\n🎨 Motifs raffinés & Couleurs éclatantes qui durent\n📏 Vendu au yard (${prodPrice}) ou en coupons complets\n\n🚚 Livraison ultra-rapide à domicile et expédition disponible partout !\n\n👇 Commandez directement sur WhatsApp avant rupture de stock :\n👉 ${waLink}`;
+
+  const text2 = `⚠️ ALERTE NOUVEAUTÉ & STOCK LIMITÉ ! ⚠️\n\nLes amatrices de véritable élégance africaine vont adorer ! 😍\nNotre tissu star "${prodName}" vient tout juste d'arriver en boutique.\n\nPourquoi nos clientes en raffolent ?\n✅ Douceur et confort inégalé sur la peau\n✅ Idéal pour mariages, baptêmes, dot et sorties chics\n✅ Prix imbattable : seulement ${prodPrice} !\n\n🎁 Offre spéciale : Profitez d'une remise exclusive pour toute commande de 2 pagnes ou plus aujourd'hui !\n\n📲 Cliquez ci-dessous pour réserver votre coupon sur WhatsApp :\n👉 ${waLink}`;
+
+  const text3 = `✨ "Ce n'est pas juste un tissu... C'est une affirmation de votre élégance." ✨\n\nPour vos grandes occasions, ne laissez rien au hasard. Optez pour le prestige avec notre "${prodName}".\n\n🧵 Catégorie : ${category} Haute Qualité\n💰 Prix exceptionnel : ${prodPrice}\n\n📦 Paiement sécurisé & Commande simplifiée en 1 clic sur notre boutique Aminata Store !\n\n💬 Écrivez-nous tout de suite pour voir les coloris disponibles en vidéo :\n👉 ${waLink}`;
+
+  return `
+    <p>🎯 <strong>Voici 3 Textes Publicitaires à Fort Taux de Conversion</strong> pour <strong>${prodName}</strong> :</p>
+    
+    <div class="ai-copy-box">
+      <div class="ai-copy-title">
+        <span>Option 1 : Angle Prestige & Célébration (AIDA)</span>
+        <button type="button" class="btn-copy-ad" onclick="copyAdText(this, \`${text1.replace(/`/g, '\\`').replace(/\\/g, '\\\\')}\`)">📋 Copier</button>
+      </div>
+      <div class="ai-copy-text">${text1}</div>
+    </div>
+
+    <div class="ai-copy-box">
+      <div class="ai-copy-title">
+        <span>Option 2 : Angle Urgence & Offre Spéciale (PAS)</span>
+        <button type="button" class="btn-copy-ad" onclick="copyAdText(this, \`${text2.replace(/`/g, '\\`').replace(/\\/g, '\\\\')}\`)">📋 Copier</button>
+      </div>
+      <div class="ai-copy-text">${text2}</div>
+    </div>
+
+    <div class="ai-copy-box">
+      <div class="ai-copy-title">
+        <span>Option 3 : Angle Storytelling & Image de Marque</span>
+        <button type="button" class="btn-copy-ad" onclick="copyAdText(this, \`${text3.replace(/`/g, '\\`').replace(/\\/g, '\\\\')}\`)">📋 Copier</button>
+      </div>
+      <div class="ai-copy-text">${text3}</div>
+    </div>
+
+    <p>💡 <em>Conseil : Vous pouvez tester l'Option 1 et l'Option 2 en A/B Testing sur Facebook Ads pour voir lequel apporte le plus de messages WhatsApp !</em></p>
+  `;
+}
+
+function generateAudienceResponse(product, goal) {
+  const prodName = product ? product.name : 'votre boutique';
+
+  return `
+    <p>🎯 <strong>Stratégie de Ciblage Facebook & Instagram Ads Recommandée</strong> pour <strong>${prodName}</strong> :</p>
+    
+    <div style="background:#fff;border:1px solid var(--color-border);padding:16px;border-radius:12px;margin:12px 0;">
+      <h4 style="margin:0 0 10px;color:var(--color-primary-dark);font-family:var(--font-display);">📍 1. Localisation Géographique</h4>
+      <ul style="margin:0 0 14px;padding-left:20px;line-height:1.5;">
+        <li><strong>Campagne Locale :</strong> Togo (Lomé, Kara, Kpalimé, Sokodé).</li>
+        <li><strong>Campagne Sous-Régionale :</strong> Bénin (Cotonou), Côte d'Ivoire (Abidjan), Sénégal (Dakar), Burkina Faso (Ouagadougou).</li>
+        <li><strong>Campagne Diaspora (Fort Pouvoir d'Achat) :</strong> France (Paris, Île-de-France, Lyon), Belgique (Bruxelles), USA / Canada.</li>
+      </ul>
+
+      <h4 style="margin:0 0 10px;color:var(--color-primary-dark);font-family:var(--font-display);">👥 2. Données Démographiques</h4>
+      <ul style="margin:0 0 14px;padding-left:20px;line-height:1.5;">
+        <li><strong>Genre :</strong> Femmes (85%) et Hommes (15% pour cadeaux/fêtes).</li>
+        <li><strong>Âge cible :</strong> 24 ans à 55 ans (coeur de cible active avec pouvoir d'achat : 28 - 48 ans).</li>
+      </ul>
+
+      <h4 style="margin:0 0 10px;color:var(--color-primary-dark);font-family:var(--font-display);">❤️ 3. Centres d'Intérêts Clés (Interests)</h4>
+      <p style="margin:0 0 6px;">Tapez ces intérêts dans Facebook Ads Manager :</p>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;">
+        <span style="background:#f4efe9;padding:4px 10px;border-radius:20px;font-size:0.8rem;font-weight:600;">Mode africaine</span>
+        <span style="background:#f4efe9;padding:4px 10px;border-radius:20px;font-size:0.8rem;font-weight:600;">Wax (textile)</span>
+        <span style="background:#f4efe9;padding:4px 10px;border-radius:20px;font-size:0.8rem;font-weight:600;">Vlisco / Uniwax</span>
+        <span style="background:#f4efe9;padding:4px 10px;border-radius:20px;font-size:0.8rem;font-weight:600;">Mariage & Cérémonie</span>
+        <span style="background:#f4efe9;padding:4px 10px;border-radius:20px;font-size:0.8rem;font-weight:600;">Haute couture africaine</span>
+        <span style="background:#f4efe9;padding:4px 10px;border-radius:20px;font-size:0.8rem;font-weight:600;">Boubou / Pagne</span>
+      </div>
+
+      <h4 style="margin:0 0 10px;color:var(--color-primary-dark);font-family:var(--font-display);">📱 4. Placements Recommandés</h4>
+      <p style="margin:0;line-height:1.5;">Privilégiez <strong>Instagram Reels</strong>, <strong>Facebook Feed</strong> et <strong>Facebook Stories</strong> avec l'objectif <strong>Messages WhatsApp (Ventes)</strong> ou <strong>Trafic Boutique</strong>.</p>
+    </div>
+  `;
+}
+
+function generateVideoIdeasResponse(product, goal) {
+  const prodName = product ? product.name : 'vos tissus';
+  return `
+    <p>🎬 <strong>3 Concepts de Vidéos / Reels Viraux (15 à 30 secondes)</strong> pour <strong>${prodName}</strong> :</p>
+    
+    <div class="ai-copy-box">
+      <div class="ai-copy-title">
+        <span>Vidéo 1 : Le Test de Texture & Brillance (0 à 15s)</span>
+      </div>
+      <div class="ai-copy-text">
+🎥 <strong>Accroche Visuelle (0-3s) :</strong> Prenez le tissu à deux mains sous une belle lumière du jour et dépliez-le d'un geste fluide vers la caméra.
+🎙️ <strong>Voix-off / Texte à l'écran :</strong> « Ne commandez pas votre pagne avant d'avoir vu cette qualité... 😱✨ »
+🔎 <strong>Plan serré (4-10s) :</strong> Gros plan sur le grain du tissu, la vivacité des motifs et la bordure dorée/satinée.
+👉 <strong>Appel à l'action (11-15s) :</strong> « Disponible en quantité très limitée chez Aminata Store. Cliquez sur le lien pour commander sur WhatsApp ! »
+      </div>
+    </div>
+
+    <div class="ai-copy-box">
+      <div class="ai-copy-title">
+        <span>Vidéo 2 : Avant / Après Inspiration Modèle de Couture (0 à 20s)</span>
+      </div>
+      <div class="ai-copy-text">
+🎥 <strong>Plan 1 (0-5s) :</strong> Montrez le rouleau de tissu brut posé sur une belle table.
+🔄 <strong>Transition rythmée (5-6s) :</strong> Transition en claquant des doigts ou en jetant le tissu vers la caméra.
+💃 <strong>Plan 2 (7-15s) :</strong> Une cliente ou un mannequin portant une superbe robe / boubou taillé dans ce même tissu.
+👉 <strong>Call To Action :</strong> « Vous avez la cérémonie ? On a le tissu parfait pour vous ! Lien en bio ou bouton WhatsApp. »
+      </div>
+    </div>
+
+    <div class="ai-copy-box">
+      <div class="ai-copy-title">
+        <span>Vidéo 3 : L'Expérience Unboxing / Préparation de Commande (0 à 15s)</span>
+      </div>
+      <div class="ai-copy-text">
+📦 <strong>Plan 1 :</strong> Pliage soigné du tissu avec son étiquette dorée.
+🎁 <strong>Plan 2 :</strong> Mise en sachet cadeau avec ruban soigné.
+🛵 <strong>Plan 3 :</strong> Remise au livreur prêt à partir.
+🎙️ <strong>Message :</strong> « Une nouvelle commande qui part pour Lomé ! Vous voulez le vôtre pour ce week-end ? Écrivez-nous vite ! »
+      </div>
+    </div>
+  `;
+}
+
+function generateOfferStrategyResponse(product, goal) {
+  return `
+    <p>💰 <strong>3 Stratégies d'Offres Irrésistibles pour Booster vos Ventes :</strong></p>
+
+    <div class="ai-copy-box">
+      <div class="ai-copy-title">
+        <span>Offre 1 : Le Pack "Duo Élégance" (Augmentation du Panier Moyen)</span>
+      </div>
+      <div class="ai-copy-text">
+🎁 <strong>L'Offre :</strong> « Pour 2 coupons de tissus achetés, recevez la <strong>LIVRAISON 100% OFFERTE</strong> + 1 foulard ou accessoire assorti en cadeau ! »
+🎯 <strong>Pourquoi ça marche :</strong> Les clients préfèrent acheter un second pagne plutôt que de payer des frais de livraison !
+      </div>
+    </div>
+
+    <div class="ai-copy-box">
+      <div class="ai-copy-title">
+        <span>Offre 2 : L'Offre "Aso Ebi & Cérémonies de Famille"</span>
+      </div>
+      <div class="ai-copy-text">
+👑 <strong>L'Offre :</strong> « Mariage, anniversaire ou baptême en vue ? Profitez de <strong>-10% dès 3 pièces</strong> et <strong>-15% dès 6 pièces</strong> pour habiller toute votre famille avec le même tissu d'honneur ! »
+🎯 <strong>Pourquoi ça marche :</strong> Cela vous permet d'écouler des rouleaux complets en une seule transaction.
+      </div>
+    </div>
+
+    <div class="ai-copy-box">
+      <div class="ai-copy-title">
+        <span>Offre 3 : L'Offre Flash 48H "Stock Privilège"</span>
+      </div>
+      <div class="ai-copy-text">
+⚡ <strong>L'Offre :</strong> « Seulement 5 coupons disponibles dans ce motif exclusif. Les 3 premières commandes reçoivent un bon de réduction de 2 000 FCFA sur leur prochain achat ! »
+🎯 <strong>Pourquoi ça marche :</strong> Crée une urgence immédiate (FOMO) qui pousse à commander sur WhatsApp sans hésiter.
+      </div>
+    </div>
+  `;
+}
+
+function handleAiFreeformQuestion(question) {
+  const q = question.toLowerCase();
+  let answer = '';
+
+  if (q.includes('budget') || q.includes('combien') || q.includes('prix') || q.includes('argent') || q.includes('coût')) {
+    answer = `
+      <p>💡 <strong>Recommandation de Budget pour vos Publicités Facebook :</strong></p>
+      <p>Pour débuter efficacement avec <strong>Aminata Store</strong> :</p>
+      <ul>
+        <li><strong>Budget de Test (Jour 1 à 3) :</strong> 3 000 à 5 000 FCFA / jour (environ 5$ à 8$).</li>
+        <li><strong>Objectif :</strong> Campagne de Messages WhatsApp (ou Trafic vers le site).</li>
+        <li><strong>Règle d'or :</strong> Dès qu'une publicité vous génère 3 à 5 conversations WhatsApp rentables, augmentez son budget de 20% par jour pour maximiser vos ventes sans perturber l'algorithme !</li>
+      </ul>
+    `;
+  } else if (q.includes('relancer') || q.includes('whatsapp') || q.includes('message') || q.includes('client')) {
+    answer = `
+      <p>💬 <strong>Script de Relance WhatsApp Imparable pour valider une vente :</strong></p>
+      <div class="ai-copy-box">
+        <div class="ai-copy-title">
+          <span>Message de relance bienveillante (à envoyer 3h après) :</span>
+        </div>
+        <div class="ai-copy-text">
+« Bonjour Chère Cliente ! ✨ Nous préparons actuellement les expéditions de la journée. Souhaitez-vous que nous vous réservions votre coupon de tissu avant la rupture de stock pour qu'il parte avec la livraison d'aujourd'hui ? 📦😊 »
+        </div>
+      </div>
+    `;
+  } else if (q.includes('photo') || q.includes('video') || q.includes('smartphone') || q.includes('camera')) {
+    answer = `
+      <p>📸 <strong>Conseils Pro pour photographier vos tissus au smartphone :</strong></p>
+      <ol>
+        <li><strong>Lumière naturelle :</strong> Photographiez toujours près d'une fenêtre le matin ou en fin d'après-midi (évitez le flash qui dénature les couleurs du Wax et du Basin).</li>
+        <li><strong>Drapé vivant :</strong> Ne laissez pas le tissu toujours à plat. Suspendez-le ou posez-le sur un mannequin pour faire ressortir la souplesse et la brillance de la matière.</li>
+        <li><strong>Vidéo en mouvement :</strong> Faites une vidéo de 5 secondes où vous passez votre main sur le tissu ; cela prouve l'authenticité et donne confiance aux acheteurs en ligne !</li>
+      </ol>
+    `;
+  } else {
+    answer = `
+      <p>✨ <strong>Conseil Stratégique Aminata Store :</strong></p>
+      <p>Pour développer vos ventes de tissus :</p>
+      <ul>
+        <li>Assurez-vous de poster au moins <strong>2 à 3 stories par jour</strong> montrant les arrivages et les avis de clients satisfaits.</li>
+        <li>Créez un catalogue WhatsApp Business connecté avec les photos HD de votre boutique.</li>
+        <li>Lancez régulièrement des offres de week-end pour déclencher des achats coup de coeur !</li>
+      </ul>
+      <p>N'hésitez pas à sélectionner un produit dans la liste ci-dessus et cliquer sur <strong>✍️ 3 Textes Publicitaires Facebook</strong> pour obtenir des accroches prêtes à l'emploi ! 🚀</p>
+    `;
+  }
+
+  appendAiBotMessage(answer);
+}
+window.handleAiFreeformQuestion = handleAiFreeformQuestion;
 
 // ══════════════════════════════════════════════
 //  SCROLL EFFECTS
@@ -2070,7 +2434,43 @@ function setupEventListeners() {
     $(`#adminTab${tab.dataset.adminTab.charAt(0).toUpperCase() + tab.dataset.adminTab.slice(1)}`)?.classList.add('active');
     if (tab.dataset.adminTab === 'chat') renderAdminChatList();
     if (tab.dataset.adminTab === 'products') renderAdminProducts();
+    if (tab.dataset.adminTab === 'marketing') renderMarketingTab();
   }));
+
+  // Marketing & Meta Pixel
+  $('#pixelConfigForm')?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const val = $('#metaPixelIdInput')?.value || '';
+    saveMetaPixelId(val);
+  });
+
+  // AI Marketing Action Buttons
+  $$('.btn-ai-pill').forEach(pill => {
+    pill.addEventListener('click', () => {
+      const action = pill.dataset.aiAction;
+      if (action) runAiMarketingAction(action);
+    });
+  });
+
+  // AI Marketing Chat
+  $('#btnSendAiMarketing')?.addEventListener('click', () => {
+    const input = $('#aiMarketingInput');
+    const q = input?.value.trim();
+    if (!q) return;
+    appendAiUserMessage(q);
+    input.value = '';
+    handleAiFreeformQuestion(q);
+  });
+
+  $('#aiMarketingInput')?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      const q = e.target.value.trim();
+      if (!q) return;
+      appendAiUserMessage(q);
+      e.target.value = '';
+      handleAiFreeformQuestion(q);
+    }
+  });
 
   // Admin Chat
   $('#adminChatSend')?.addEventListener('click', adminSendMessage);

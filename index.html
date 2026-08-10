@@ -26,7 +26,8 @@
     t.src=v;s=b.getElementsByTagName(e)[0];
     s.parentNode.insertBefore(t,s)}(window, document,'script',
     'https://connect.facebook.net/en_US/fbevents.js');
-    fbq('init', '1532882571493316');
+    var _activePixel = (function(){ try { return localStorage.getItem('aminata_meta_pixel_id') || '1532882571493316'; } catch(e){ return '1532882571493316'; } })();
+    fbq('init', _activePixel);
     fbq('track', 'PageView');
     </script>
     <noscript><img height="1" width="1" style="display:none"
@@ -710,6 +711,7 @@
             <button class="admin-nav-tab active" data-admin-tab="orders">📦 Commandes</button>
             <button class="admin-nav-tab" data-admin-tab="products">🏷️ Produits</button>
             <button class="admin-nav-tab" data-admin-tab="chat">💬 Messages <span class="admin-chat-badge" id="adminChatBadge"></span></button>
+            <button class="admin-nav-tab" data-admin-tab="marketing">🚀 Marketing & IA</button>
         </div>
         <!-- Orders Tab -->
         <div class="admin-tab-content active" id="adminTabOrders">
@@ -775,6 +777,109 @@
                             <input type="text" id="adminChatInput" placeholder="Écrire un message...">
                             <button class="admin-chat-send" id="adminChatSend">
                                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Marketing & IA Tab -->
+        <div class="admin-tab-content" id="adminTabMarketing">
+            <div class="marketing-dashboard">
+                <!-- 1. Meta Pixel Manager Card -->
+                <div class="marketing-card pixel-manager-card">
+                    <div class="marketing-card-header">
+                        <div class="marketing-card-icon">🎯</div>
+                        <div>
+                            <h3>Meta Pixel (Facebook Ads)</h3>
+                            <p>Connectez ou modifiez votre Pixel Facebook pour mesurer les visites, paniers et ventes générés par vos publicités.</p>
+                        </div>
+                        <span class="pixel-status-badge" id="pixelStatusBadge">✅ Pixel Actif</span>
+                    </div>
+                    <form id="pixelConfigForm" class="pixel-form" novalidate>
+                        <div class="form-group">
+                            <label for="metaPixelIdInput">
+                                Identifiant Meta Pixel (ID Pixel ou extrait)
+                            </label>
+                            <div class="pixel-input-group">
+                                <input type="text" id="metaPixelIdInput" placeholder="Ex: 1532882571493316" value="1532882571493316">
+                                <button type="submit" class="btn btn-primary btn-save-pixel" id="btnSavePixel">
+                                    💾 Enregistrer le Pixel
+                                </button>
+                            </div>
+                            <small class="form-hint">
+                                💡 Vos événements e-commerce standards (<strong>PageView</strong>, <strong>AddToCart</strong>, <strong>InitiateCheckout</strong>, <strong>Purchase</strong>) sont trackés automatiquement.
+                            </small>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- 2. AI Marketing Assistant Card -->
+                <div class="marketing-card ai-assistant-card">
+                    <div class="marketing-card-header">
+                        <div class="marketing-card-icon">✨</div>
+                        <div>
+                            <h3>Assistant IA Stratégie Publicitaire & Copywriting</h3>
+                            <p>Générez des textes publicitaires Facebook irrésistibles, des ciblages précis et des scripts vidéos pour vendre vos tissus.</p>
+                        </div>
+                    </div>
+
+                    <!-- AI Controls -->
+                    <div class="ai-controls-bar">
+                        <div class="form-group ai-select-group">
+                            <label for="aiProductSelect">🎯 Tissu à promouvoir :</label>
+                            <select id="aiProductSelect" class="ai-product-select">
+                                <option value="all">🌟 Stratégie Globale Boutique</option>
+                            </select>
+                        </div>
+                        <div class="form-group ai-goal-group">
+                            <label for="aiGoalSelect">🎯 Objectif de la Publicité :</label>
+                            <select id="aiGoalSelect" class="ai-goal-select">
+                                <option value="whatsapp_sales">💬 Ventes Directes WhatsApp (Closing rapide)</option>
+                                <option value="ceremonie">👑 Cérémonies, Mariages & Fêtes de Famille</option>
+                                <option value="promo_urgence">🔥 Offre Spéciale / Promotion Flash / Déstockage</option>
+                                <option value="notoriete">✨ Notoriété & Image de Marque Luxe</option>
+                                <option value="diaspora">🌍 Vente Diaspora / Envoi Cadeau</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Quick Action Pills -->
+                    <div class="ai-quick-actions">
+                        <button type="button" class="btn-ai-pill" data-ai-action="copywriting">
+                            ✍️ 3 Textes Publicitaires Facebook
+                        </button>
+                        <button type="button" class="btn-ai-pill" data-ai-action="audience">
+                            👥 Ciblage d'Audience Recommandé
+                        </button>
+                        <button type="button" class="btn-ai-pill" data-ai-action="video_ideas">
+                            🎬 3 Idées de Vidéos / Reels Viraux
+                        </button>
+                        <button type="button" class="btn-ai-pill" data-ai-action="offer_strategy">
+                            💰 Stratégie d'Offre Irrésistible
+                        </button>
+                    </div>
+
+                    <!-- AI Chat Box -->
+                    <div class="ai-chat-container">
+                        <div class="ai-chat-messages" id="aiMarketingMessages">
+                            <div class="ai-msg ai-msg-bot">
+                                <div class="ai-msg-avatar">🤖</div>
+                                <div class="ai-msg-content">
+                                    <p><strong>Bonjour Propriétaire !</strong> Je suis votre expert IA en marketing e-commerce et publicités Facebook Ads pour <strong>Aminata Store</strong>.</p>
+                                    <p>Sélectionnez un tissu ci-dessus et cliquez sur un bouton d'action rapide, ou posez-moi n'importe quelle question sur votre business ! 🚀</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="ai-chat-input-bar">
+                            <input type="text" id="aiMarketingInput" placeholder="Posez une question ou demandez une stratégie pour un produit..." autocomplete="off">
+                            <button type="button" class="btn btn-primary btn-ai-send" id="btnSendAiMarketing">
+                                <span>Envoyer</span>
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="22" y1="2" x2="11" y2="13"></line>
+                                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                                </svg>
                             </button>
                         </div>
                     </div>
