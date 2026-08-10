@@ -569,12 +569,37 @@
             <div id="clientLoginView">
                 <form id="clientLoginForm" novalidate>
                     <div class="form-group">
-                        <label for="clientLoginPhone">Numéro de téléphone</label>
-                        <input type="tel" id="clientLoginPhone" placeholder="Ex: 96 06 54 18 ou +228 96 06 54 18" autocomplete="tel">
+                        <label for="clientLoginPhone">Numéro WhatsApp *</label>
+                        <div class="phone-input-wrapper">
+                            <select id="loginCountrySelect" class="country-select" aria-label="Indicatif pays">
+                                <option value="228" selected>🇹🇬 +228 (Togo)</option>
+                                <option value="229">🇧🇯 +229 (Bénin)</option>
+                                <option value="225">🇨🇮 +225 (Côte d'Ivoire)</option>
+                                <option value="221">🇸🇳 +221 (Sénégal)</option>
+                                <option value="223">🇲🇱 +223 (Mali)</option>
+                                <option value="226">🇧🇫 +226 (Burkina)</option>
+                                <option value="227">🇳🇪 +227 (Niger)</option>
+                                <option value="237">🇨🇲 +237 (Cameroun)</option>
+                                <option value="241">🇬🇦 +241 (Gabon)</option>
+                                <option value="242">🇨🇬 +242 (Congo)</option>
+                                <option value="243">🇨🇩 +243 (RDC)</option>
+                                <option value="224">🇬🇳 +224 (Guinée)</option>
+                                <option value="33">🇫🇷 +33 (France)</option>
+                                <option value="1">🇺🇸 +1 (USA / Canada)</option>
+                                <option value="32">🇧🇪 +32 (Belgique)</option>
+                                <option value="41">🇨🇭 +41 (Suisse)</option>
+                                <option value="44">🇬🇧 +44 (UK)</option>
+                                <option value="49">🇩🇪 +49 (Allemagne)</option>
+                                <option value="39">🇮🇹 +39 (Italie)</option>
+                                <option value="34">🇪🇸 +34 (Espagne)</option>
+                                <option value="other">🌐 Autre (+)</option>
+                            </select>
+                            <input type="tel" id="clientLoginPhone" placeholder="90 12 34 56" required autocomplete="tel">
+                        </div>
                     </div>
                     <div class="form-group">
-                        <label for="clientLoginPass">Mot de passe</label>
-                        <input type="password" id="clientLoginPass" placeholder="Mot de passe" autocomplete="current-password">
+                        <label for="clientLoginPass">Mot de passe *</label>
+                        <input type="password" id="clientLoginPass" placeholder="••••••••" required autocomplete="current-password">
                     </div>
                     <span class="form-error" id="clientLoginError"></span>
                     <button type="submit" class="btn btn-login btn-client-login">
@@ -593,17 +618,48 @@
             <!-- Client Register -->
             <div id="clientRegisterView" style="display:none;">
                 <form id="clientRegisterForm" novalidate>
-                    <div class="form-group">
-                        <label for="regName">Prénom</label>
-                        <input type="text" id="regName" placeholder="Votre prénom" autocomplete="given-name">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="regPrenom">Prénom *</label>
+                            <input type="text" id="regPrenom" placeholder="Aminata" required autocomplete="given-name">
+                        </div>
+                        <div class="form-group">
+                            <label for="regNom">Nom *</label>
+                            <input type="text" id="regNom" placeholder="Diallo" required autocomplete="family-name">
+                        </div>
                     </div>
                     <div class="form-group">
-                        <label for="regPhone">Numéro de téléphone</label>
-                        <input type="tel" id="regPhone" placeholder="Ex: 96 06 54 18 ou +228 96 06 54 18" autocomplete="tel">
+                        <label for="regPhone">Numéro WhatsApp *</label>
+                        <div class="phone-input-wrapper">
+                            <select id="regCountrySelect" class="country-select" aria-label="Indicatif pays">
+                                <option value="228" selected>🇹🇬 +228 (Togo)</option>
+                                <option value="229">🇧🇯 +229 (Bénin)</option>
+                                <option value="225">🇨🇮 +225 (Côte d'Ivoire)</option>
+                                <option value="221">🇸🇳 +221 (Sénégal)</option>
+                                <option value="223">🇲🇱 +223 (Mali)</option>
+                                <option value="226">🇧🇫 +226 (Burkina)</option>
+                                <option value="227">🇳🇪 +227 (Niger)</option>
+                                <option value="237">🇨🇲 +237 (Cameroun)</option>
+                                <option value="241">🇬🇦 +241 (Gabon)</option>
+                                <option value="242">🇨🇬 +242 (Congo)</option>
+                                <option value="243">🇨🇩 +243 (RDC)</option>
+                                <option value="224">🇬🇳 +224 (Guinée)</option>
+                                <option value="33">🇫🇷 +33 (France)</option>
+                                <option value="1">🇺🇸 +1 (USA / Canada)</option>
+                                <option value="32">🇧🇪 +32 (Belgique)</option>
+                                <option value="41">🇨🇭 +41 (Suisse)</option>
+                                <option value="44">🇬🇧 +44 (UK)</option>
+                                <option value="49">🇩🇪 +49 (Allemagne)</option>
+                                <option value="39">🇮🇹 +39 (Italie)</option>
+                                <option value="34">🇪🇸 +34 (Espagne)</option>
+                                <option value="other">🌐 Autre (+)</option>
+                            </select>
+                            <input type="tel" id="regPhone" placeholder="90 12 34 56" required autocomplete="tel">
+                        </div>
                     </div>
                     <div class="form-group">
-                        <label for="regPass">Mot de passe</label>
-                        <input type="password" id="regPass" placeholder="Choisir un mot de passe" autocomplete="new-password">
+                        <label for="regPass">Créer un mot de passe *</label>
+                        <input type="password" id="regPass" placeholder="Min. 4 caractères" required autocomplete="new-password">
                     </div>
                     <span class="form-error" id="clientRegisterError"></span>
                     <button type="submit" class="btn btn-login btn-client-login">

@@ -425,15 +425,45 @@ function adminLogin(e) {
   }
 }
 
+function buildFullPhoneNumber(countrySelectId, phoneInputId) {
+  const countrySelect = $(`#${countrySelectId}`);
+  const phoneInput = $(`#${phoneInputId}`);
+  const rawInput = phoneInput ? phoneInput.value.trim() : '';
+  const countryCode = (countrySelect && countrySelect.value !== 'other') ? countrySelect.value : '228';
+
+  let cleanDigits = rawInput.replace(/\D/g, '');
+  if (!cleanDigits) return '';
+
+  if (rawInput.startsWith('+')) {
+    return `+${cleanDigits}`;
+  }
+
+  if (countrySelect?.value === 'other') {
+    return `+${cleanDigits}`;
+  }
+
+  // Remove leading 0 (e.g. 090123456 -> 90123456)
+  if (cleanDigits.startsWith('0')) {
+    cleanDigits = cleanDigits.substring(1);
+  }
+
+  // Check if country code is already prefixed
+  if (cleanDigits.startsWith(countryCode) && cleanDigits.length > countryCode.length + 5) {
+    return `+${cleanDigits}`;
+  }
+
+  return `+${countryCode}${cleanDigits}`;
+}
+
 async function clientLogin(e) {
   e.preventDefault();
-  const phone = $('#clientLoginPhone')?.value.trim() || '';
+  const phone = buildFullPhoneNumber('loginCountrySelect', 'clientLoginPhone') || $('#clientLoginPhone')?.value.trim() || '';
   const pass = $('#clientLoginPass')?.value.trim() || '';
   const err = $('#clientLoginError');
   if (err) err.textContent = '';
 
-  if (!phone) {
-    if (err) err.textContent = 'Veuillez saisir votre numéro de téléphone';
+  if (!phone || phone.replace(/\D/g, '').length < 4) {
+    if (err) err.textContent = 'Veuillez saisir un numéro de téléphone valide';
     return;
   }
   if (!pass) {
@@ -457,7 +487,7 @@ async function clientLogin(e) {
     if (client && client.password === pass) {
       saveAuth({ role: 'client', user: client });
       closeLogin();
-      showToast(`👤 Bienvenue, ${client.prenom} !`, 'success');
+      showToast(`👤 Bienvenue, ${client.prenom || 'Client'} !`, 'success');
       openClientPanel();
       startChatPolling();
     } else if (client) {
@@ -473,18 +503,23 @@ async function clientLogin(e) {
 
 async function clientRegister(e) {
   e.preventDefault();
-  const prenom = $('#regName')?.value.trim() || '';
-  const phone = $('#regPhone')?.value.trim() || '';
+  const prenom = ($('#regPrenom') || $('#regName'))?.value.trim() || '';
+  const nom = ($('#regNom') || $('#clientRegNom'))?.value.trim() || '';
+  const phone = buildFullPhoneNumber('regCountrySelect', 'regPhone') || $('#regPhone')?.value.trim() || '';
   const pass = $('#regPass')?.value.trim() || '';
-  const err = $('#clientRegisterError');
+  const err = $('#clientRegisterError') || $('#clientRegError');
   if (err) err.textContent = '';
 
   if (!prenom || prenom.length < 2) { 
     if (err) err.textContent = 'Prénom requis (au moins 2 caractères)'; 
     return; 
   }
-  if (!phone || phone.replace(/\D/g, '').length < 4) { 
-    if (err) err.textContent = 'Numéro de téléphone valide requis'; 
+  if (!nom || nom.length < 2) { 
+    if (err) err.textContent = 'Nom de famille requis (au moins 2 caractères)'; 
+    return; 
+  }
+  if (!phone || phone.replace(/\D/g, '').length < 6) { 
+    if (err) err.textContent = 'Numéro WhatsApp valide requis'; 
     return; 
   }
   if (!pass || pass.length < 3) { 
@@ -506,11 +541,17 @@ async function clientRegister(e) {
       return; 
     }
 
-    const client = { phone, prenom, password: pass, createdAt: new Date().toISOString() };
+    const client = { 
+      phone, 
+      prenom, 
+      nom, 
+      password: pass, 
+      createdAt: new Date().toISOString() 
+    };
     await DB.put('clients', client);
     saveAuth({ role: 'client', user: client });
     closeLogin();
-    showToast(`📝 Compte créé ! Bienvenue, ${prenom} !`, 'success');
+    showToast(`📝 Compte créé avec succès ! Bienvenue, ${prenom} ${nom} !`, 'success');
     openClientPanel();
     startChatPolling();
   } catch (errDb) {
