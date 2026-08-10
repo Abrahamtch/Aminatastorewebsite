@@ -172,7 +172,8 @@ const DB = {
 
   async getNextProductId() {
     const all = await this.getAll('products');
-    return all.length > 0 ? Math.max(...all.map(p => p.id)) + 1 : 1;
+    const numericIds = all.map(p => parseInt(p.id, 10)).filter(n => !isNaN(n) && n > 0);
+    return numericIds.length > 0 ? Math.max(...numericIds) + 1 : 1;
   }
 };
 
@@ -1310,60 +1311,182 @@ async function deleteProduct(id) {
   }
 }
 
-async function saveProduct(e) {
-  e.preventDefault();
-  const editId = $('#prodEditId').value ? parseInt($('#prodEditId').value) : null;
-  const name = $('#prodName').value.trim();
-  const category = $('#prodCategory').value;
-  const price = parseInt($('#prodPrice').value) || 0;
-  const description = $('#prodDesc').value.trim();
-  const badge = $('#prodBadge').value.trim() || null;
-  const badgeType = $('#prodBadgeType').value;
-  const featured = $('#prodFeatured') ? $('#prodFeatured').checked : true;
-
-  if (!name || !price) { showToast('Nom et prix requis', 'error'); return; }
-
-  let image = '';
-  const fileInput = $('#prodImage');
-  if (fileInput.files && fileInput.files[0]) {
-    image = await readFileAsBase64(fileInput.files[0]);
-  } else if (editId) {
-    const existing = await DB.get('products', editId);
-    image = existing?.image || '';
+async function processImageFile(file, maxWidth = 1280, maxHeight = 1280, quality = 0.82) {
+  if (!file) return '';
+  if (file.type && file.type.startsWith('video/')) {
+    if (file.size > 20 * 1024 * 1024) {
+      showToast('Vidéo trop lourde (max 20 Mo)', 'warning');
+      throw new Error('Video too large');
+    }
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (e) => resolve(e.target.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
   }
-  if (!image && !editId) image = 'images/wax_hollandais.jpg';
 
-  const id = editId || await DB.getNextProductId();
-  const validColors = editingColorVariants.filter(c => c.name && c.name.trim() !== '');
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        let w = img.width;
+        let h = img.height;
 
-  await DB.put('products', { 
-    id, 
-    name, 
-    category, 
-    price, 
-    description, 
-    image, 
-    media: editingExtraMedia.slice(0, 20),
-    colors: validColors,
-    badge, 
-    badgeType,
-    featured
+        if (w > maxWidth || h > maxHeight) {
+          if (w > h) {
+            h = Math.round((h * maxWidth) / w);
+            w = maxWidth;
+          } else {
+            w = Math.round((w * maxHeight) / h);
+            h = maxHeight;
+          }
+        }
+
+        const canvas = document.createElement('canvas');
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, w, h);
+        try {
+          const dataUrl = canvas.toDataURL('image/jpeg', quality);
+          resolve(dataUrl);
+        } catch(err) {
+          resolve(e.target.result);
+        }
+      };
+      img.onerror = () => resolve(e.target.result);
+      img.src = e.target.result;
+    };
+    reader.onerror = () => resolve('');
+    reader.readAsDataURL(file);
   });
-
-  products = await DB.getAll('products');
-  renderAdminProducts(); 
-  if ($('#productsGrid')) renderProducts();
-  if ($('#collectionProductsGrid')) renderCollectionPage();
-  closeProductForm();
-  showToast(editId ? 'Produit modifié !' : 'Produit ajouté !', 'success');
 }
 
 function readFileAsBase64(file) {
-  return new Promise((res, rej) => {
-    if (file.size > 3 * 1024 * 1024) { showToast('Image trop grande (max 3 Mo)', 'error'); rej('too large'); return; }
-    const r = new FileReader(); r.onload = (e) => res(e.target.result); r.onerror = rej; r.readAsDataURL(file);
-  });
+  return processImageFile(file);
 }
+
+async function saveProduct(e) {
+  if (e) e.preventDefault();
+
+  const formModal = $('#productFormModal');
+  const submitBtn = $('#productForm button[type="submit"]') || $('.btn-save-product');
+  const originalBtnText = submitBtn ? submitBtn.innerHTML : '💾 Enregistrer le Produit';
+
+  try {
+    const editIdInput = $('#prodEditId');
+    const editId = (editIdInput && editIdInput.value) ? parseInt(editIdInput.value, 10) : null;
+    const nameInput = $('#prodName');
+    const categoryInput = $('#prodCategory');
+    const priceInput = $('#prodPrice');
+    const descInput = $('#prodDesc');
+    const badgeInput = $('#prodBadge');
+    const badgeTypeInput = $('#prodBadgeType');
+    const featCheckbox = $('#prodFeatured');
+
+    const name = nameInput ? nameInput.value.trim() : '';
+    const category = categoryInput ? categoryInput.value : 'Wax';
+    const price = priceInput ? parseInt(priceInput.value, 10) : 0;
+    const description = descInput ? descInput.value.trim() : '';
+    const badge = badgeInput ? badgeInput.value.trim() : null;
+    const badgeType = badgeTypeInput ? badgeTypeInput.value : '';
+    const featured = featCheckbox ? featCheckbox.checked : true;
+
+    // Reset styles
+    if (nameInput) nameInput.style.borderColor = '';
+    if (priceInput) priceInput.style.borderColor = '';
+
+    if (!name) {
+      if (nameInput) {
+        nameInput.style.borderColor = 'var(--color-error)';
+        nameInput.focus();
+        if (formModal) formModal.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+      showToast('⚠️ Veuillez renseigner le nom du tissu (en haut du formulaire)', 'error');
+      return;
+    }
+
+    if (!price || isNaN(price) || price <= 0) {
+      if (priceInput) {
+        priceInput.style.borderColor = 'var(--color-error)';
+        priceInput.focus();
+        if (formModal) formModal.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+      showToast('⚠️ Veuillez renseigner un prix valide (ex: 12000)', 'error');
+      return;
+    }
+
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '⏳ Enregistrement du produit...';
+    }
+
+    // Determine primary image
+    let image = '';
+    const previewEl = $('#imagePreview');
+    const fileInput = $('#prodImage');
+
+    if (previewEl && previewEl.src && previewEl.style.display !== 'none' && !previewEl.src.endsWith('.html')) {
+      image = previewEl.src;
+    } else if (fileInput && fileInput.files && fileInput.files[0]) {
+      try {
+        image = await processImageFile(fileInput.files[0]);
+      } catch (err) {
+        console.warn('Image processing error:', err);
+      }
+    } else if (editId) {
+      const existing = await DB.get('products', editId);
+      image = existing?.image || '';
+    }
+
+    // If no primary image set but extra media exists, use first extra media!
+    if (!image && editingExtraMedia.length > 0) {
+      image = editingExtraMedia[0].url;
+    }
+
+    if (!image) {
+      image = 'images/wax_hollandais.jpg';
+    }
+
+    const id = editId || await DB.getNextProductId();
+    const validColors = editingColorVariants.filter(c => c && c.name && c.name.trim() !== '');
+
+    const productRecord = { 
+      id: Number(id), 
+      name, 
+      category, 
+      price: Number(price), 
+      description, 
+      image, 
+      media: editingExtraMedia.slice(0, 20),
+      colors: validColors,
+      badge: badge || null, 
+      badgeType,
+      featured: Boolean(featured)
+    };
+
+    await DB.put('products', productRecord);
+
+    products = await DB.getAll('products');
+    renderAdminProducts(); 
+    if ($('#productsGrid')) renderProducts();
+    if ($('#collectionProductsGrid')) renderCollectionPage();
+    
+    closeProductForm();
+    showToast(editId ? `✅ "${name}" modifié avec succès !` : `✅ "${name}" ajouté avec succès !`, 'success');
+  } catch (err) {
+    console.error('Erreur lors de l\'enregistrement du produit:', err);
+    showToast('Erreur lors de l\'enregistrement : ' + (err.message || err), 'error');
+  } finally {
+    if (submitBtn) {
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = originalBtnText;
+    }
+  }
+}
+window.saveProduct = saveProduct;
 
 // ══════════════════════════════════════════════
 //  CLIENT PANEL
@@ -1729,13 +1852,25 @@ function setupEventListeners() {
   uploadArea?.addEventListener('click', () => fileInput?.click());
   fileInput?.addEventListener('change', async (e) => {
     const file = e.target.files[0]; if (!file) return;
-    try { const b64 = await readFileAsBase64(file); preview.src = b64; preview.style.display = 'block'; placeholder.style.display = 'none'; } catch(err) {}
+    try {
+      const b64 = await processImageFile(file);
+      if (b64) {
+        preview.src = b64;
+        preview.style.display = 'block';
+        if (placeholder) placeholder.style.display = 'none';
+        showToast('Photo principale prête !', 'success');
+      }
+    } catch(err) {
+      console.error(err);
+      showToast('Erreur lors du traitement de l\'image', 'error');
+    }
   });
 
   // Extra Media & Color Variant Upload Listeners
   $('#btnAddExtraMedia')?.addEventListener('click', () => $('#prodExtraMedia')?.click());
   $('#prodExtraMedia')?.addEventListener('change', async (e) => {
     const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
     for (const file of files) {
       if (editingExtraMedia.length >= 20) {
         showToast('Limite de 20 médias atteinte', 'warning');
@@ -1743,11 +1878,16 @@ function setupEventListeners() {
       }
       const isVideo = file.type.startsWith('video/');
       try {
-        const b64 = await readFileAsBase64(file);
-        editingExtraMedia.push({ type: isVideo ? 'video' : 'image', url: b64 });
-      } catch(err) {}
+        const b64 = await processImageFile(file);
+        if (b64) {
+          editingExtraMedia.push({ type: isVideo ? 'video' : 'image', url: b64 });
+        }
+      } catch(err) {
+        console.error(err);
+      }
     }
     renderExtraMediaGrid();
+    showToast(`${editingExtraMedia.length}/20 médias chargés`, 'info');
   });
 
   $('#btnAddColorVariant')?.addEventListener('click', () => {
