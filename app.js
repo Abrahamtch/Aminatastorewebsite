@@ -6,7 +6,7 @@
  */
 
 // ── Configuration ──
-const WHATSAPP_NUMBER = '22896065418';
+const WHATSAPP_NUMBER = '221769214015';
 const STORE_NAME = 'Aminata Store';
 const DB_NAME = 'AminataStoreDB';
 const DB_VERSION = 2;
@@ -1988,22 +1988,52 @@ function stopChatPolling() {
 // ══════════════════════════════════════════════
 //  MARKETING, META PIXEL & AI ADS ASSISTANT
 // ══════════════════════════════════════════════
-const DEFAULT_PIXEL_ID = '1532882571493316';
+const DEFAULT_PIXEL_CODE = `<!-- Meta Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '1532882571493316');
+fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=1532882571493316&ev=PageView&noscript=1"
+/></noscript>
+<!-- End Meta Pixel Code -->`;
 
-function getActivePixelId() {
-  return localStorage.getItem('aminata_meta_pixel_id') || DEFAULT_PIXEL_ID;
+function getActivePixelCode() {
+  return localStorage.getItem('aminata_meta_pixel_code') || DEFAULT_PIXEL_CODE;
 }
 
-function saveMetaPixelId(pixelInput) {
-  if (!pixelInput) return;
-  const match = pixelInput.match(/\d{10,20}/);
-  const cleanId = match ? match[0] : pixelInput.trim();
-  
-  localStorage.setItem('aminata_meta_pixel_id', cleanId);
+function extractPixelIdFromCode(code) {
+  if (!code) return '1532882571493316';
+  const m1 = code.match(/fbq\s*\(\s*['"]init['"]\s*,\s*['"](\d+)['"]/);
+  if (m1 && m1[1]) return m1[1];
+  const m2 = code.match(/tr\?id=(\d+)/);
+  if (m2 && m2[1]) return m2[1];
+  const m3 = code.match(/\b\d{10,20}\b/);
+  if (m3) return m3[0];
+  return '1532882571493316';
+}
+
+function saveMetaPixelCode(rawCode) {
+  if (!rawCode || !rawCode.trim()) {
+    showToast('Veuillez coller le code source du pixel', 'warning');
+    return;
+  }
+  const cleanCode = rawCode.trim();
+  localStorage.setItem('aminata_meta_pixel_code', cleanCode);
+  const pixelId = extractPixelIdFromCode(cleanCode);
+  localStorage.setItem('aminata_meta_pixel_id', pixelId);
 
   if (typeof window.fbq === 'function') {
     try {
-      window.fbq('init', cleanId);
+      window.fbq('init', pixelId);
       window.fbq('track', 'PageView');
     } catch (e) {
       console.warn('Erreur fbq init:', e);
@@ -2012,22 +2042,40 @@ function saveMetaPixelId(pixelInput) {
 
   const badge = $('#pixelStatusBadge');
   if (badge) {
-    badge.textContent = `✅ Pixel Actif (${cleanId})`;
+    badge.textContent = `✅ Pixel Actif (ID: ${pixelId})`;
   }
 
-  showToast(`🎯 Meta Pixel (${cleanId}) enregistré avec succès !`, 'success');
+  showToast(`🎯 Code Meta Pixel enregistré & activé (ID: ${pixelId}) !`, 'success');
 }
-window.saveMetaPixelId = saveMetaPixelId;
+window.saveMetaPixelCode = saveMetaPixelCode;
+
+function resetMetaPixelCode() {
+  localStorage.removeItem('aminata_meta_pixel_code');
+  localStorage.removeItem('aminata_meta_pixel_id');
+  const codeArea = $('#metaPixelCodeInput');
+  if (codeArea) codeArea.value = DEFAULT_PIXEL_CODE;
+  const badge = $('#pixelStatusBadge');
+  if (badge) badge.textContent = `✅ Pixel Actif (ID: 1532882571493316)`;
+  if (typeof window.fbq === 'function') {
+    try {
+      window.fbq('init', '1532882571493316');
+      window.fbq('track', 'PageView');
+    } catch (e) {}
+  }
+  showToast('🔄 Code Pixel réinitialisé par défaut', 'info');
+}
+window.resetMetaPixelCode = resetMetaPixelCode;
 
 async function renderMarketingTab() {
-  const pixelInput = $('#metaPixelIdInput');
-  if (pixelInput) {
-    pixelInput.value = getActivePixelId();
+  const pixelTextarea = $('#metaPixelCodeInput');
+  if (pixelTextarea) {
+    pixelTextarea.value = getActivePixelCode();
   }
 
+  const activeId = extractPixelIdFromCode(getActivePixelCode());
   const badge = $('#pixelStatusBadge');
   if (badge) {
-    badge.textContent = `✅ Pixel Actif (${getActivePixelId()})`;
+    badge.textContent = `✅ Pixel Actif (ID: ${activeId})`;
   }
 
   const prodSelect = $('#aiProductSelect');
@@ -2154,7 +2202,7 @@ function generateCopywritingResponse(product, goal) {
   const prodName = product ? product.name : 'Nos Tissus Wax & Basin de Luxe';
   const prodPrice = product ? `${formatPrice(product.price)} / yard` : 'Prix direct atelier';
   const category = product ? product.category : 'Wax, Basin & Soie';
-  const waLink = 'https://wa.me/22896065418';
+  const waLink = 'https://wa.me/221769214015';
 
   const text1 = `👑 FAITES TOURNER TOUS LES REGARDS LORS DE VOTRE PROCHAINE CÉRÉMONIE ! 👑\n\nVous cherchez un tissu d'une brillance et d'une tenue irréprochable qui sublimera votre modèle de couture ? ✨\n\nDécouvrez notre collection exclusive : "${prodName}" (${category}) !\n\n💎 100% Qualité Supérieure — Ne déteint pas au lavage\n🎨 Motifs raffinés & Couleurs éclatantes qui durent\n📏 Vendu au yard (${prodPrice}) ou en coupons complets\n\n🚚 Livraison ultra-rapide à domicile et expédition disponible partout !\n\n👇 Commandez directement sur WhatsApp avant rupture de stock :\n👉 ${waLink}`;
 
@@ -2437,12 +2485,13 @@ function setupEventListeners() {
     if (tab.dataset.adminTab === 'marketing') renderMarketingTab();
   }));
 
-  // Marketing & Meta Pixel
+  // Marketing & Meta Pixel Code
   $('#pixelConfigForm')?.addEventListener('submit', (e) => {
     e.preventDefault();
-    const val = $('#metaPixelIdInput')?.value || '';
-    saveMetaPixelId(val);
+    const val = $('#metaPixelCodeInput')?.value || '';
+    saveMetaPixelCode(val);
   });
+  $('#btnResetPixel')?.addEventListener('click', resetMetaPixelCode);
 
   // AI Marketing Action Buttons
   $$('.btn-ai-pill').forEach(pill => {
