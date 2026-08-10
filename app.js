@@ -639,13 +639,27 @@ function setupProductAnimations() {
 // ══════════════════════════════════════════════
 function loadCart() { try { cart = JSON.parse(localStorage.getItem('aminata_cart') || '[]'); } catch(e) { cart = []; } updateCartUI(); }
 function saveCart() { localStorage.setItem('aminata_cart', JSON.stringify(cart)); updateCartUI(); }
+
 function addToCart(productId, btnEl) {
-  const product = products.find(p => p.id === productId);
+  const prodList = (products && products.length > 0) ? products : DEFAULT_PRODUCTS;
+  const product = prodList.find(p => String(p.id) === String(productId));
   if (!product) return;
-  const ex = cart.find(i => i.id === productId);
-  if (ex) ex.quantity += 1; else cart.push({ id: product.id, quantity: 1 });
+  const ex = cart.find(i => String(i.id) === String(productId) && !i.color);
+  if (ex) {
+    ex.quantity += 1;
+    if (!ex.name) ex.name = product.name;
+    if (!ex.price) ex.price = product.price;
+    if (!ex.image) ex.image = product.image;
+  } else {
+    cart.push({ id: product.id, name: product.name, price: product.price, image: product.image, quantity: 1 });
+  }
   saveCart();
-  if (btnEl) { const orig = btnEl.innerHTML; btnEl.innerHTML = '✓ Ajouté !'; btnEl.classList.add('added'); setTimeout(() => { btnEl.innerHTML = orig; btnEl.classList.remove('added'); }, 1500); }
+  if (btnEl) {
+    const orig = btnEl.innerHTML;
+    btnEl.innerHTML = '✓ Ajouté !';
+    btnEl.classList.add('added');
+    setTimeout(() => { btnEl.innerHTML = orig; btnEl.classList.remove('added'); }, 1500);
+  }
   pulseBadge();
   showToast(`${product.name} ajouté au panier`, 'success');
   if (typeof fbq === 'function') {
@@ -661,10 +675,34 @@ function addToCart(productId, btnEl) {
     } catch(e) {}
   }
 }
-function removeFromCart(pid) { cart = cart.filter(i => i.id !== pid); saveCart(); showToast('Article retiré', 'info'); }
-function updateQuantity(pid, d) { const i = cart.find(x => x.id === pid); if (!i) return; i.quantity += d; if (i.quantity <= 0) removeFromCart(pid); else saveCart(); }
-function getCartTotal() { return cart.reduce((t, i) => { const p = products.find(x => x.id === i.id); return t + (p ? p.price * i.quantity : 0); }, 0); }
-function getCartCount() { return cart.reduce((c, i) => c + i.quantity, 0); }
+
+function removeFromCart(pid) {
+  cart = cart.filter(i => String(i.id) !== String(pid));
+  saveCart();
+  showToast('Article retiré', 'info');
+}
+
+function updateQuantity(pid, d) {
+  const i = cart.find(x => String(x.id) === String(pid));
+  if (!i) return;
+  i.quantity = (Number(i.quantity) || 1) + d;
+  if (i.quantity <= 0) removeFromCart(pid);
+  else saveCart();
+}
+
+function getCartTotal() {
+  const prodList = (products && products.length > 0) ? products : DEFAULT_PRODUCTS;
+  return cart.reduce((t, i) => {
+    const p = prodList.find(x => String(x.id) === String(i.id));
+    const price = (p && p.price) ? p.price : (Number(i.price) || 0);
+    const qty = Number(i.quantity) || 1;
+    return t + (price * qty);
+  }, 0);
+}
+
+function getCartCount() {
+  return cart.reduce((c, i) => c + (Number(i.quantity) || 1), 0);
+}
 
 function updateCartUI() {
   const count = getCartCount();
@@ -677,12 +715,46 @@ function updateCartUI() {
 function renderCartItems() {
   const container = $('#cartItems'), empty = $('#cartEmpty'), footer = $('#cartFooter'), totalEl = $('#cartTotal');
   if (!container) return;
-  if (cart.length === 0) { container.innerHTML = ''; if (empty) empty.style.display = 'flex'; if (footer) footer.style.display = 'none'; return; }
-  if (empty) empty.style.display = 'none'; if (footer) footer.style.display = 'block';
+  if (cart.length === 0) {
+    container.innerHTML = '';
+    if (empty) empty.style.display = 'flex';
+    if (footer) footer.style.display = 'none';
+    if (totalEl) totalEl.textContent = formatPrice(0);
+    return;
+  }
+  if (empty) empty.style.display = 'none';
+  if (footer) footer.style.display = 'block';
+
+  const prodList = (products && products.length > 0) ? products : DEFAULT_PRODUCTS;
   container.innerHTML = cart.map(item => {
-    const p = products.find(x => x.id === item.id); if (!p) return '';
-    return `<div class="cart-item"><img class="cart-item-img" src="${p.image}" alt="${p.name}"><div class="cart-item-details"><div class="cart-item-name">${p.name}</div><div class="cart-item-price">${formatPrice(p.price)} /yard</div><div class="cart-item-bottom"><div class="qty-controls"><button class="qty-btn" onclick="updateQuantity(${p.id},-1)">−</button><span class="qty-value">${item.quantity}</span><button class="qty-btn" onclick="updateQuantity(${p.id},+1)">+</button></div><span class="cart-item-line-total">${formatPrice(p.price * item.quantity)}</span></div></div><button class="cart-item-remove" onclick="removeFromCart(${p.id})"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button></div>`;
+    const p = prodList.find(x => String(x.id) === String(item.id));
+    const name = item.name || p?.name || 'Tissu Africain';
+    const price = (p && p.price) ? p.price : (Number(item.price) || 0);
+    const image = item.image || p?.image || 'images/wax_hollandais.jpg';
+    const qty = Number(item.quantity) || 1;
+    return `<div class="cart-item">
+      <img class="cart-item-img" src="${image}" alt="${name}">
+      <div class="cart-item-details">
+        <div class="cart-item-name">${name}</div>
+        <div class="cart-item-price">${formatPrice(price)} /yard</div>
+        <div class="cart-item-bottom">
+          <div class="qty-controls">
+            <button class="qty-btn" onclick="updateQuantity('${item.id}', -1)" aria-label="Diminuer">−</button>
+            <span class="qty-value">${qty}</span>
+            <button class="qty-btn" onclick="updateQuantity('${item.id}', 1)" aria-label="Augmenter">+</button>
+          </div>
+          <span class="cart-item-line-total">${formatPrice(price * qty)}</span>
+        </div>
+      </div>
+      <button class="cart-item-remove" onclick="removeFromCart('${item.id}')" aria-label="Supprimer">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>`;
   }).join('');
+
   if (totalEl) totalEl.textContent = formatPrice(getCartTotal());
 }
 
@@ -793,11 +865,14 @@ function openQuickView(pid) {
       ? `${p.name} — Variante: ${selectedColorVariant}`
       : p.name;
 
-    const ex = cart.find(i => i.id === pid && i.color === selectedColorVariant);
+    const ex = cart.find(i => String(i.id) === String(pid) && i.color === selectedColorVariant);
     if (ex) {
       ex.quantity += qvQty;
+      if (!ex.name) ex.name = itemTitle;
+      if (!ex.price) ex.price = p.price;
+      if (!ex.image) ex.image = p.image;
     } else {
-      cart.push({ id: pid, name: itemTitle, color: selectedColorVariant, quantity: qvQty });
+      cart.push({ id: pid, name: itemTitle, color: selectedColorVariant, price: p.price, image: p.image, quantity: qvQty });
     }
     saveCart();
     pulseBadge();
@@ -857,45 +932,140 @@ function closeQuickView() {
 function openCheckout() {
   if (cart.length === 0) { showToast('Votre panier est vide', 'error'); return; }
   closeCart();
-  const oi = $('#orderItems'), ot = $('#orderTotal');
-  if (oi) oi.innerHTML = cart.map(i => { const p = products.find(x => x.id === i.id); if (!p) return ''; return `<div class="order-item-row"><span>${p.name} <span class="order-item-qty">×${i.quantity}</span></span><span>${formatPrice(p.price * i.quantity)}</span></div>`; }).join('');
-  if (ot) ot.textContent = formatPrice(getCartTotal());
+
+  const prodList = (products && products.length > 0) ? products : DEFAULT_PRODUCTS;
+  const oi = $('#orderItems') || $('#summaryItems');
+  const ot = $('#orderTotal') || $('#summaryTotal');
+  const totalAmount = getCartTotal();
+
+  if (oi) {
+    oi.innerHTML = cart.map(i => {
+      const p = prodList.find(x => String(x.id) === String(i.id));
+      const name = i.name || p?.name || 'Tissu Africain';
+      const price = (p && p.price) ? p.price : (Number(i.price) || 0);
+      const qty = Number(i.quantity) || 1;
+      return `<div class="order-item-row">
+        <span>${name} <span class="order-item-qty">×${qty}</span></span>
+        <span>${formatPrice(price * qty)}</span>
+      </div>`;
+    }).join('');
+  }
+
+  if (ot) ot.textContent = formatPrice(totalAmount);
+
   // Pre-fill if client logged in
   if (currentAuth?.role === 'client') {
-    const nameEl = $('#customerName'), phoneEl = $('#customerPhone');
-    if (nameEl && currentAuth.user?.prenom) nameEl.value = currentAuth.user.prenom;
-    if (phoneEl && currentAuth.user?.phone) phoneEl.value = currentAuth.user.phone;
+    const nameEl = $('#clientNom') || $('#customerName');
+    const phoneEl = $('#clientPhone') || $('#customerPhone');
+    const user = currentAuth.user;
+    if (nameEl && user?.prenom) nameEl.value = (user.prenom + (user.nom ? ' ' + user.nom : '')).trim();
+    if (phoneEl && user?.phone) phoneEl.value = user.phone;
   }
+
+  // Clear previous error states
+  const ne = $('#nomError') || $('#nameError');
+  const pe = $('#phoneError');
+  const ve = $('#villeError');
+  if (ne) ne.textContent = '';
+  if (pe) pe.textContent = '';
+  if (ve) ve.textContent = '';
+
   if (typeof fbq === 'function') {
     try {
       fbq('track', 'InitiateCheckout', {
         num_items: getCartCount(),
-        value: getCartTotal(),
+        value: totalAmount,
         currency: 'XOF'
       });
     } catch(e) {}
   }
-  setTimeout(() => { $('#checkoutOverlay')?.classList.add('open'); $('#checkoutModal')?.classList.add('open'); document.body.style.overflow = 'hidden'; }, 300);
+
+  setTimeout(() => {
+    $('#checkoutOverlay')?.classList.add('open');
+    $('#checkoutModal')?.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }, 200);
 }
-function closeCheckout() { $('#checkoutOverlay')?.classList.remove('open'); $('#checkoutModal')?.classList.remove('open'); document.body.style.overflow = ''; }
+
+function closeCheckout() {
+  $('#checkoutOverlay')?.classList.remove('open');
+  $('#checkoutModal')?.classList.remove('open');
+  document.body.style.overflow = '';
+}
 
 async function submitOrder(e) {
   e.preventDefault();
-  const prenom = $('#customerName')?.value.trim() || '';
-  const phone = $('#customerPhone')?.value.trim() || '';
-  const comment = $('#customerComment')?.value.trim() || '';
-  const ne = $('#nameError'), pe = $('#phoneError'); let err = false;
-  if (ne) ne.textContent = ''; if (pe) pe.textContent = '';
-  if (prenom.length < 2) { if (ne) ne.textContent = 'Prénom requis (min. 2 car.)'; err = true; }
-  if (phone.length < 4) { if (pe) pe.textContent = 'Numéro WhatsApp requis'; err = true; }
+
+  const nameEl = $('#clientNom') || $('#customerName');
+  const phoneEl = $('#clientPhone') || $('#customerPhone');
+  const countrySelect = $('#countrySelect');
+  const villeEl = $('#clientVille');
+  const commentEl = $('#clientCommentaire') || $('#customerComment');
+
+  const prenom = nameEl?.value.trim() || '';
+  const rawPhone = phoneEl?.value.trim() || '';
+  const countryCode = countrySelect?.value || '228';
+  const ville = villeEl?.value.trim() || '';
+  const comment = commentEl?.value.trim() || '';
+
+  const ne = $('#nomError') || $('#nameError');
+  const pe = $('#phoneError');
+  const ve = $('#villeError');
+  let err = false;
+
+  if (ne) ne.textContent = '';
+  if (pe) pe.textContent = '';
+  if (ve) ve.textContent = '';
+
+  if (prenom.length < 2) {
+    if (ne) ne.textContent = 'Nom complet requis (min. 2 car.)';
+    err = true;
+  }
+
+  const cleanPhone = rawPhone.replace(/[\s\-\(\)\.]/g, '');
+  if (!cleanPhone || cleanPhone.length < 4) {
+    if (pe) pe.textContent = 'Numéro WhatsApp requis (au moins 4 chiffres)';
+    err = true;
+  }
+
+  if (villeEl && ville.length < 2) {
+    if (ve) ve.textContent = 'Ville / Quartier requis (min. 2 car.)';
+    err = true;
+  }
+
   if (err) return;
 
+  // Format full international phone number
+  let fullPhone = cleanPhone;
+  if (!fullPhone.startsWith('+')) {
+    if (fullPhone.startsWith(countryCode)) {
+      fullPhone = '+' + fullPhone;
+    } else {
+      fullPhone = `+${countryCode}${fullPhone}`;
+    }
+  }
+
+  const prodList = (products && products.length > 0) ? products : DEFAULT_PRODUCTS;
+  const orderTotal = getCartTotal();
+
   const order = {
-    id: genId('ORD'), date: new Date().toISOString(),
-    customer: { prenom, phone },
-    items: cart.map(i => { const p = products.find(x => x.id === i.id); return { name: i.name || p?.name || '?', qty: i.quantity, price: p?.price || 0, total: (p?.price || 0) * i.quantity }; }),
-    total: getCartTotal(), comment, status: 'nouveau', read: false, clientPhone: currentAuth?.role === 'client' ? currentAuth.user.phone : phone
+    id: genId('ORD'),
+    date: new Date().toISOString(),
+    customer: { prenom, phone: fullPhone, rawPhone, ville },
+    items: cart.map(i => {
+      const p = prodList.find(x => String(x.id) === String(i.id));
+      const name = i.name || p?.name || 'Tissu Africain';
+      const price = (p && p.price) ? p.price : (Number(i.price) || 0);
+      const qty = Number(i.quantity) || 1;
+      return { name, qty, price, total: price * qty };
+    }),
+    total: orderTotal,
+    comment,
+    status: 'nouveau',
+    read: false,
+    clientPhone: (currentAuth?.role === 'client' && currentAuth.user?.phone) ? currentAuth.user.phone : fullPhone
   };
+
   await DB.put('orders', order);
   Notify.playChime();
   Notify.push('🛒 Nouvelle Commande', `${prenom} — ${formatPrice(order.total)}`);
@@ -906,22 +1076,45 @@ async function submitOrder(e) {
         content_type: 'product',
         value: order.total,
         currency: 'XOF',
-        num_items: cart.reduce((acc, cur) => acc + cur.quantity, 0)
+        num_items: cart.reduce((acc, cur) => acc + (Number(cur.quantity) || 1), 0)
       });
     } catch(e) {}
   }
 
-  // WhatsApp message
+  // Compose WhatsApp message with full details
   const now = new Date();
-  let msg = `🛒 *NOUVELLE COMMANDE*  🛒\n━━━━━━━━━━━━━━━━━━━━\n\n📋 *Réf:* ${order.id}\n👤 *Client:* ${prenom}\n📱 *WhatsApp:* ${phone}\n\n📋 *Détails:*\n\n`;
-  cart.forEach((i, idx) => { const p = products.find(x => x.id === i.id); if (p) msg += `${idx + 1}. ${i.name || p.name} × ${i.quantity} — ${formatPrice(p.price * i.quantity)}\n`; });
-  msg += `\n━━━━━━━━━━━━━━━━━━━━\n💰 *TOTAL: ${formatPrice(getCartTotal())}*\n━━━━━━━━━━━━━━━━━━━━\n\n💬 *Commentaire:* ${comment || 'Aucun'}\n\n📅 *Date:* ${now.toLocaleDateString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })} à ${now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}\n\n_Commande via ${STORE_NAME}_`;
+  let msg = `🛒 *NOUVELLE COMMANDE* 🛒\n━━━━━━━━━━━━━━━━━━━━\n\n`;
+  msg += `📋 *Réf:* ${order.id}\n`;
+  msg += `👤 *Client:* ${prenom}\n`;
+  msg += `📱 *WhatsApp:* ${fullPhone}\n`;
+  if (ville) msg += `📍 *Ville / Quartier:* ${ville}\n`;
+  msg += `\n📦 *Articles commandés:*\n`;
+
+  cart.forEach((i, idx) => {
+    const p = prodList.find(x => String(x.id) === String(i.id));
+    const name = i.name || p?.name || 'Tissu';
+    const price = (p && p.price) ? p.price : (Number(i.price) || 0);
+    const qty = Number(i.quantity) || 1;
+    msg += `${idx + 1}. *${name}* × ${qty} = ${formatPrice(price * qty)}\n`;
+  });
+
+  msg += `\n━━━━━━━━━━━━━━━━━━━━\n`;
+  msg += `💰 *TOTAL: ${formatPrice(orderTotal)}*\n`;
+  msg += `━━━━━━━━━━━━━━━━━━━━\n`;
+  if (comment) msg += `\n💬 *Commentaire:* ${comment}\n`;
+  msg += `\n📅 *Date:* ${now.toLocaleDateString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })} à ${now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}\n\n`;
+  msg += `_Commande passée sur ${STORE_NAME}_`;
+
   const waUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
 
-  cart = []; saveCart(); $('#checkoutForm')?.reset();
-  showToast('✅ Commande enregistrée !', 'success');
+  cart = [];
+  saveCart();
+  $('#checkoutForm')?.reset();
+  showToast('✅ Commande validée ! Redirection WhatsApp...', 'success');
   closeCheckout();
-  setTimeout(() => { window.open(waUrl, '_blank') || (window.location.href = waUrl); }, 1500);
+  setTimeout(() => {
+    window.open(waUrl, '_blank') || (window.location.href = waUrl);
+  }, 1200);
 }
 
 // ══════════════════════════════════════════════

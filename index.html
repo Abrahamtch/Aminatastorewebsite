@@ -385,44 +385,75 @@
         <!-- Checkout Form -->
         <form class="checkout-form" id="checkoutForm" novalidate>
             <div class="form-group">
-                <label for="customerName">
+                <label for="clientNom">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"></path>
                         <circle cx="12" cy="7" r="4"></circle>
                     </svg>
-                    Prénom <span class="required">*</span>
+                    Nom complet <span class="required">*</span>
                 </label>
-                <input type="text" id="customerName" name="customerName" placeholder="Votre prénom" required minlength="2" autocomplete="given-name">
-                <span class="form-error" id="nameError"></span>
+                <input type="text" id="clientNom" placeholder="Ex: Aminata Diallo" required autocomplete="name">
+                <span class="form-error" id="nomError"></span>
             </div>
 
             <div class="form-group">
-                <label for="customerPhone">
+                <label for="clientPhone">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"></path>
                     </svg>
-                    Numéro WhatsApp <span class="required">*</span>
+                    Numéro WhatsApp (avec indicatif) <span class="required">*</span>
                 </label>
-                <input type="tel" id="customerPhone" name="customerPhone" placeholder="Ex: 96 06 54 18 ou +228 96 06 54 18" required autocomplete="tel">
+                <div class="phone-input-wrapper">
+                    <select id="countrySelect" class="country-select" aria-label="Indicatif pays">
+                        <option value="228" data-flag="🇹🇬" selected>🇹🇬 Togo (+228)</option>
+                        <option value="229" data-flag="🇧🇯">🇧🇯 Bénin (+229)</option>
+                        <option value="225" data-flag="🇨🇮">🇨🇮 Côte d'Ivoire (+225)</option>
+                        <option value="221" data-flag="🇸🇳">🇸🇳 Sénégal (+221)</option>
+                        <option value="223" data-flag="🇲🇱">🇲🇱 Mali (+223)</option>
+                        <option value="226" data-flag="🇧🇫">🇧🇫 Burkina (+226)</option>
+                        <option value="227" data-flag="🇳🇪">🇳🇪 Niger (+227)</option>
+                        <option value="237" data-flag="🇨🇲">🇨🇲 Cameroun (+237)</option>
+                        <option value="241" data-flag="🇬🇦">🇬🇦 Gabon (+241)</option>
+                        <option value="242" data-flag="🇨🇬">🇨🇬 Congo (+242)</option>
+                        <option value="243" data-flag="🇨🇩">🇨🇩 RDC (+243)</option>
+                        <option value="224" data-flag="🇬🇳">🇬🇳 Guinée (+224)</option>
+                        <option value="33" data-flag="🇫🇷">🇫🇷 France (+33)</option>
+                        <option value="1" data-flag="🇺🇸">🇺🇸 USA/Canada (+1)</option>
+                        <option value="32" data-flag="🇧🇪">🇧🇪 Belgique (+32)</option>
+                    </select>
+                    <input type="tel" id="clientPhone" placeholder="90 12 34 56" required autocomplete="tel-national">
+                </div>
                 <span class="form-error" id="phoneError"></span>
             </div>
 
             <div class="form-group">
-                <label for="customerComment">
+                <label for="clientVille">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"></path>
+                        <circle cx="12" cy="9" r="2.5"></circle>
+                    </svg>
+                    Ville / Quartier <span class="required">*</span>
+                </label>
+                <input type="text" id="clientVille" placeholder="Ex: Lomé, Tokoin" required>
+                <span class="form-error" id="villeError"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="clientCommentaire">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"></path>
                     </svg>
-                    Commentaire <span class="optional">(facultatif)</span>
+                    Commentaire ou instructions <span class="optional">(optionnel)</span>
                 </label>
-                <textarea id="customerComment" name="customerComment" placeholder="Précisions sur votre commande, couleurs souhaitées, quantité en yards..." rows="3"></textarea>
+                <textarea id="clientCommentaire" placeholder="Précisez une couleur préférée, un lieu de livraison, quantité en yards..." rows="2"></textarea>
             </div>
 
-            <button type="submit" class="btn btn-whatsapp-order" id="submitOrder">
+            <button type="submit" class="btn btn-whatsapp-order" id="submitOrderBtn">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
                     <path d="M12 0C5.373 0 0 5.373 0 12c0 2.625.846 5.059 2.284 7.034L.789 23.492a.5.5 0 00.611.611l4.458-1.495A11.952 11.952 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-2.384 0-4.593-.693-6.46-1.886l-.452-.287-2.648.888.888-2.648-.287-.452A9.956 9.956 0 012 12C2 6.486 6.486 2 12 2s10 4.486 10 10-4.486 10-10 10z"/>
                 </svg>
-                <span>Commander via WhatsApp</span>
+                <span>Confirmer et Commander sur WhatsApp</span>
             </button>
         </form>
     </div>
