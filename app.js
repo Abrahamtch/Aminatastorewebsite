@@ -213,11 +213,14 @@ const DB = {
           const { error } = await sb.from('products').upsert(data);
           if (error) console.warn('Supabase put product error:', error);
         } else if (store === 'orders') {
-          await sb.from('orders').upsert(data);
+          const { error } = await sb.from('orders').upsert(data);
+          if (error) console.warn('Supabase put order error:', error);
         } else if (store === 'clients') {
-          await sb.from('clients').upsert(data);
+          const { error } = await sb.from('clients').upsert(data);
+          if (error) console.warn('Supabase put client error:', error);
         } else if (store === 'messages') {
-          await sb.from('messages').upsert(data);
+          const { error } = await sb.from('messages').upsert(data);
+          if (error) console.warn('Supabase put message error:', error);
         }
       } catch (err) {
         console.warn('Supabase put error, falling back to local:', err);
@@ -229,9 +232,10 @@ const DB = {
 
   async get(store, key) {
     const sb = getSupabase();
-    if (sb && store === 'products') {
+    if (sb && ['products', 'orders', 'clients'].includes(store)) {
       try {
-        const { data, error } = await sb.from('products').select('*').eq('id', key).maybeSingle();
+        const keyField = store === 'clients' ? 'phone' : 'id';
+        const { data, error } = await sb.from(store).select('*').eq(keyField, key).maybeSingle();
         if (!error && data) return data;
       } catch (err) {}
     }
@@ -246,17 +250,22 @@ const DB = {
 
   async getAll(store) {
     const sb = getSupabase();
-    if (sb && store === 'products') {
+    if (sb && ['products', 'orders', 'clients', 'messages'].includes(store)) {
       try {
-        const { data, error } = await sb.from('products').select('*').order('id', { ascending: true });
+        let query = sb.from(store).select('*');
+        if (store === 'products') query = query.order('id', { ascending: true });
+        if (store === 'orders') query = query.order('date', { ascending: false });
+        if (store === 'messages') query = query.order('timestamp', { ascending: true });
+        
+        const { data, error } = await query;
         if (!error && Array.isArray(data) && data.length > 0) {
           for (const item of data) {
-            this.putLocal('products', item).catch(() => {});
+            this.putLocal(store, item).catch(() => {});
           }
           return data;
         }
       } catch (err) {
-        console.warn('Supabase getAll error, fallback to local:', err);
+        console.warn(`Supabase getAll(${store}) notice:`, err);
       }
     }
 
@@ -265,11 +274,12 @@ const DB = {
 
   async delete(store, key) {
     const sb = getSupabase();
-    if (sb && store === 'products') {
+    if (sb && ['products', 'orders', 'clients', 'messages'].includes(store)) {
       try {
-        await sb.from('products').delete().eq('id', key);
+        const keyField = store === 'clients' ? 'phone' : 'id';
+        await sb.from(store).delete().eq(keyField, key);
       } catch(err) {
-        console.warn('Supabase delete error:', err);
+        console.warn(`Supabase delete(${store}) notice:`, err);
       }
     }
 
