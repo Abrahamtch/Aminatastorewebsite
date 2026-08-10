@@ -648,6 +648,18 @@ function addToCart(productId, btnEl) {
   if (btnEl) { const orig = btnEl.innerHTML; btnEl.innerHTML = '✓ Ajouté !'; btnEl.classList.add('added'); setTimeout(() => { btnEl.innerHTML = orig; btnEl.classList.remove('added'); }, 1500); }
   pulseBadge();
   showToast(`${product.name} ajouté au panier`, 'success');
+  if (typeof fbq === 'function') {
+    try {
+      fbq('track', 'AddToCart', {
+        content_name: product.name,
+        content_category: product.category,
+        content_ids: [String(product.id)],
+        content_type: 'product',
+        value: product.price,
+        currency: 'XOF'
+      });
+    } catch(e) {}
+  }
 }
 function removeFromCart(pid) { cart = cart.filter(i => i.id !== pid); saveCart(); showToast('Article retiré', 'info'); }
 function updateQuantity(pid, d) { const i = cart.find(x => x.id === pid); if (!i) return; i.quantity += d; if (i.quantity <= 0) removeFromCart(pid); else saveCart(); }
@@ -790,6 +802,18 @@ function openQuickView(pid) {
     saveCart();
     pulseBadge();
     showToast(`${p.name} (${selectedColorVariant || 'Standard'}, ×${qvQty}) ajouté`, 'success');
+    if (typeof fbq === 'function') {
+      try {
+        fbq('track', 'AddToCart', {
+          content_name: itemTitle,
+          content_category: p.category,
+          content_ids: [String(pid)],
+          content_type: 'product',
+          value: (p.price || 0) * qvQty,
+          currency: 'XOF'
+        });
+      } catch(e) {}
+    }
     closeQuickView();
   };
 
@@ -842,6 +866,15 @@ function openCheckout() {
     if (nameEl && currentAuth.user?.prenom) nameEl.value = currentAuth.user.prenom;
     if (phoneEl && currentAuth.user?.phone) phoneEl.value = currentAuth.user.phone;
   }
+  if (typeof fbq === 'function') {
+    try {
+      fbq('track', 'InitiateCheckout', {
+        num_items: getCartCount(),
+        value: getCartTotal(),
+        currency: 'XOF'
+      });
+    } catch(e) {}
+  }
   setTimeout(() => { $('#checkoutOverlay')?.classList.add('open'); $('#checkoutModal')?.classList.add('open'); document.body.style.overflow = 'hidden'; }, 300);
 }
 function closeCheckout() { $('#checkoutOverlay')?.classList.remove('open'); $('#checkoutModal')?.classList.remove('open'); document.body.style.overflow = ''; }
@@ -866,6 +899,17 @@ async function submitOrder(e) {
   await DB.put('orders', order);
   Notify.playChime();
   Notify.push('🛒 Nouvelle Commande', `${prenom} — ${formatPrice(order.total)}`);
+
+  if (typeof fbq === 'function') {
+    try {
+      fbq('track', 'Purchase', {
+        content_type: 'product',
+        value: order.total,
+        currency: 'XOF',
+        num_items: cart.reduce((acc, cur) => acc + cur.quantity, 0)
+      });
+    } catch(e) {}
+  }
 
   // WhatsApp message
   const now = new Date();
