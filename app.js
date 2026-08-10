@@ -507,6 +507,7 @@ async function clientRegister(e) {
   const nom = ($('#regNom') || $('#clientRegNom'))?.value.trim() || '';
   const phone = buildFullPhoneNumber('regCountrySelect', 'regPhone') || $('#regPhone')?.value.trim() || '';
   const pass = $('#regPass')?.value.trim() || '';
+  const passConfirm = ($('#regPassConfirm') || $('#clientRegPassConfirm'))?.value.trim() || '';
   const err = $('#clientRegisterError') || $('#clientRegError');
   if (err) err.textContent = '';
 
@@ -522,8 +523,12 @@ async function clientRegister(e) {
     if (err) err.textContent = 'Numéro WhatsApp valide requis'; 
     return; 
   }
-  if (!pass || pass.length < 3) { 
-    if (err) err.textContent = 'Mot de passe requis (au moins 3 caractères)'; 
+  if (!pass || pass.length < 4) { 
+    if (err) err.textContent = 'Le mot de passe doit comporter au moins 4 caractères'; 
+    return; 
+  }
+  if (pass !== passConfirm) {
+    if (err) err.textContent = 'Les deux mots de passe ne correspondent pas'; 
     return; 
   }
 
@@ -1655,11 +1660,84 @@ window.saveProduct = saveProduct;
 // ══════════════════════════════════════════════
 function openClientPanel() {
   if (currentAuth?.role !== 'client') return;
-  const w = $('#clientWelcome'); if (w) w.textContent = `Bienvenue, ${currentAuth.user?.prenom || 'Client'}`;
-  $('#clientPanelOverlay')?.classList.add('open'); $('#clientPanel')?.classList.add('open'); document.body.style.overflow = 'hidden';
-  renderClientOrders(); renderClientChat();
+  const user = currentAuth.user || {};
+  const w = $('#clientWelcome'); if (w) w.textContent = `Bienvenue, ${user.prenom || 'Client'}`;
+  const pName = $('#clientProfileName'); if (pName) pName.textContent = `${user.prenom || ''} ${user.nom || ''}`.trim() || 'Client';
+  const pPhone = $('#clientProfilePhone'); if (pPhone) pPhone.textContent = user.phone || '';
+  
+  $('#clientPanelOverlay')?.classList.add('open'); 
+  $('#clientPanel')?.classList.add('open'); 
+  document.body.style.overflow = 'hidden';
+
+  renderClientOrders(); 
+  renderClientChat();
 }
 function closeClientPanel() { $('#clientPanelOverlay')?.classList.remove('open'); $('#clientPanel')?.classList.remove('open'); document.body.style.overflow = ''; }
+
+async function changeClientPassword(e) {
+  e.preventDefault();
+  if (currentAuth?.role !== 'client' || !currentAuth.user) {
+    showToast('Vous devez être connecté pour changer de mot de passe', 'error');
+    return;
+  }
+
+  const oldPass = $('#oldPass')?.value.trim() || '';
+  const newPass = $('#newPass')?.value.trim() || '';
+  const confirmNewPass = $('#confirmNewPass')?.value.trim() || '';
+  const err = $('#changePassError');
+  if (err) err.textContent = '';
+
+  if (!oldPass) {
+    if (err) err.textContent = 'Veuillez saisir votre mot de passe actuel';
+    return;
+  }
+
+  if (oldPass !== currentAuth.user.password) {
+    if (err) err.textContent = 'Le mot de passe actuel est incorrect';
+    return;
+  }
+
+  if (!newPass || newPass.length < 4) {
+    if (err) err.textContent = 'Le nouveau mot de passe doit comporter au moins 4 caractères';
+    return;
+  }
+
+  if (newPass !== confirmNewPass) {
+    if (err) err.textContent = 'La confirmation du mot de passe ne correspond pas';
+    return;
+  }
+
+  const saveBtn = $('#changePasswordForm button[type="submit"]');
+  const origText = saveBtn ? saveBtn.innerHTML : '💾 Mettre à jour le mot de passe';
+
+  try {
+    if (saveBtn) {
+      saveBtn.disabled = true;
+      saveBtn.innerHTML = '⏳ Mise à jour...';
+    }
+
+    const updatedClient = {
+      ...currentAuth.user,
+      password: newPass,
+      updatedAt: new Date().toISOString()
+    };
+
+    await DB.put('clients', updatedClient);
+    saveAuth({ role: 'client', user: updatedClient });
+    
+    $('#changePasswordForm')?.reset();
+    showToast('✅ Votre mot de passe a été modifié avec succès !', 'success');
+  } catch (error) {
+    console.error('Erreur changement mot de passe:', error);
+    if (err) err.textContent = 'Erreur lors de la mise à jour : ' + (error.message || error);
+  } finally {
+    if (saveBtn) {
+      saveBtn.disabled = false;
+      saveBtn.innerHTML = origText;
+    }
+  }
+}
+window.changeClientPassword = changeClientPassword;
 
 async function renderClientOrders() {
   const container = $('#clientOrders'); if (!container) return;
@@ -2070,6 +2148,7 @@ function setupEventListeners() {
   }));
   $('#clientChatSend')?.addEventListener('click', clientSendMessage);
   $('#clientChatInput')?.addEventListener('keydown', (e) => { if (e.key === 'Enter') clientSendMessage(); });
+  $('#changePasswordForm')?.addEventListener('submit', changeClientPassword);
 
   // Collection Page Controls & Listeners
   const colSearchInput = $('#colSearchInput');

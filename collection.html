@@ -517,6 +517,10 @@
                         <label for="regPass">Créer un mot de passe *</label>
                         <input type="password" id="regPass" placeholder="Min. 4 caractères" required autocomplete="new-password">
                     </div>
+                    <div class="form-group">
+                        <label for="regPassConfirm">Confirmer le mot de passe *</label>
+                        <input type="password" id="regPassConfirm" placeholder="Retapez le même mot de passe" required autocomplete="new-password">
+                    </div>
                     <div class="form-error" id="clientRegisterError"></div>
                     <button type="submit" class="btn btn-login btn-client-login">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -771,6 +775,7 @@
         <div class="client-nav-tabs">
             <button class="admin-nav-tab active" data-client-tab="history">📦 Mes Commandes</button>
             <button class="admin-nav-tab" data-client-tab="chat">💬 Chat <span class="client-chat-badge" id="clientChatBadge"></span></button>
+            <button class="admin-nav-tab" data-client-tab="settings">⚙️ Paramètres</button>
         </div>
         <!-- Order History -->
         <div class="client-tab-content active" id="clientTabHistory">
@@ -785,6 +790,40 @@
                     <button class="admin-chat-send" id="clientChatSend">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
                     </button>
+                </div>
+            </div>
+        </div>
+        <!-- Client Settings / Security -->
+        <div class="client-tab-content" id="clientTabSettings">
+            <div class="client-settings-card">
+                <div class="client-profile-summary">
+                    <div class="client-avatar-large">👤</div>
+                    <div class="client-profile-details">
+                        <h4 id="clientProfileName">Client</h4>
+                        <p id="clientProfilePhone">+228 ...</p>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <h4>🔒 Modifier mon Mot de Passe</h4>
+                    <form id="changePasswordForm" class="settings-form" novalidate>
+                        <div class="form-group">
+                            <label for="oldPass">Mot de passe actuel *</label>
+                            <input type="password" id="oldPass" placeholder="Votre mot de passe actuel" required autocomplete="current-password">
+                        </div>
+                        <div class="form-group">
+                            <label for="newPass">Nouveau mot de passe *</label>
+                            <input type="password" id="newPass" placeholder="Min. 4 caractères" required autocomplete="new-password">
+                        </div>
+                        <div class="form-group">
+                            <label for="confirmNewPass">Confirmer le nouveau mot de passe *</label>
+                            <input type="password" id="confirmNewPass" placeholder="Retapez le nouveau mot de passe" required autocomplete="new-password">
+                        </div>
+                        <div class="form-error" id="changePassError"></div>
+                        <button type="submit" class="btn btn-primary btn-save-password">
+                            💾 Mettre à jour le mot de passe
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>
