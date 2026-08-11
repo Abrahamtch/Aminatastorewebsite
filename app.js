@@ -289,7 +289,7 @@ const DB = {
         const keyField = store === 'clients' ? 'phone' : 'id';
         const { data, error } = await sb.from(store).select('*').eq(keyField, key).maybeSingle();
         if (!error && data) {
-          this.putLocal(store, data).catch(() => {});
+          try { await this.putLocal(store, data); } catch(e) {}
           return data;
         }
       } catch (err) {}
@@ -332,7 +332,7 @@ const DB = {
         const { data, error } = await query;
         if (!error && Array.isArray(data) && data.length > 0) {
           for (const item of data) {
-            this.putLocal(store, item).catch(() => {});
+            try { await this.putLocal(store, item); } catch(e) {}
           }
           return data;
         }
@@ -341,7 +341,14 @@ const DB = {
       }
     }
 
-    return this.getLocalAll(store);
+    const localList = await this.getLocalAll(store);
+    if (store === 'products' && (!localList || localList.length === 0)) {
+      for (const p of DEFAULT_PRODUCTS) {
+        try { await this.putLocal('products', p); } catch(e) {}
+      }
+      return [...DEFAULT_PRODUCTS];
+    }
+    return localList;
   },
 
   async delete(store, key) {
@@ -707,17 +714,21 @@ document.addEventListener('DOMContentLoaded', async () => {
   loadCart();
   parseUrlParams();
 
-  // Asynchronous DB initialization
+  // Instant render with default catalog so the page is never blank!
+  if (!products || products.length === 0) {
+    products = [...DEFAULT_PRODUCTS];
+  }
+  if ($('#productsGrid')) renderProducts();
+  if ($('#collectionProductsGrid')) renderCollectionPage();
+
+  // Asynchronous DB initialization and refresh
   try {
     await DB.init();
-    products = await DB.getAll('products');
-    
-    // Render Home Favorites or Full Collection
-    if ($('#productsGrid')) {
-      renderProducts();
-    }
-    if ($('#collectionProductsGrid')) {
-      renderCollectionPage();
+    const loaded = await DB.getAll('products');
+    if (loaded && loaded.length > 0) {
+      products = loaded;
+      if ($('#productsGrid')) renderProducts();
+      if ($('#collectionProductsGrid')) renderCollectionPage();
     }
     
     if (currentAuth?.role === 'client') startChatPolling();
@@ -732,55 +743,58 @@ document.addEventListener('DOMContentLoaded', async () => {
 async function renderProducts(category = 'all') {
   const grid = $('#productsGrid');
   if (!grid) return;
-  products = await DB.getAll('products');
+
   if (!products || products.length === 0) {
     products = [...DEFAULT_PRODUCTS];
   }
   
-  // Only display products that are marked as featured by the admin!
-  let featuredList = products.filter(p => isFeatured(p));
-  if (category !== 'all') {
-    featuredList = featuredList.filter(p => p.category === category);
+  // Filter by category
+  let list = [...products];
+  if (category && category !== 'all') {
+    list = list.filter(p => p.category && p.category.toLowerCase() === category.toLowerCase());
   }
 
-  if (featuredList.length === 0) {
-    grid.innerHTML = `
-      <div class="empty-favorites-card">
-        <div class="empty-fav-icon">✦</div>
-        <h3 class="empty-fav-title">Aucun tissu vedette dans cette catégorie</h3>
-        <p class="empty-fav-text">Découvrez notre collection complète de tissus premium sur notre catalogue.</p>
-        <a href="collection.html" class="btn btn-primary" style="margin-top: 8px;">
-          <span>Explorer Toute la Collection (${products.length} Tissus)</span>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-        </a>
-      </div>
-    `;
-  } else {
-    grid.innerHTML = featuredList.map((p, i) => `
-      <div class="product-card" data-id="${p.id}" style="animation-delay: ${i * 0.08}s">
-        <div class="product-image-container" onclick="openQuickView(${p.id})">
-          ${p.badge ? `<span class="product-badge-label ${p.badgeType || ''}">${p.badge}</span>` : ''}
-          <img src="${p.image}" alt="${p.name}" loading="lazy">
-          <div class="product-overlay">
-            <button class="btn-add-cart" onclick="event.stopPropagation(); addToCart(${p.id}, this)">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 01-8 0"></path></svg>
-              Ajouter au panier
-            </button>
-          </div>
-        </div>
-        <div class="product-info">
-          <span class="product-category-tag">${p.category}</span>
-          <h3 class="product-name">${p.name}</h3>
-          <p class="product-desc-short">${p.description || ''}</p>
-          <div class="product-bottom">
-            <span class="product-price">${formatPrice(p.price)}<span class="product-price-unit"> /yard</span></span>
-          </div>
-        </div>
-      </div>
-    `).join('');
+  // Filter featured or fallback to full list
+  let displayList = list.filter(p => isFeatured(p));
+  if (displayList.length === 0) {
+    displayList = list;
   }
+  if (displayList.length === 0) {
+    displayList = [...DEFAULT_PRODUCTS];
+  }
+
+  grid.innerHTML = displayList.map((p, i) => `
+    <div class="product-card" data-id="${p.id}" style="animation-delay: ${i * 0.08}s">
+      <div class="product-image-container" onclick="openQuickView(${p.id})">
+        ${p.badge ? `<span class="product-badge-label ${p.badgeType || ''}">${p.badge}</span>` : ''}
+        <img src="${p.image}" alt="${p.name}" loading="lazy">
+        <div class="product-overlay">
+          <button class="btn-add-cart" onclick="event.stopPropagation(); addToCart(${p.id}, this)">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 01-8 0"></path></svg>
+            Ajouter au panier
+          </button>
+        </div>
+      </div>
+      <div class="product-info">
+        <span class="product-category-tag">${p.category}</span>
+        <h3 class="product-name">${p.name}</h3>
+        <p class="product-desc-short">${p.description || ''}</p>
+        <div class="product-bottom">
+          <span class="product-price">${formatPrice(p.price)}<span class="product-price-unit"> /yard</span></span>
+        </div>
+      </div>
+    </div>
+  `).join('');
   grid.style.opacity = '1';
 }
+window.renderProducts = renderProducts;
+
+function filterByCategory(category, tabEl) {
+  $$('.category-tab').forEach(t => t.classList.remove('active'));
+  if (tabEl) tabEl.classList.add('active');
+  renderProducts(category);
+}
+window.filterByCategory = filterByCategory;
 
 // ══════════════════════════════════════════════
 //  COLLECTION PAGE: COMPLETE CATALOG & FILTERS
@@ -788,7 +802,6 @@ async function renderProducts(category = 'all') {
 async function renderCollectionPage() {
   const grid = $('#collectionProductsGrid');
   if (!grid) return;
-  products = await DB.getAll('products');
   if (!products || products.length === 0) {
     products = [...DEFAULT_PRODUCTS];
   }
@@ -875,6 +888,7 @@ async function renderCollectionPage() {
   }
   grid.style.opacity = '1';
 }
+window.renderCollectionPage = renderCollectionPage;
 
 function resetCollectionFilters() {
   collectionCategory = 'all';
