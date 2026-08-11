@@ -2302,7 +2302,6 @@ img { max-width: 100%; display: block; }
 }
 
 .pixel-status-badge {
-  margin-left: auto;
   background: #ecfdf5;
   color: #065f46;
   border: 1px solid #a7f3d0;
@@ -2313,6 +2312,73 @@ img { max-width: 100%; display: block; }
   display: inline-flex;
   align-items: center;
   gap: 4px;
+}
+
+/* ── Pixel Manager Card (Discreet Drawer View) ── */
+.pixel-summary-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.pixel-summary-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex: 1;
+  min-width: 260px;
+}
+
+.pixel-summary-left h3 {
+  margin: 0 0 4px;
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--color-dark);
+}
+
+.pixel-summary-left p {
+  margin: 0;
+  color: var(--color-text-light);
+  font-size: 0.85rem;
+}
+
+.pixel-summary-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.btn-toggle-pixel-editor {
+  padding: 8px 16px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all var(--transition-fast);
+}
+
+.btn-toggle-pixel-editor:hover {
+  background: var(--color-dark);
+  color: #fff;
+}
+
+.pixel-editor-drawer {
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px dashed var(--color-border);
+  animation: slideDown 0.25s ease-out forwards;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .pixel-code-textarea {
@@ -2355,12 +2421,74 @@ img { max-width: 100%; display: block; }
   font-weight: 600;
 }
 
+.btn-cancel-pixel {
+  padding: 12px 18px;
+  font-weight: 600;
+  background: #f1ede7;
+  color: #555;
+  border: 1px solid var(--color-border);
+}
+
+.btn-cancel-pixel:hover {
+  background: #e2ddd5;
+  color: #222;
+}
+
 .form-hint {
   display: block;
   margin-top: 10px;
   font-size: 0.8rem;
   color: var(--color-text-light);
   line-height: 1.4;
+}
+
+/* ── AI Assistant Header & Actions ── */
+.ai-header-actions {
+  margin-left: auto;
+}
+
+.btn-clear-ai-history {
+  background: #fff;
+  border: 1px solid var(--color-border);
+  padding: 6px 14px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  border-radius: var(--radius-full);
+  color: var(--color-text-light);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-clear-ai-history:hover {
+  border-color: #ef4444;
+  color: #dc2626;
+  background: #fef2f2;
+}
+
+.ai-typing-indicator {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 2px;
+}
+
+.ai-typing-dot {
+  width: 7px;
+  height: 7px;
+  background: var(--color-primary);
+  border-radius: 50%;
+  animation: bounceDot 1.2s infinite ease-in-out;
+}
+
+.ai-typing-dot:nth-child(2) { animation-delay: 0.2s; }
+.ai-typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes bounceDot {
+  0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+  40% { transform: scale(1.1); opacity: 1; }
 }
 
 /* ── AI Assistant Bar & Controls ── */

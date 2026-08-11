@@ -786,35 +786,49 @@
         <!-- Marketing & IA Tab -->
         <div class="admin-tab-content" id="adminTabMarketing">
             <div class="marketing-dashboard">
-                <!-- 1. Meta Pixel Manager Card -->
+                <!-- 1. Meta Pixel Manager Card (Discreet) -->
                 <div class="marketing-card pixel-manager-card">
-                    <div class="marketing-card-header">
-                        <div class="marketing-card-icon">🎯</div>
-                        <div>
-                            <h3>Meta Pixel (Facebook Ads)</h3>
-                            <p>Connectez ou modifiez votre Pixel Facebook pour mesurer les visites, paniers et ventes générés par vos publicités.</p>
-                        </div>
-                        <span class="pixel-status-badge" id="pixelStatusBadge">✅ Pixel Actif</span>
-                    </div>
-                    <form id="pixelConfigForm" class="pixel-form" novalidate>
-                        <div class="form-group">
-                            <label for="metaPixelCodeInput">
-                                Code Source complet du Meta Pixel (Facebook Ads) :
-                            </label>
-                            <textarea id="metaPixelCodeInput" class="pixel-code-textarea" rows="6" placeholder="Collez ici le code source complet de votre Pixel Meta (avec les balises <script>...)"></textarea>
-                            <div class="pixel-actions-row">
-                                <button type="submit" class="btn btn-primary btn-save-pixel" id="btnSavePixel">
-                                    💾 Enregistrer & Activer le Pixel
-                                </button>
-                                <button type="button" class="btn btn-secondary btn-reset-pixel" id="btnResetPixel">
-                                    🔄 Réinitialiser par défaut
-                                </button>
+                    <div class="pixel-summary-row">
+                        <div class="pixel-summary-left">
+                            <div class="marketing-card-icon">🎯</div>
+                            <div>
+                                <h3>Meta Pixel (Facebook Ads)</h3>
+                                <p>Mesure les visites, ajouts au panier et ventes générés par vos publicités.</p>
                             </div>
-                            <small class="form-hint">
-                                💡 Collez le code fourni par Facebook Ads Manager. Les événements de suivi e-commerce (<strong>PageView</strong>, <strong>AddToCart</strong>, <strong>InitiateCheckout</strong>, <strong>Purchase</strong>) sont trackés automatiquement.
-                            </small>
                         </div>
-                    </form>
+                        <div class="pixel-summary-right">
+                            <span class="pixel-status-badge" id="pixelStatusBadge">✅ Pixel Actif</span>
+                            <button type="button" class="btn btn-secondary btn-toggle-pixel-editor" id="btnTogglePixelEditor">
+                                ⚙️ Changer le pixel
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Hidden by default editor drawer -->
+                    <div class="pixel-editor-drawer" id="pixelEditorDrawer" style="display:none;">
+                        <form id="pixelConfigForm" class="pixel-form" novalidate>
+                            <div class="form-group">
+                                <label for="metaPixelCodeInput">
+                                    Code Source complet du Meta Pixel (Facebook Ads) :
+                                </label>
+                                <textarea id="metaPixelCodeInput" class="pixel-code-textarea" rows="6" placeholder="Collez ici le code source complet de votre Pixel Meta (avec les balises <script>...)"></textarea>
+                                <div class="pixel-actions-row">
+                                    <button type="submit" class="btn btn-primary btn-save-pixel" id="btnSavePixel">
+                                        💾 Enregistrer le nouveau Pixel
+                                    </button>
+                                    <button type="button" class="btn btn-secondary btn-reset-pixel" id="btnResetPixel">
+                                        🔄 Réinitialiser par défaut
+                                    </button>
+                                    <button type="button" class="btn btn-cancel-pixel" id="btnCancelPixel">
+                                        ✕ Fermer
+                                    </button>
+                                </div>
+                                <small class="form-hint">
+                                    💡 Collez le code fourni par Facebook Ads Manager. Les événements de suivi e-commerce (<strong>PageView</strong>, <strong>AddToCart</strong>, <strong>InitiateCheckout</strong>, <strong>Purchase</strong>) sont trackés automatiquement.
+                                </small>
+                            </div>
+                        </form>
+                    </div>
                 </div>
 
                 <!-- 2. AI Marketing Assistant Card -->
@@ -822,8 +836,13 @@
                     <div class="marketing-card-header">
                         <div class="marketing-card-icon">✨</div>
                         <div>
-                            <h3>Assistant IA Stratégie Publicitaire & Copywriting</h3>
-                            <p>Générez des textes publicitaires Facebook irrésistibles, des ciblages précis et des scripts vidéos pour vendre vos tissus.</p>
+                            <h3>Assistant IA Marketing — Abraham</h3>
+                            <p>Conseiller stratégique et copywriter personnel d'Aminata pour booster les ventes de tissus.</p>
+                        </div>
+                        <div class="ai-header-actions">
+                            <button type="button" class="btn-clear-ai-history" id="btnClearAiHistory" title="Effacer l'historique et démarrer une nouvelle conversation">
+                                🔄 Nouvelle discussion
+                            </button>
                         </div>
                     </div>
 
