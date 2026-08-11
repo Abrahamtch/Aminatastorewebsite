@@ -706,7 +706,7 @@ window.closeClientPanel = closeClientPanel;
 // ══════════════════════════════════════════════
 //  INITIALISATION
 // ══════════════════════════════════════════════
-document.addEventListener('DOMContentLoaded', async () => {
+async function initApp() {
   // Synchronous UI setup FIRST so buttons work immediately!
   setupEventListeners();
   setupScrollEffects();
@@ -735,7 +735,14 @@ document.addEventListener('DOMContentLoaded', async () => {
   } catch(e) {
     console.error('DB init error:', e);
   }
-});
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initApp);
+} else {
+  initApp();
+}
+
 
 // ══════════════════════════════════════════════
 //  HOME PAGE: FEATURED PRODUCTS SHOWCASE
@@ -1421,10 +1428,6 @@ async function submitOrder(e) {
   }, 1200);
 }
 
-// ══════════════════════════════════════════════
-//  CATEGORY FILTER
-// ══════════════════════════════════════════════
-function filterByCategory(cat, tab) { $$('.category-tab').forEach(t => t.classList.remove('active')); tab.classList.add('active'); renderProducts(cat); }
 
 // ══════════════════════════════════════════════
 //  ADMIN PANEL
@@ -2039,6 +2042,120 @@ async function openAdminChat(clientId) {
   await renderAdminChatMessages(clientId);
 }
 window.openAdminChat = openAdminChat;
+
+// ── Admin Chat View & Message Sender ──
+async function renderAdminChatMessages(clientId) {
+  const container = $('#adminChatMessages');
+  if (!container) return;
+  const msgs = await getConversation('admin', clientId);
+  container.innerHTML = msgs.length === 0
+    ? '<div style="padding:40px;text-align:center;color:#999;">Démarrez la conversation avec ce client.</div>'
+    : msgs.map(m => `
+        <div class="chat-msg ${m.from === 'admin' ? 'chat-msg-sent' : 'chat-msg-received'}">
+          <div class="chat-msg-bubble">${escapeHtml(m.text)}</div>
+          <div class="chat-msg-time">${new Date(m.timestamp).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}</div>
+        </div>
+      `).join('');
+  requestAnimationFrame(() => { container.scrollTop = container.scrollHeight; });
+}
+window.renderAdminChatMessages = renderAdminChatMessages;
+
+async function adminSendMessage() {
+  const input = $('#adminChatInput');
+  if (!input || !adminChatActiveClient) return;
+  const text = input.value.trim();
+  if (!text) return;
+  await sendMessage('admin', adminChatActiveClient, text);
+  input.value = '';
+  await renderAdminChatMessages(adminChatActiveClient);
+  await renderAdminChatList();
+}
+window.adminSendMessage = adminSendMessage;
+
+// ── Client Chat View & Message Sender ──
+async function renderClientChat() {
+  if (currentAuth?.role !== 'client') return;
+  const container = $('#clientChatMessages');
+  if (!container) return;
+  const phone = currentAuth.user.phone;
+  const msgs = await getConversation('admin', phone);
+
+  // Mark messages as read
+  for (const m of msgs) {
+    if (m.to === phone && !m.read) {
+      m.read = true;
+      await DB.put('messages', m);
+    }
+  }
+  updateClientChatBadge();
+
+  container.innerHTML = msgs.length === 0
+    ? '<div style="padding:40px;text-align:center;color:#999;">Envoyez un message au propriétaire de la boutique.</div>'
+    : msgs.map(m => `
+        <div class="chat-msg ${m.from === phone ? 'chat-msg-sent' : 'chat-msg-received'}">
+          <div class="chat-msg-bubble">${escapeHtml(m.text)}</div>
+          <div class="chat-msg-time">${new Date(m.timestamp).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}</div>
+        </div>
+      `).join('');
+  requestAnimationFrame(() => { container.scrollTop = container.scrollHeight; });
+}
+window.renderClientChat = renderClientChat;
+
+async function clientSendMessage() {
+  if (currentAuth?.role !== 'client') return;
+  const input = $('#clientChatInput');
+  if (!input) return;
+  const text = input.value.trim();
+  if (!text) return;
+  await sendMessage(currentAuth.user.phone, 'admin', text);
+  input.value = '';
+  await renderClientChat();
+  Notify.playChime();
+}
+window.clientSendMessage = clientSendMessage;
+
+async function updateClientChatBadge() {
+  if (currentAuth?.role !== 'client') return;
+  const phone = currentAuth.user?.phone;
+  if (!phone) return;
+  const all = await DB.getAll('messages');
+  const unread = all.filter(m => m.to === phone && !m.read).length;
+  const badge = $('#clientChatBadge'), bubbleBadge = $('#chatBubbleBadge');
+  if (badge) { badge.textContent = unread || ''; badge.style.display = unread > 0 ? 'inline-flex' : 'none'; }
+  if (bubbleBadge) { bubbleBadge.textContent = unread || ''; bubbleBadge.style.display = unread > 0 ? 'flex' : 'none'; }
+}
+window.updateClientChatBadge = updateClientChatBadge;
+
+function startChatPolling() { 
+  stopChatPolling(); 
+  chatPollInterval = setInterval(async () => { 
+    try {
+      if (currentAuth?.role === 'client') { 
+        await updateClientChatBadge(); 
+        if ($('#clientPanel')?.classList.contains('open')) {
+          await renderClientChat(); 
+        }
+      } else if (currentAuth?.role === 'admin') {
+        if ($('#adminPanel')?.classList.contains('open')) {
+          await renderAdminChatList();
+          if (adminChatActiveClient) {
+            await renderAdminChatMessages(adminChatActiveClient);
+          }
+        }
+      }
+    } catch(e) {}
+  }, 2500); 
+}
+window.startChatPolling = startChatPolling;
+
+function stopChatPolling() { 
+  if (chatPollInterval) { 
+    clearInterval(chatPollInterval); 
+    chatPollInterval = null; 
+  } 
+}
+window.stopChatPolling = stopChatPolling;
+
 // ══════════════════════════════════════════════
 //  MARKETING, META PIXEL & SMART AI ASSISTANT (ABRAHAM)
 // ══════════════════════════════════════════════
@@ -2557,8 +2674,30 @@ function handleAiFreeformQuestion(question) {
 window.handleAiFreeformQuestion = handleAiFreeformQuestion;
 
 // ══════════════════════════════════════════════
+//  TOAST NOTIFICATIONS
+// ══════════════════════════════════════════════
+function showToast(message, type = 'info') {
+  const c = $('#toastContainer') || document.getElementById('toastContainer');
+  if (!c) return;
+  const icons = { success: '✓', error: '✕', info: 'ℹ', warning: '⚠' };
+  const t = document.createElement('div');
+  t.className = `toast toast-${type}`;
+  t.innerHTML = `<span class="toast-icon">${icons[type] || 'ℹ'}</span><span class="toast-message">${message}</span>`;
+  c.appendChild(t);
+  requestAnimationFrame(() => requestAnimationFrame(() => t.classList.add('show')));
+  setTimeout(() => {
+    t.classList.remove('show');
+    setTimeout(() => {
+      if (t.parentNode) t.parentNode.removeChild(t);
+    }, 400);
+  }, 3200);
+}
+window.showToast = showToast;
+
+// ══════════════════════════════════════════════
 //  SCROLL EFFECTS
 // ══════════════════════════════════════════════
+
 function setupScrollEffects() {
   const nav = $('#navbar'), bg = $('.hero-bg'); let tick = false;
   window.addEventListener('scroll', () => { if (!tick) { requestAnimationFrame(() => { const y = window.scrollY; if (y > 60) nav?.classList.add('scrolled'); else nav?.classList.remove('scrolled'); if (bg && window.innerWidth > 768) bg.style.transform = `translateY(${y * 0.3}px)`; tick = false; }); tick = true; } });
@@ -2829,8 +2968,45 @@ function setupEventListeners() {
   window.toggleAdminFeatured = toggleAdminFeatured;
   window.resetCollectionFilters = resetCollectionFilters;
   window.setCollectionFilter = setCollectionFilter;
+  window.filterByCategory = filterByCategory;
+  window.openQuickView = openQuickView;
+  window.closeQuickView = closeQuickView;
+  window.addToCart = addToCart;
+  window.removeFromCart = removeFromCart;
+  window.updateQuantity = updateQuantity;
+  window.openCart = openCart;
+  window.closeCart = closeCart;
+  window.openCheckout = openCheckout;
+  window.closeCheckout = closeCheckout;
+  window.submitOrder = submitOrder;
+  window.openLogin = openLogin;
+  window.closeLogin = closeLogin;
+  window.openAdmin = openAdmin;
+  window.closeAdmin = closeAdmin;
+  window.openClientPanel = openClientPanel;
+  window.closeClientPanel = closeClientPanel;
+  window.handleAuthClick = handleAuthClick;
+  window.logout = logout;
+  window.changeOrderStatus = changeOrderStatus;
+  window.confirmDeleteOrder = confirmDeleteOrder;
+  window.viewOrderDetail = viewOrderDetail;
+  window.closeOrderDetail = closeOrderDetail;
+  window.openProductForm = openProductForm;
+  window.closeProductForm = closeProductForm;
+  window.editProduct = editProduct;
+  window.deleteProduct = deleteProduct;
+  window.saveProduct = saveProduct;
+  window.showToast = showToast;
+  window.adminSendMessage = adminSendMessage;
+  window.clientSendMessage = clientSendMessage;
+  window.renderAdminProducts = renderAdminProducts;
+  window.renderAdminOrders = renderAdminOrders;
+  window.renderProducts = renderProducts;
+  window.renderCollectionPage = renderCollectionPage;
+  window.initApp = initApp;
 
   // Escape
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { closeCart(); closeCheckout(); closeQuickView(); closeLogin(); closeAdmin(); closeClientPanel(); closeOrderDetail(); closeProductForm(); } });
 }
+
 
