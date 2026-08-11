@@ -123,24 +123,28 @@ function getSupabase() {
 }
 
 // ══════════════════════════════════════════════
-//  DATABASE — Supabase Cloud (with IndexedDB fallback)
+//  DATABASE — Supabase Cloud (with IndexedDB & LocalStorage fallback)
 // ══════════════════════════════════════════════
 const DB = {
   db: null,
   async init() {
-    // 1. Initialize IndexedDB as local cache
-    this.db = await new Promise((resolve, reject) => {
-      const req = indexedDB.open(DB_NAME, DB_VERSION);
-      req.onupgradeneeded = (e) => {
-        const db = e.target.result;
-        if (!db.objectStoreNames.contains('orders')) { const s = db.createObjectStore('orders', { keyPath: 'id' }); s.createIndex('status', 'status'); }
-        if (!db.objectStoreNames.contains('products')) { db.createObjectStore('products', { keyPath: 'id' }); }
-        if (!db.objectStoreNames.contains('clients')) { db.createObjectStore('clients', { keyPath: 'phone' }); }
-        if (!db.objectStoreNames.contains('messages')) { const m = db.createObjectStore('messages', { keyPath: 'id' }); m.createIndex('conversation', 'conversation'); }
-      };
-      req.onsuccess = (e) => resolve(e.target.result);
-      req.onerror = (e) => reject(e.target.error);
-    });
+    // 1. Initialize IndexedDB as local cache with silent fallback
+    try {
+      this.db = await new Promise((resolve) => {
+        const req = indexedDB.open(DB_NAME, DB_VERSION);
+        req.onupgradeneeded = (e) => {
+          const db = e.target.result;
+          if (!db.objectStoreNames.contains('orders')) { const s = db.createObjectStore('orders', { keyPath: 'id' }); s.createIndex('status', 'status'); }
+          if (!db.objectStoreNames.contains('products')) { db.createObjectStore('products', { keyPath: 'id' }); }
+          if (!db.objectStoreNames.contains('clients')) { db.createObjectStore('clients', { keyPath: 'phone' }); }
+          if (!db.objectStoreNames.contains('messages')) { const m = db.createObjectStore('messages', { keyPath: 'id' }); m.createIndex('conversation', 'conversation'); }
+        };
+        req.onsuccess = (e) => resolve(e.target.result);
+        req.onerror = () => resolve(null);
+      });
+    } catch(e) {
+      this.db = null;
+    }
 
     // 2. Seed initial products if needed
     await this.seedProducts();
@@ -188,20 +192,61 @@ const DB = {
   },
 
   async putLocal(store, data) {
-    return new Promise((res, rej) => {
-      const tx = this.db.transaction(store, 'readwrite');
-      tx.objectStore(store).put(data);
-      tx.oncomplete = () => res();
-      tx.onerror = (e) => rej(e.target.error);
+    if (!data) return;
+    const keyProp = store === 'clients' ? 'phone' : 'id';
+    
+    // Always mirror in localStorage
+    try {
+      let localMirror = [];
+      const raw = localStorage.getItem('aminata_store_' + store);
+      if (raw) localMirror = JSON.parse(raw) || [];
+      const idx = localMirror.findIndex(i => i && i[keyProp] === data[keyProp]);
+      if (idx >= 0) localMirror[idx] = data;
+      else localMirror.push(data);
+      localStorage.setItem('aminata_store_' + store, JSON.stringify(localMirror));
+    } catch (e) {}
+
+    if (!this.db) return;
+    return new Promise((res) => {
+      try {
+        const tx = this.db.transaction(store, 'readwrite');
+        tx.objectStore(store).put(data);
+        tx.oncomplete = () => res();
+        tx.onerror = () => res();
+      } catch (e) {
+        res();
+      }
     });
   },
 
   async getLocalAll(store) {
-    return new Promise((res, rej) => {
-      const tx = this.db.transaction(store, 'readonly');
-      const req = tx.objectStore(store).getAll();
-      req.onsuccess = () => res(req.result || []);
-      req.onerror = (e) => rej(e.target.error);
+    const keyProp = store === 'clients' ? 'phone' : 'id';
+    let localMirror = [];
+    try {
+      const raw = localStorage.getItem('aminata_store_' + store);
+      if (raw) localMirror = JSON.parse(raw) || [];
+    } catch (e) {}
+
+    if (!this.db) return localMirror;
+
+    return new Promise((res) => {
+      try {
+        const tx = this.db.transaction(store, 'readonly');
+        const req = tx.objectStore(store).getAll();
+        req.onsuccess = () => {
+          const idbList = req.result || [];
+          const merged = [...idbList];
+          localMirror.forEach(mItem => {
+            if (mItem && mItem[keyProp] && !merged.some(item => item[keyProp] === mItem[keyProp])) {
+              merged.push(mItem);
+            }
+          });
+          res(merged);
+        };
+        req.onerror = () => res(localMirror);
+      } catch (e) {
+        res(localMirror);
+      }
     });
   },
 
@@ -216,7 +261,14 @@ const DB = {
           const { error } = await sb.from('orders').upsert(data);
           if (error) console.warn('Supabase put order error:', error);
         } else if (store === 'clients') {
-          const { error } = await sb.from('clients').upsert(data);
+          const clientData = {
+            phone: data.phone,
+            prenom: data.prenom,
+            nom: data.nom,
+            password: data.password,
+            created_at: data.createdAt || data.created_at || new Date().toISOString()
+          };
+          const { error } = await sb.from('clients').upsert(clientData);
           if (error) console.warn('Supabase put client error:', error);
         } else if (store === 'messages') {
           const { error } = await sb.from('messages').upsert(data);
@@ -236,15 +288,35 @@ const DB = {
       try {
         const keyField = store === 'clients' ? 'phone' : 'id';
         const { data, error } = await sb.from(store).select('*').eq(keyField, key).maybeSingle();
-        if (!error && data) return data;
+        if (!error && data) {
+          this.putLocal(store, data).catch(() => {});
+          return data;
+        }
       } catch (err) {}
     }
 
-    return new Promise((res, rej) => {
-      const tx = this.db.transaction(store, 'readonly');
-      const req = tx.objectStore(store).get(key);
-      req.onsuccess = () => res(req.result);
-      req.onerror = (e) => rej(e.target.error);
+    return new Promise((res) => {
+      const keyField = store === 'clients' ? 'phone' : 'id';
+      let localItem = null;
+      try {
+        const raw = localStorage.getItem('aminata_store_' + store);
+        const list = raw ? JSON.parse(raw) : [];
+        localItem = list.find(i => i && String(i[keyField]) === String(key)) || null;
+      } catch (e) {}
+
+      if (!this.db) {
+        res(localItem);
+        return;
+      }
+
+      try {
+        const tx = this.db.transaction(store, 'readonly');
+        const req = tx.objectStore(store).get(key);
+        req.onsuccess = () => res(req.result || localItem);
+        req.onerror = () => res(localItem);
+      } catch (e) {
+        res(localItem);
+      }
     });
   },
 
@@ -273,21 +345,37 @@ const DB = {
   },
 
   async delete(store, key) {
+    const keyField = store === 'clients' ? 'phone' : 'id';
+    
+    // Remove from localStorage
+    try {
+      const raw = localStorage.getItem('aminata_store_' + store);
+      if (raw) {
+        let list = JSON.parse(raw) || [];
+        list = list.filter(i => i && String(i[keyField]) !== String(key));
+        localStorage.setItem('aminata_store_' + store, JSON.stringify(list));
+      }
+    } catch(e) {}
+
     const sb = getSupabase();
     if (sb && ['products', 'orders', 'clients', 'messages'].includes(store)) {
       try {
-        const keyField = store === 'clients' ? 'phone' : 'id';
         await sb.from(store).delete().eq(keyField, key);
       } catch(err) {
         console.warn(`Supabase delete(${store}) notice:`, err);
       }
     }
 
-    return new Promise((res, rej) => {
-      const tx = this.db.transaction(store, 'readwrite');
-      tx.objectStore(store).delete(key);
-      tx.oncomplete = () => res();
-      tx.onerror = (e) => rej(e.target.error);
+    if (!this.db) return;
+    return new Promise((res) => {
+      try {
+        const tx = this.db.transaction(store, 'readwrite');
+        tx.objectStore(store).delete(key);
+        tx.oncomplete = () => res();
+        tx.onerror = () => res();
+      } catch(e) {
+        res();
+      }
     });
   },
 
@@ -457,13 +545,16 @@ function buildFullPhoneNumber(countrySelectId, phoneInputId) {
 
 async function clientLogin(e) {
   e.preventDefault();
-  const phone = buildFullPhoneNumber('loginCountrySelect', 'clientLoginPhone') || $('#clientLoginPhone')?.value.trim() || '';
+  const rawInput = $('#clientLoginPhone')?.value.trim() || '';
+  const countrySelect = $('#loginCountrySelect');
+  const countryCode = (countrySelect && countrySelect.value !== 'other') ? countrySelect.value : '228';
+  const fullPhone = buildFullPhoneNumber('loginCountrySelect', 'clientLoginPhone') || rawInput;
   const pass = $('#clientLoginPass')?.value.trim() || '';
   const err = $('#clientLoginError');
   if (err) err.textContent = '';
 
-  if (!phone || phone.replace(/\D/g, '').length < 4) {
-    if (err) err.textContent = 'Veuillez saisir un numéro de téléphone valide';
+  if (!rawInput) {
+    if (err) err.textContent = 'Veuillez saisir votre numéro WhatsApp';
     return;
   }
   if (!pass) {
@@ -472,32 +563,59 @@ async function clientLogin(e) {
   }
 
   try {
+    const rawDigits = rawInput.replace(/\D/g, '');
+    const fullDigits = fullPhone.replace(/\D/g, '');
+
+    // Fetch all clients from both Supabase and Local storage
     const allClients = await DB.getAll('clients');
-    const targetDigits = phone.replace(/\D/g, '');
 
-    const client = allClients.find(c => {
-      if (!c.phone) return false;
-      const cDigits = c.phone.replace(/\D/g, '');
-      return c.phone === phone || 
-             (targetDigits && cDigits === targetDigits) || 
-             (targetDigits.length >= 6 && cDigits.endsWith(targetDigits)) || 
-             (cDigits.length >= 6 && targetDigits.endsWith(cDigits));
-    });
+    // Matching helper function
+    const isMatch = (c) => {
+      if (!c || !c.phone) return false;
+      const cDigits = String(c.phone).replace(/\D/g, '');
+      if (!cDigits) return false;
+      return c.phone === fullPhone ||
+             c.phone === rawInput ||
+             cDigits === fullDigits ||
+             cDigits === rawDigits ||
+             (rawDigits.length >= 6 && cDigits.endsWith(rawDigits)) ||
+             (cDigits.length >= 6 && rawDigits.endsWith(cDigits)) ||
+             (fullDigits.length >= 6 && cDigits.endsWith(fullDigits)) ||
+             (cDigits.length >= 6 && fullDigits.endsWith(cDigits));
+    };
 
-    if (client && client.password === pass) {
-      saveAuth({ role: 'client', user: client });
-      closeLogin();
-      showToast(`👤 Bienvenue, ${client.prenom || 'Client'} !`, 'success');
-      openClientPanel();
-      startChatPolling();
-    } else if (client) {
-      if (err) err.textContent = 'Mot de passe incorrect';
+    let client = allClients.find(isMatch);
+
+    // If still not found, try direct Supabase query
+    const sb = getSupabase();
+    if (!client && sb) {
+      try {
+        const { data } = await sb.from('clients').select('*');
+        if (Array.isArray(data)) {
+          client = data.find(isMatch);
+          if (client) {
+            await DB.putLocal('clients', client);
+          }
+        }
+      } catch(sbErr) {}
+    }
+
+    if (client) {
+      if (String(client.password).trim() === pass) {
+        saveAuth({ role: 'client', user: client });
+        closeLogin();
+        showToast(`👤 Bienvenue, ${client.prenom || 'Client'} !`, 'success');
+        openClientPanel();
+        startChatPolling();
+      } else {
+        if (err) err.textContent = 'Mot de passe incorrect. Veuillez vérifier votre mot de passe.';
+      }
     } else {
-      if (err) err.textContent = 'Compte introuvable. Cliquez sur "Créer un compte" ci-dessous.';
+      if (err) err.textContent = `Compte introuvable pour ce numéro (+${countryCode} ${rawDigits}). Cliquez sur "Créer un compte" ci-dessous.`;
     }
   } catch (errDb) {
     console.error('Login DB error:', errDb);
-    if (err) err.textContent = 'Erreur lors de la connexion. Veuillez réessayer.';
+    if (err) err.textContent = 'Erreur technique lors de la connexion. Veuillez réessayer.';
   }
 }
 
@@ -536,9 +654,12 @@ async function clientRegister(e) {
     const allClients = await DB.getAll('clients');
     const targetDigits = phone.replace(/\D/g, '');
     const existing = allClients.find(c => {
-      if (!c.phone) return false;
-      const cDigits = c.phone.replace(/\D/g, '');
-      return c.phone === phone || (targetDigits && cDigits === targetDigits);
+      if (!c || !c.phone) return false;
+      const cDigits = String(c.phone).replace(/\D/g, '');
+      return c.phone === phone || 
+             (targetDigits && cDigits === targetDigits) ||
+             (targetDigits.length >= 6 && cDigits.endsWith(targetDigits)) ||
+             (cDigits.length >= 6 && targetDigits.endsWith(cDigits));
     });
 
     if (existing) { 
@@ -551,7 +672,8 @@ async function clientRegister(e) {
       prenom, 
       nom, 
       password: pass, 
-      createdAt: new Date().toISOString() 
+      createdAt: new Date().toISOString(),
+      created_at: new Date().toISOString()
     };
     await DB.put('clients', client);
     saveAuth({ role: 'client', user: client });
