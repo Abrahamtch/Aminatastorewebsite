@@ -1812,6 +1812,70 @@ async function saveProduct(e) {
 }
 window.saveProduct = saveProduct;
 
+async function syncLocalProductsToCloud() {
+  const sb = getSupabase();
+  if (!sb) {
+    showToast('⚠️ Supabase n\'est pas initialisé sur votre navigateur.', 'error');
+    return;
+  }
+
+  const localList = await DB.getLocalAll('products');
+  if (!localList || localList.length === 0) {
+    showToast('ℹ️ Aucun produit local à synchroniser.', 'info');
+    return;
+  }
+
+  showToast(`⏳ Synchronisation de ${localList.length} produit(s) vers Supabase...`, 'info', 4000);
+
+  let successCount = 0;
+  let failCount = 0;
+  let lastError = null;
+
+  for (const p of localList) {
+    try {
+      const productRecord = { 
+        id: Number(p.id), 
+        name: p.name, 
+        category: p.category || 'Wax', 
+        price: Number(p.price), 
+        description: p.description || '', 
+        image: p.image || '', 
+        media: (p.media || []).slice(0, 20),
+        colors: p.colors || [],
+        badge: p.badge || null, 
+        badgeType: p.badgeType || '',
+        featured: Boolean(p.featured)
+      };
+
+      const { error } = await sb.from('products').upsert(productRecord);
+      if (error) {
+        console.error('Erreur synchro produit:', p.name, error);
+        failCount++;
+        lastError = error;
+      } else {
+        successCount++;
+      }
+    } catch(e) {
+      console.error('Exception synchro produit:', p.name, e);
+      failCount++;
+      lastError = e;
+    }
+  }
+
+  if (successCount > 0 && failCount === 0) {
+    showToast(`✅ ${successCount} produit(s) synchronisé(s) avec succès dans Supabase !`, 'success', 6000);
+    products = await DB.getAll('products');
+    renderAdminProducts();
+    if ($('#productsGrid')) renderProducts();
+    if ($('#collectionProductsGrid')) renderCollectionPage();
+  } else if (successCount > 0 && failCount > 0) {
+    showToast(`⚠️ ${successCount} produit(s) synchronisé(s), mais ${failCount} échec(s). Erreur : ${lastError?.message || lastError}`, 'warning', 8000);
+  } else {
+    showToast(`❌ Échec de la synchronisation vers Supabase : ${lastError?.message || lastError}`, 'error', 8000);
+  }
+}
+window.syncLocalProductsToCloud = syncLocalProductsToCloud;
+
 // ══════════════════════════════════════════════
 //  CLIENT PANEL
 // ══════════════════════════════════════════════

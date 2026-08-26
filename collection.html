@@ -605,7 +605,10 @@
         <div class="admin-tab-content" id="adminTabProducts">
             <div class="admin-products-header">
                 <h3>🏷️ Gestion des Produits</h3>
-                <button class="btn btn-primary btn-add-product" id="addProductBtn">+ Ajouter un Produit</button>
+                <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                    <button class="btn btn-secondary" onclick="syncLocalProductsToCloud()">☁️ Synchroniser vers Supabase</button>
+                    <button class="btn btn-primary btn-add-product" id="addProductBtn">+ Ajouter un Produit</button>
+                </div>
             </div>
             <div class="admin-products-grid" id="adminProductsGrid"></div>
         </div>
