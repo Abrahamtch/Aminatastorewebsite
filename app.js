@@ -259,6 +259,9 @@ const DB = {
       try {
         let res;
         if (store === 'products') {
+          if (data && data.image && data.image.startsWith('data:image')) {
+            data.image = await compressDataUrl(data.image, 800, 800, 0.70);
+          }
           res = await sb.from('products').upsert(data);
         } else if (store === 'orders') {
           res = await sb.from('orders').upsert(data);
@@ -1648,7 +1651,44 @@ async function deleteProduct(id) {
   }
 }
 
-async function processImageFile(file, maxWidth = 1280, maxHeight = 1280, quality = 0.82) {
+async function compressDataUrl(dataUrl, maxWidth = 800, maxHeight = 800, quality = 0.70) {
+  if (!dataUrl || typeof dataUrl !== 'string' || !dataUrl.startsWith('data:image')) {
+    return dataUrl || '';
+  }
+  if (dataUrl.length < 100000) return dataUrl;
+
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => {
+      let w = img.width;
+      let h = img.height;
+      if (w > maxWidth || h > maxHeight) {
+        if (w > h) {
+          h = Math.round((h * maxWidth) / w);
+          w = maxWidth;
+        } else {
+          w = Math.round((w * maxHeight) / h);
+          h = maxHeight;
+        }
+      }
+      const canvas = document.createElement('canvas');
+      canvas.width = w;
+      canvas.height = h;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, w, h);
+      try {
+        const compressed = canvas.toDataURL('image/jpeg', quality);
+        resolve(compressed);
+      } catch (e) {
+        resolve(dataUrl);
+      }
+    };
+    img.onerror = () => resolve(dataUrl);
+    img.src = dataUrl;
+  });
+}
+
+async function processImageFile(file, maxWidth = 800, maxHeight = 800, quality = 0.70) {
   if (!file) return '';
   if (file.type && file.type.startsWith('video/')) {
     if (file.size > 20 * 1024 * 1024) {
@@ -1853,14 +1893,26 @@ async function syncLocalProductsToCloud(silent = false) {
 
   for (const p of localList) {
     try {
+      const compressedImg = await compressDataUrl(p.image, 800, 800, 0.70);
+      let compressedMedia = [];
+      if (Array.isArray(p.media)) {
+        compressedMedia = await Promise.all(p.media.map(async m => {
+          if (m && m.url && m.url.startsWith('data:image')) {
+            const url = await compressDataUrl(m.url, 800, 800, 0.70);
+            return { ...m, url };
+          }
+          return m;
+        }));
+      }
+
       const productRecord = { 
         id: Number(p.id), 
         name: p.name, 
         category: p.category || 'Wax', 
         price: Number(p.price), 
         description: p.description || '', 
-        image: p.image || '', 
-        media: (p.media || []).slice(0, 20),
+        image: compressedImg || '', 
+        media: compressedMedia.slice(0, 20),
         colors: p.colors || [],
         badge: p.badge || null, 
         badgeType: p.badgeType || '',
