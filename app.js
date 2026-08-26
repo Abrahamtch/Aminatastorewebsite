@@ -1450,6 +1450,8 @@ function openAdmin() {
   Notify.requestPerm();
   $('#adminOverlay')?.classList.add('open'); $('#adminPanel')?.classList.add('open'); document.body.style.overflow = 'hidden';
   renderAdminOrders(); renderAdminProducts(); renderAdminChatList(); renderMarketingTab();
+  // Auto-sync products from localStorage to Supabase in background
+  setTimeout(() => { syncLocalProductsToCloud(true); }, 1000);
 }
 function closeAdmin() { $('#adminOverlay')?.classList.remove('open'); $('#adminPanel')?.classList.remove('open'); document.body.style.overflow = ''; }
 
@@ -1508,7 +1510,23 @@ async function exportCSV() {
 async function renderAdminProducts() {
   const grid = $('#adminProductsGrid'); if (!grid) return;
   const prods = await DB.getAll('products');
-  grid.innerHTML = prods.map(p => {
+
+  const syncBannerHTML = `
+    <div class="admin-sync-banner" style="grid-column: 1 / -1; background: linear-gradient(135deg, #4f46e5, #7c3aed); color: white; padding: 16px 20px; border-radius: 14px; margin-bottom: 15px; display: flex; align-items: center; justify-content: space-between; gap: 15px; box-shadow: 0 4px 15px rgba(79,70,229,0.3);">
+      <div style="display:flex; align-items:center; gap:12px;">
+        <span style="font-size: 1.8rem;">☁️</span>
+        <div>
+          <h4 style="margin:0; font-size:1.05rem; font-weight:700; color:#fff;">Synchroniser tous les produits vers Supabase</h4>
+          <p style="margin:4px 0 0 0; font-size:0.85rem; opacity:0.9;">Cliquez ici pour transférer vos produits locaux vers la base de données cloud.</p>
+        </div>
+      </div>
+      <button onclick="syncLocalProductsToCloud(false)" style="background:#ffffff; color:#4f46e5; font-weight:800; border:none; padding:10px 22px; border-radius:30px; cursor:pointer; white-space:nowrap; font-size:0.9rem; transition:transform 0.2s;" onmouseover="this.style.transform='scale(1.04)'" onmouseout="this.style.transform='scale(1)'">
+        🚀 Lancer la Synchronisation
+      </button>
+    </div>
+  `;
+
+  grid.innerHTML = syncBannerHTML + prods.map(p => {
     const feat = isFeatured(p);
     return `
     <div class="admin-product-card">
@@ -1812,20 +1830,22 @@ async function saveProduct(e) {
 }
 window.saveProduct = saveProduct;
 
-async function syncLocalProductsToCloud() {
+async function syncLocalProductsToCloud(silent = false) {
   const sb = getSupabase();
   if (!sb) {
-    showToast('⚠️ Supabase n\'est pas initialisé sur votre navigateur.', 'error');
+    if (!silent) showToast('⚠️ Supabase n\'est pas initialisé sur votre navigateur.', 'error');
     return;
   }
 
   const localList = await DB.getLocalAll('products');
   if (!localList || localList.length === 0) {
-    showToast('ℹ️ Aucun produit local à synchroniser.', 'info');
+    if (!silent) showToast('ℹ️ Aucun produit local à synchroniser.', 'info');
     return;
   }
 
-  showToast(`⏳ Synchronisation de ${localList.length} produit(s) vers Supabase...`, 'info', 4000);
+  if (!silent) {
+    showToast(`⏳ Synchronisation de ${localList.length} produit(s) vers Supabase...`, 'info', 4000);
+  }
 
   let successCount = 0;
   let failCount = 0;
@@ -1870,7 +1890,7 @@ async function syncLocalProductsToCloud() {
     if ($('#collectionProductsGrid')) renderCollectionPage();
   } else if (successCount > 0 && failCount > 0) {
     showToast(`⚠️ ${successCount} produit(s) synchronisé(s), mais ${failCount} échec(s). Erreur : ${lastError?.message || lastError}`, 'warning', 8000);
-  } else {
+  } else if (!silent) {
     showToast(`❌ Échec de la synchronisation vers Supabase : ${lastError?.message || lastError}`, 'error', 8000);
   }
 }
