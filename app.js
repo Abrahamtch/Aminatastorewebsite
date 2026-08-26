@@ -252,14 +252,16 @@ const DB = {
 
   async put(store, data) {
     const sb = getSupabase();
+    let supabaseSuccess = false;
+    let supabaseErr = null;
+
     if (sb) {
       try {
+        let res;
         if (store === 'products') {
-          const { error } = await sb.from('products').upsert(data);
-          if (error) console.warn('Supabase put product error:', error);
+          res = await sb.from('products').upsert(data);
         } else if (store === 'orders') {
-          const { error } = await sb.from('orders').upsert(data);
-          if (error) console.warn('Supabase put order error:', error);
+          res = await sb.from('orders').upsert(data);
         } else if (store === 'clients') {
           const clientData = {
             phone: data.phone,
@@ -268,18 +270,29 @@ const DB = {
             password: data.password,
             created_at: data.createdAt || data.created_at || new Date().toISOString()
           };
-          const { error } = await sb.from('clients').upsert(clientData);
-          if (error) console.warn('Supabase put client error:', error);
+          res = await sb.from('clients').upsert(clientData);
         } else if (store === 'messages') {
-          const { error } = await sb.from('messages').upsert(data);
-          if (error) console.warn('Supabase put message error:', error);
+          res = await sb.from('messages').upsert(data);
+        }
+
+        if (res && res.error) {
+          console.error(`❌ Erreur Supabase put (${store}):`, res.error);
+          supabaseErr = res.error;
+        } else if (res) {
+          supabaseSuccess = true;
         }
       } catch (err) {
-        console.warn('Supabase put error, falling back to local:', err);
+        console.error(`❌ Exception Supabase put (${store}):`, err);
+        supabaseErr = err;
       }
     }
 
-    return this.putLocal(store, data);
+    await this.putLocal(store, data);
+
+    if (sb && !supabaseSuccess && supabaseErr) {
+      return { success: false, error: supabaseErr, local: true };
+    }
+    return { success: true, local: true };
   },
 
   async get(store, key) {
@@ -1773,7 +1786,7 @@ async function saveProduct(e) {
       featured: Boolean(featured)
     };
 
-    await DB.put('products', productRecord);
+    const saveResult = await DB.put('products', productRecord);
 
     products = await DB.getAll('products');
     renderAdminProducts(); 
@@ -1781,7 +1794,12 @@ async function saveProduct(e) {
     if ($('#collectionProductsGrid')) renderCollectionPage();
     
     closeProductForm();
-    showToast(editId ? `✅ "${name}" modifié avec succès !` : `✅ "${name}" ajouté avec succès !`, 'success');
+    if (saveResult && saveResult.error) {
+      const errMsg = saveResult.error.message || JSON.stringify(saveResult.error);
+      showToast(`⚠️ Produit enregistré localement, mais échec Supabase : ${errMsg}`, 'error', 8000);
+    } else {
+      showToast(editId ? `✅ "${name}" modifié avec succès !` : `✅ "${name}" ajouté avec succès !`, 'success');
+    }
   } catch (err) {
     console.error('Erreur lors de l\'enregistrement du produit:', err);
     showToast('Erreur lors de l\'enregistrement : ' + (err.message || err), 'error');
