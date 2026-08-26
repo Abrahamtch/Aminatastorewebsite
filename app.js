@@ -337,6 +337,10 @@ const DB = {
   },
 
   async getAll(store) {
+    const keyProp = store === 'clients' ? 'phone' : 'id';
+    let sbData = [];
+    let sbSuccess = false;
+
     const sb = getSupabase();
     if (sb && ['products', 'orders', 'clients', 'messages'].includes(store)) {
       try {
@@ -346,11 +350,14 @@ const DB = {
         if (store === 'messages') query = query.order('timestamp', { ascending: true });
         
         const { data, error } = await query;
-        if (!error && Array.isArray(data) && data.length > 0) {
+        if (!error && Array.isArray(data)) {
+          sbData = data;
+          sbSuccess = true;
           for (const item of data) {
             try { await this.putLocal(store, item); } catch(e) {}
           }
-          return data;
+        } else if (error) {
+          console.warn(`Supabase getAll(${store}) error:`, error);
         }
       } catch (err) {
         console.warn(`Supabase getAll(${store}) notice:`, err);
@@ -358,6 +365,32 @@ const DB = {
     }
 
     const localList = await this.getLocalAll(store);
+
+    if (sbSuccess) {
+      const merged = [...sbData];
+      const unsyncedLocals = [];
+
+      localList.forEach(localItem => {
+        if (localItem && localItem[keyProp]) {
+          const existsInSb = merged.some(sbItem => String(sbItem[keyProp]) === String(localItem[keyProp]));
+          if (!existsInSb) {
+            merged.push(localItem);
+            unsyncedLocals.push(localItem);
+          }
+        }
+      });
+
+      if (unsyncedLocals.length > 0 && store === 'products') {
+        setTimeout(() => {
+          if (typeof window.syncLocalProductsToCloud === 'function') {
+            window.syncLocalProductsToCloud(true);
+          }
+        }, 500);
+      }
+
+      return merged;
+    }
+
     if (store === 'products' && (!localList || localList.length === 0)) {
       for (const p of DEFAULT_PRODUCTS) {
         try { await this.putLocal('products', p); } catch(e) {}
