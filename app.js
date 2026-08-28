@@ -367,26 +367,22 @@ const DB = {
     const localList = await this.getLocalAll(store);
 
     if (sbSuccess) {
-      const merged = [...sbData];
-      const unsyncedLocals = [];
+      if (store === 'products') {
+        try {
+          localStorage.setItem('aminata_store_products', JSON.stringify(sbData));
+        } catch(e) {}
+        return sbData;
+      }
 
+      const merged = [...sbData];
       localList.forEach(localItem => {
         if (localItem && localItem[keyProp]) {
           const existsInSb = merged.some(sbItem => String(sbItem[keyProp]) === String(localItem[keyProp]));
           if (!existsInSb) {
             merged.push(localItem);
-            unsyncedLocals.push(localItem);
           }
         }
       });
-
-      if (unsyncedLocals.length > 0 && store === 'products') {
-        setTimeout(() => {
-          if (typeof window.syncLocalProductsToCloud === 'function') {
-            window.syncLocalProductsToCloud(true);
-          }
-        }, 500);
-      }
 
       return merged;
     }
