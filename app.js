@@ -402,21 +402,31 @@ const DB = {
 
   async delete(store, key) {
     const keyField = store === 'clients' ? 'phone' : 'id';
+    const numKey = !isNaN(Number(key)) ? Number(key) : key;
+    const strKey = String(key);
     
     // Remove from localStorage
     try {
       const raw = localStorage.getItem('aminata_store_' + store);
       if (raw) {
         let list = JSON.parse(raw) || [];
-        list = list.filter(i => i && String(i[keyField]) !== String(key));
+        list = list.filter(i => i && String(i[keyField]) !== strKey && Number(i[keyField]) !== numKey);
         localStorage.setItem('aminata_store_' + store, JSON.stringify(list));
       }
     } catch(e) {}
 
+    // Remove from global in-memory products array
+    if (store === 'products' && Array.isArray(products)) {
+      products = products.filter(p => p && String(p.id) !== strKey && Number(p.id) !== numKey);
+    }
+
     const sb = getSupabase();
     if (sb && ['products', 'orders', 'clients', 'messages'].includes(store)) {
       try {
-        await sb.from(store).delete().eq(keyField, key);
+        const { error } = await sb.from(store).delete().eq(keyField, numKey);
+        if (error) {
+          console.error(`❌ Erreur Supabase delete(${store}):`, error);
+        }
       } catch(err) {
         console.warn(`Supabase delete(${store}) notice:`, err);
       }
@@ -426,7 +436,9 @@ const DB = {
     return new Promise((res) => {
       try {
         const tx = this.db.transaction(store, 'readwrite');
-        tx.objectStore(store).delete(key);
+        const os = tx.objectStore(store);
+        os.delete(numKey);
+        os.delete(strKey);
         tx.oncomplete = () => res();
         tx.onerror = () => res();
       } catch(e) {
@@ -1675,12 +1687,14 @@ window.removeColorVariant = removeColorVariant;
 
 async function deleteProduct(id) {
   const p = await DB.get('products', id);
-  if (confirm(`Supprimer "${p?.name || id}" ?`)) {
+  const name = p?.name || id;
+  if (confirm(`Voulez-vous vraiment supprimer "${name}" ?`)) {
     await DB.delete('products', id);
-    products = await DB.getAll('products');
-    renderAdminProducts(); renderProducts();
+    products = products.filter(item => item && String(item.id) !== String(id) && Number(item.id) !== Number(id));
+    renderAdminProducts();
+    if ($('#productsGrid')) renderProducts();
     if ($('#collectionProductsGrid')) renderCollectionPage();
-    showToast('Produit supprimé', 'info');
+    showToast(`✅ "${name}" a été supprimé définitivement.`, 'success');
   }
 }
 
