@@ -20,20 +20,20 @@ const STORE_PRODUCTS = [
     name: 'Basin riche 100% coton',
     slug: 'basin-riche-100-coton',
     category: 'Basin',
-    price: 25000,
+    price: 5000,
     description: 'Basin riche authentique 100% coton de qualité supérieure. Éclat brillant exceptionnel, tombé rigide parfait et motifs damassés raffinés. Idéal pour les grands boubous de cérémonie et tenues traditionnelles de prestige.',
-    image: 'Produits/1- Basin riche 100% coton/Bleu.jpeg',
+    image: 'Produits/1- Basin riche 100 Coton/Bleu.jpeg',
     media: [
-      { type: 'image', url: 'Produits/1- Basin riche 100% coton/Bleu.jpeg' },
-      { type: 'image', url: 'Produits/1- Basin riche 100% coton/Bleu ciel.jpeg' },
-      { type: 'image', url: 'Produits/1- Basin riche 100% coton/Bleu foncé.jpeg' },
-      { type: 'image', url: 'Produits/1- Basin riche 100% coton/Jaune.jpeg' },
-      { type: 'image', url: 'Produits/1- Basin riche 100% coton/Maron.jpeg' },
-      { type: 'image', url: 'Produits/1- Basin riche 100% coton/Orange.jpeg' },
-      { type: 'image', url: 'Produits/1- Basin riche 100% coton/Rose.jpeg' },
-      { type: 'image', url: 'Produits/1- Basin riche 100% coton/Rouge.jpeg' },
-      { type: 'image', url: 'Produits/1- Basin riche 100% coton/Vert.jpeg' },
-      { type: 'image', url: 'Produits/1- Basin riche 100% coton/Violet.jpeg' }
+      { type: 'image', url: 'Produits/1- Basin riche 100 Coton/Bleu.jpeg' },
+      { type: 'image', url: 'Produits/1- Basin riche 100 Coton/Bleu ciel.jpeg' },
+      { type: 'image', url: 'Produits/1- Basin riche 100 Coton/Bleu foncé.jpeg' },
+      { type: 'image', url: 'Produits/1- Basin riche 100 Coton/Jaune.jpeg' },
+      { type: 'image', url: 'Produits/1- Basin riche 100 Coton/Maron.jpeg' },
+      { type: 'image', url: 'Produits/1- Basin riche 100 Coton/Orange.jpeg' },
+      { type: 'image', url: 'Produits/1- Basin riche 100 Coton/Rose.jpeg' },
+      { type: 'image', url: 'Produits/1- Basin riche 100 Coton/Rouge.jpeg' },
+      { type: 'image', url: 'Produits/1- Basin riche 100 Coton/Vert.jpeg' },
+      { type: 'image', url: 'Produits/1- Basin riche 100 Coton/Violet.jpeg' }
     ],
     colors: [
       { name: 'Bleu Royal', hex: '#1E3A8A' },
@@ -55,7 +55,7 @@ const STORE_PRODUCTS = [
     name: 'Gezner qualité premium',
     slug: 'gezner-qualite-premium',
     category: 'Basin',
-    price: 35000,
+    price: 8000,
     description: 'Véritable Getzner autrichien qualité premium au lustre incomparable. Tissu damassé d\'exception, d\'une douceur veloutée et d\'une brillance permanente. Le choix de prédilection des confections de prestige.',
     image: 'Produits/2- Gezner qualité premium/Blanc 1.jpeg',
     media: [
@@ -91,7 +91,7 @@ const STORE_PRODUCTS = [
     name: 'Thioub VIP',
     slug: 'thioub-vip',
     category: 'Thioub',
-    price: 18000,
+    price: 6000,
     description: 'Thioub d\'exception qualité VIP aux teintures artisanales éclatantes. Motifs uniques et finitions soignées apportant une touche de grâce et de noblesse à vos tenues traditionnelles et modernes.',
     image: 'Produits/3- Thioub VIP/01.jpeg',
     media: [
@@ -121,7 +121,7 @@ const STORE_PRODUCTS = [
     name: 'Thioub léger',
     slug: 'thioub-leger',
     category: 'Thioub',
-    price: 12000,
+    price: 4000,
     description: 'Tissu Thioub léger et fluide, parfait pour le quotidien comme pour les fêtes. Matière respirante et agréable à porter offrant un confort absolu tout en restant raffiné.',
     image: 'Produits/4- Thioub léger/01.jpeg',
     media: [
@@ -148,7 +148,7 @@ const STORE_PRODUCTS = [
     name: 'Fil à fil italien qualité premium',
     slug: 'fil-a-fil-italien-qualite-premium',
     category: 'Coton',
-    price: 15000,
+    price: 3000,
     description: 'Sublime fil à fil tissé en Italie avec les meilleures fibres de coton. Texture fine, toucher soyeux et tenue impeccable pour des tenues sur-mesure résolument élégantes et distinguées.',
     image: 'Produits/5- Fil à fil italien qualité premium/01.jpeg',
     media: [
@@ -175,7 +175,7 @@ const STORE_PRODUCTS = [
     name: 'Fil à fil unique qualité Supérieur',
     slug: 'fil-a-fil-unique-qualite-superieur',
     category: 'Coton',
-    price: 12500,
+    price: 4500,
     description: 'Fil à fil haut de gamme aux teintes riches et nuancées. Idéal pour chemises, grands boubous légers et créations coutures contemporaines au style épuré.',
     image: 'Produits/6- Fil à fil unique qualité Supérieur/Blanc.jpeg',
     media: [
@@ -207,7 +207,7 @@ const STORE_PRODUCTS = [
     name: 'Wax',
     slug: 'wax',
     category: 'Wax',
-    price: 10000,
+    price: 5000,
     description: 'Superbe collection Wax aux imprimés africains vibrants et motifs graphiques envoûtants. Couleurs grand teint qui résistent parfaitement au lavage pour des créations colorées et pleines de charisme.',
     image: 'Produits/7- Wax/WhatsApp Image 2025-10-17 at 09.47.10.jpeg',
     media: [
@@ -235,7 +235,7 @@ const STORE_PRODUCTS = [
     name: 'Fil à fil Motif Dubaï qualité original',
     slug: 'fil-a-fil-motif-dubai-qualite-original',
     category: 'Coton',
-    price: 20000,
+    price: 7500,
     description: 'Fil à fil exclusif orné de motifs orientaux inspirés de la haute couture de Dubaï. Tissu noble, brillant et raffiné accompagné de sa démonstration vidéo.',
     image: 'Produits/8- Fil à fil Motif Dubaï qualité original/01.jpeg',
     media: [
@@ -412,6 +412,9 @@ const DB = {
     } catch(e) {
       this.db = null;
     }
+
+    // Always ensure latest catalog prices & fixed media paths are synced
+    await this.syncRealProductsFolder();
 
     // 2. Setup Supabase Realtime synchronization
     this.setupRealtime();
