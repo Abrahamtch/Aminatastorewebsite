@@ -358,11 +358,20 @@ function openProductNewTab(e, pid) {
   window.open(prodUrl, '_blank');
 }
 
+function getFullImageUrl(imgUrl) {
+  if (!imgUrl) return '';
+  if (imgUrl.startsWith('http://') || imgUrl.startsWith('https://')) return imgUrl;
+  const origin = window.location.origin;
+  const cleanPath = imgUrl.startsWith('/') ? imgUrl.substring(1) : imgUrl;
+  return `${origin}/${encodeURI(cleanPath)}`;
+}
+
 window.slugify = slugify;
 window.getProductSlug = getProductSlug;
 window.getProductUrl = getProductUrl;
 window.copyProductUrl = copyProductUrl;
 window.openProductNewTab = openProductNewTab;
+window.getFullImageUrl = getFullImageUrl;
 
 // ── Supabase Cloud Database ──
 const SUPABASE_URL = 'https://nglihypdaiyftfutjqoo.supabase.co';
@@ -1690,7 +1699,12 @@ function openQuickView(pid) {
   if (directWaBtn) {
     directWaBtn.onclick = () => {
       const variant = selectedColorVariant && selectedColorVariant !== 'Standard' ? ` (Variante: ${selectedColorVariant})` : '';
-      const text = `Bonjour Aminata Store ! ✨ Je souhaite commander le tissu :\n👉 *${p.name}*${variant}\n📏 Quantité : ${qvQty} yard(s)\n💰 Prix Total : ${formatPrice(p.price * qvQty)}\n\nPouvez-vous me confirmer la disponibilité et la livraison ? Merci !`;
+      const fullImgUrl = getFullImageUrl(p.image);
+      let text = `Bonjour Aminata Store ! ✨ Je souhaite commander le tissu :\n👉 *${p.name}*${variant}\n📏 Quantité : ${qvQty} yard(s)\n💰 Prix Total : ${formatPrice(p.price * qvQty)}\n`;
+      if (fullImgUrl) {
+        text += `🖼️ Photo du tissu : ${fullImgUrl}\n`;
+      }
+      text += `\nPouvez-vous me confirmer la disponibilité et la livraison ? Merci !`;
       const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
       window.open(url, '_blank');
     };
@@ -1906,7 +1920,13 @@ async function submitOrder(e) {
     const name = i.name || p?.name || 'Tissu';
     const price = (p && p.price) ? p.price : (Number(i.price) || 0);
     const qty = Number(i.quantity) || 1;
+    const imgPath = p?.image || i.image || '';
+    const fullImgUrl = getFullImageUrl(imgPath);
+
     msg += `${idx + 1}. *${name}* × ${qty} = ${formatPrice(price * qty)}\n`;
+    if (fullImgUrl) {
+      msg += `   🖼️ *Photo:* ${fullImgUrl}\n`;
+    }
   });
 
   msg += `\n━━━━━━━━━━━━━━━━━━━━\n`;
