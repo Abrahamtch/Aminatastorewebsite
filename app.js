@@ -404,11 +404,7 @@ const DB = {
       this.db = null;
     }
 
-    // 2. Purge initial mock products if existing & sync real products folder
-    await this.purgeDefaultMockProducts();
-    await this.syncRealProductsFolder();
-
-    // 3. Setup Supabase Realtime synchronization
+    // 2. Setup Supabase Realtime synchronization
     this.setupRealtime();
   },
 
@@ -1055,26 +1051,33 @@ async function initApp() {
   loadAuth();
   loadCart();
 
-  // ⚡ INSTANT 0ms RENDER FROM LOCAL CACHE ⚡
+  // ⚡ INSTANT 0ms RENDER FROM LOCAL CACHE OR STORE_PRODUCTS ⚡
   try {
     const cached = localStorage.getItem('aminata_store_products');
     if (cached) {
       const parsed = JSON.parse(cached);
       if (Array.isArray(parsed) && parsed.length > 0) {
         products = parsed;
-        if ($('#productsGrid')) renderProducts();
-        if ($('#collectionProductsGrid')) renderCollectionPage();
+      } else {
+        products = STORE_PRODUCTS;
       }
+    } else {
+      products = STORE_PRODUCTS;
     }
-  } catch(e) {}
+  } catch(e) {
+    products = STORE_PRODUCTS;
+  }
 
+  // Render IMMEDIATELY at 0ms (no blocking network wait!)
+  if ($('#productsGrid')) renderProducts();
+  if ($('#collectionProductsGrid')) renderCollectionPage();
   parseUrlParams();
 
-  // Fast async revalidation from Supabase in background
+  // Async background revalidation from Supabase
   try {
     await DB.init();
     const loaded = await DB.getAll('products');
-    if (Array.isArray(loaded)) {
+    if (Array.isArray(loaded) && loaded.length > 0) {
       products = loaded;
       if ($('#productsGrid')) renderProducts();
       if ($('#collectionProductsGrid')) renderCollectionPage();
@@ -1129,12 +1132,13 @@ async function renderProducts(category = 'all') {
 
   grid.innerHTML = displayList.map((p, i) => {
     const prodUrl = getProductUrl(p);
+    const isHighPriority = i < 4 ? 'fetchpriority="high"' : 'loading="lazy"';
     return `
-    <div class="product-card" data-id="${p.id}" style="animation-delay: ${i * 0.08}s">
+    <div class="product-card" data-id="${p.id}" style="animation-delay: ${i * 0.04}s">
       <a href="${prodUrl}" target="_blank" class="product-card-link" onclick="openProductNewTab(event, ${p.id})">
         <div class="product-image-container">
           ${p.badge ? `<span class="product-badge-label ${p.badgeType || ''}">${p.badge}</span>` : ''}
-          <img src="${p.image}" alt="${p.name}" loading="lazy">
+          <img src="${p.image}" alt="${p.name}" ${isHighPriority}>
           <div class="product-overlay">
             <button class="btn-add-cart" onclick="event.stopPropagation(); event.preventDefault(); addToCart(${p.id}, this)">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 01-8 0"></path></svg>
@@ -1237,12 +1241,13 @@ async function renderCollectionPage() {
   } else {
     grid.innerHTML = list.map((p, i) => {
       const prodUrl = getProductUrl(p);
+      const isHighPriority = i < 4 ? 'fetchpriority="high"' : 'loading="lazy"';
       return `
-      <div class="product-card" data-id="${p.id}" style="animation-delay: ${i * 0.05}s">
+      <div class="product-card" data-id="${p.id}" style="animation-delay: ${i * 0.04}s">
         <a href="${prodUrl}" target="_blank" class="product-card-link" onclick="openProductNewTab(event, ${p.id})">
           <div class="product-image-container">
             ${p.badge ? `<span class="product-badge-label ${p.badgeType || ''}">${p.badge}</span>` : ''}
-            <img src="${p.image}" alt="${p.name}" loading="lazy">
+            <img src="${p.image}" alt="${p.name}" ${isHighPriority}>
             <div class="product-overlay">
               <button class="btn-add-cart" onclick="event.stopPropagation(); event.preventDefault(); addToCart(${p.id}, this)">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 01-8 0"></path></svg>
