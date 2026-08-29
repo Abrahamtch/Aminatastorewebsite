@@ -377,9 +377,14 @@ const DB = {
         if (!error && Array.isArray(data)) {
           sbData = data;
           sbSuccess = true;
-          for (const item of data) {
-            try { await this.putLocal(store, item); } catch(e) {}
+          if (store === 'products') {
+            try {
+              localStorage.setItem('aminata_store_products', JSON.stringify(sbData));
+            } catch(e) {}
+            return sbData;
           }
+          // Non-blocking sync to local DB
+          Promise.all((data || []).map(item => this.putLocal(store, item).catch(()=>{})));
         } else if (error) {
           console.warn(`Supabase getAll(${store}) error:`, error);
         }
@@ -388,16 +393,13 @@ const DB = {
       }
     }
 
+    if (store === 'products' && sbSuccess) {
+      return sbData;
+    }
+
     const localList = await this.getLocalAll(store);
 
     if (sbSuccess) {
-      if (store === 'products') {
-        try {
-          localStorage.setItem('aminata_store_products', JSON.stringify(sbData));
-        } catch(e) {}
-        return sbData;
-      }
-
       const merged = [...sbData];
       localList.forEach(localItem => {
         if (localItem && localItem[keyProp]) {
@@ -411,9 +413,6 @@ const DB = {
       return merged;
     }
 
-    if (store === 'products' && (!localList || localList.length === 0)) {
-      return [];
-    }
     return localList || [];
   },
 
@@ -790,14 +789,32 @@ async function initApp() {
   setupScrollEffects();
   loadAuth();
   loadCart();
+
+  // ⚡ INSTANT 0ms RENDER FROM LOCAL CACHE ⚡
+  try {
+    const cached = localStorage.getItem('aminata_store_products');
+    if (cached) {
+      const parsed = JSON.parse(cached);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        products = parsed;
+        if ($('#productsGrid')) renderProducts();
+        if ($('#collectionProductsGrid')) renderCollectionPage();
+      }
+    }
+  } catch(e) {}
+
   parseUrlParams();
 
+  // Fast async revalidation from Supabase in background
   try {
     await DB.init();
     const loaded = await DB.getAll('products');
-    products = Array.isArray(loaded) ? loaded : [];
-    if ($('#productsGrid')) renderProducts();
-    if ($('#collectionProductsGrid')) renderCollectionPage();
+    if (Array.isArray(loaded)) {
+      products = loaded;
+      if ($('#productsGrid')) renderProducts();
+      if ($('#collectionProductsGrid')) renderCollectionPage();
+      parseUrlParams();
+    }
     
     if (currentAuth?.role === 'client') startChatPolling();
   } catch(e) {
@@ -1034,21 +1051,17 @@ function parseUrlParams() {
   const prodParam = urlParams.get('product') || urlParams.get('p') || urlParams.get('slug');
   if (prodParam) {
     const targetSlug = decodeURIComponent(prodParam).trim().toLowerCase();
-    const checkProductParam = () => {
-      const prodList = (products && products.length > 0) ? products : DEFAULT_PRODUCTS;
-      const matched = prodList.find(p => 
-        String(p.id) === targetSlug || 
-        (p.slug && p.slug.toLowerCase() === targetSlug) || 
-        slugify(p.name) === targetSlug
-      );
+    const prodList = (products && products.length > 0) ? products : [];
+    const matched = prodList.find(p => 
+      String(p.id) === targetSlug || 
+      (p.slug && p.slug.toLowerCase() === targetSlug) || 
+      slugify(p.name) === targetSlug
+    );
 
-      if (matched) {
-        openQuickView(matched.id);
-        document.title = `${matched.name} - ${formatPrice(matched.price)} | Aminata Store`;
-      }
-    };
-    setTimeout(checkProductParam, 300);
-    setTimeout(checkProductParam, 1200);
+    if (matched) {
+      openQuickView(matched.id);
+      document.title = `${matched.name} - ${formatPrice(matched.price)} | Aminata Store`;
+    }
   }
 }
 
