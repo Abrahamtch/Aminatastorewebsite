@@ -1,42 +1,50 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Aminata Store — Votre boutique en ligne de tissus africains premium. Wax, Basin, Lin, Coton, Soie, Dentelle et plus encore. Qualité exceptionnelle, livraison rapide.">
-    <meta name="keywords" content="tissu, wax, basin, lin, coton, soie, dentelle, tissu africain, boutique tissu, pagne, bazin, ankara, aminata store">
+    <meta name="description"
+        content="Aminata Store — Votre boutique en ligne de tissus africains premium. Wax, Basin, Lin, Coton, Soie, Dentelle et plus encore. Qualité exceptionnelle, livraison rapide.">
+    <meta name="keywords"
+        content="tissu, wax, basin, lin, coton, soie, dentelle, tissu africain, boutique tissu, pagne, bazin, ankara, aminata store">
     <meta name="theme-color" content="#C8A96E">
     <title>Aminata Store — Tissus Premium & Élégance Africaine</title>
-    
+
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://nglihypdaiyftfutjqoo.supabase.co" crossorigin>
     <link rel="dns-prefetch" href="https://nglihypdaiyftfutjqoo.supabase.co">
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
     <!-- Stylesheet -->
     <link rel="stylesheet" href="styles.css">
 
     <!-- Meta Pixel Code -->
     <script>
-    !function(f,b,e,v,n,t,s)
-    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-    n.queue=[];t=b.createElement(e);t.async=!0;
-    t.src=v;s=b.getElementsByTagName(e)[0];
-    s.parentNode.insertBefore(t,s)}(window, document,'script',
-    'https://connect.facebook.net/en_US/fbevents.js');
-    var _activePixel = (function(){ try { return localStorage.getItem('aminata_meta_pixel_id') || '1532882571493316'; } catch(e){ return '1532882571493316'; } })();
-    fbq('init', _activePixel);
-    fbq('track', 'PageView');
+        !function (f, b, e, v, n, t, s) {
+            if (f.fbq) return; n = f.fbq = function () {
+                n.callMethod ?
+                n.callMethod.apply(n, arguments) : n.queue.push(arguments)
+            };
+            if (!f._fbq) f._fbq = n; n.push = n; n.loaded = !0; n.version = '2.0';
+            n.queue = []; t = b.createElement(e); t.async = !0;
+            t.src = v; s = b.getElementsByTagName(e)[0];
+            s.parentNode.insertBefore(t, s)
+        }(window, document, 'script',
+            'https://connect.facebook.net/en_US/fbevents.js');
+        var _activePixel = (function () { try { return localStorage.getItem('aminata_meta_pixel_id') || '1532882571493316'; } catch (e) { return '1532882571493316'; } })();
+        fbq('init', _activePixel);
+        fbq('track', 'PageView');
     </script>
     <noscript><img height="1" width="1" style="display:none"
-    src="https://www.facebook.com/tr?id=1532882571493316&ev=PageView&noscript=1"
-    /></noscript>
+            src="https://www.facebook.com/tr?id=1532882571493316&ev=PageView&noscript=1" /></noscript>
     <!-- End Meta Pixel Code -->
 </head>
+
 <body>
 
     <!-- ===== NAVIGATION ===== -->
@@ -56,7 +64,8 @@
 
             <div class="navbar-actions">
                 <button class="cart-btn" id="cartBtn" aria-label="Ouvrir le panier">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
                         <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"></path>
                         <line x1="3" y1="6" x2="21" y2="6"></line>
                         <path d="M16 10a4 4 0 01-8 0"></path>
@@ -65,7 +74,8 @@
                 </button>
                 <!-- Auth Button -->
                 <button class="auth-btn" id="authBtn" aria-label="Se connecter">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
                         <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"></path>
                         <circle cx="12" cy="7" r="4"></circle>
                     </svg>
@@ -89,19 +99,23 @@
         <div class="hero-content">
             <div class="hero-badge">✦ Collection Exclusive 2026 ✦</div>
             <h1 class="hero-title">L'Élégance<br><span class="hero-title-accent">au Fil du Tissu</span></h1>
-            <p class="hero-subtitle">Découvrez notre collection raffinée de tissus premium — Wax, Basin, Lin, Coton, Soie & Dentelle — sélectionnés avec passion pour sublimer vos créations.</p>
+            <p class="hero-subtitle">Découvrez notre collection raffinée de tissus premium — Wax, Basin, Lin, Coton,
+                Soie & Dentelle — sélectionnés avec passion pour sublimer vos créations.</p>
             <div class="hero-actions">
                 <a href="collection.html" class="btn btn-primary" id="ctaExplorer">
                     <span>Explorer la Collection Complète</span>
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
                         <line x1="5" y1="12" x2="19" y2="12"></line>
                         <polyline points="12 5 19 12 12 19"></polyline>
                     </svg>
                 </a>
                 <a href="https://wa.me/221769214015" target="_blank" class="btn btn-secondary" id="ctaWhatsApp">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
-                        <path d="M12 0C5.373 0 0 5.373 0 12c0 2.625.846 5.059 2.284 7.034L.789 23.492a.5.5 0 00.611.611l4.458-1.495A11.952 11.952 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-2.384 0-4.593-.693-6.46-1.886l-.452-.287-2.648.888.888-2.648-.287-.452A9.956 9.956 0 012 12C2 6.486 6.486 2 12 2s10 4.486 10 10-4.486 10-10 10z"/>
+                        <path
+                            d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" />
+                        <path
+                            d="M12 0C5.373 0 0 5.373 0 12c0 2.625.846 5.059 2.284 7.034L.789 23.492a.5.5 0 00.611.611l4.458-1.495A11.952 11.952 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-2.384 0-4.593-.693-6.46-1.886l-.452-.287-2.648.888.888-2.648-.287-.452A9.956 9.956 0 012 12C2 6.486 6.486 2 12 2s10 4.486 10 10-4.486 10-10 10z" />
                     </svg>
                     <span>Nous Contacter</span>
                 </a>
@@ -140,7 +154,8 @@
             <div class="section-header">
                 <span class="section-badge">✦ Notre Sélection Vedette ✦</span>
                 <h2 class="section-title">Nos Tissus Coups de Cœur</h2>
-                <p class="section-subtitle">Une sélection exclusive de nos plus belles créations textiles. Retrouvez l'intégralité de notre catalogue dans la collection complète.</p>
+                <p class="section-subtitle">Une sélection exclusive de nos plus belles créations textiles. Retrouvez
+                    l'intégralité de notre catalogue dans la collection complète.</p>
                 <div class="section-divider">
                     <span class="divider-diamond">◆</span>
                 </div>
@@ -192,7 +207,8 @@
                         <polyline points="12 5 19 12 12 19"></polyline>
                     </svg>
                 </a>
-                <p style="font-size: 0.88rem; color: var(--color-text-light);">Accédez à l'intégralité du catalogue avec filtres par prix, recherche et tri personnalisé.</p>
+                <p style="font-size: 0.88rem; color: var(--color-text-light);">Accédez à l'intégralité du catalogue avec
+                    filtres par prix, recherche et tri personnalisé.</p>
             </div>
         </div>
     </section>
@@ -204,8 +220,11 @@
                 <div class="about-content">
                     <span class="section-badge">Notre Histoire</span>
                     <h2 class="section-title" style="text-align: left;">Un Savoir-Faire<br>d'Exception</h2>
-                    <p class="about-text">Chez <strong>Aminata Store</strong>, nous croyons que chaque tissu raconte une histoire. Notre passion pour les textiles africains nous pousse à sélectionner uniquement les meilleurs tissus — du Wax hollandais authentique au Basin brodé artisanal.</p>
-                    <p class="about-text">Nous collaborons directement avec les meilleurs artisans et fournisseurs pour vous garantir une qualité irréprochable à des prix justes.</p>
+                    <p class="about-text">Chez <strong>Aminata Store</strong>, nous croyons que chaque tissu raconte une
+                        histoire. Notre passion pour les textiles africains nous pousse à sélectionner uniquement les
+                        meilleurs tissus — du Wax hollandais authentique au Basin brodé artisanal.</p>
+                    <p class="about-text">Nous collaborons directement avec les meilleurs artisans et fournisseurs pour
+                        vous garantir une qualité irréprochable à des prix justes.</p>
                     <div class="about-features">
                         <div class="feature">
                             <div class="feature-icon">🎯</div>
@@ -249,11 +268,14 @@
         <div class="container">
             <div class="cta-content">
                 <h2 class="cta-title">Besoin de Conseils ?</h2>
-                <p class="cta-text">Notre équipe est disponible sur WhatsApp pour vous aider à choisir le tissu parfait pour vos projets de couture.</p>
+                <p class="cta-text">Notre équipe est disponible sur WhatsApp pour vous aider à choisir le tissu parfait
+                    pour vos projets de couture.</p>
                 <a href="https://wa.me/221769214015" target="_blank" class="btn btn-whatsapp">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
-                        <path d="M12 0C5.373 0 0 5.373 0 12c0 2.625.846 5.059 2.284 7.034L.789 23.492a.5.5 0 00.611.611l4.458-1.495A11.952 11.952 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-2.384 0-4.593-.693-6.46-1.886l-.452-.287-2.648.888.888-2.648-.287-.452A9.956 9.956 0 012 12C2 6.486 6.486 2 12 2s10 4.486 10 10-4.486 10-10 10z"/>
+                        <path
+                            d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" />
+                        <path
+                            d="M12 0C5.373 0 0 5.373 0 12c0 2.625.846 5.059 2.284 7.034L.789 23.492a.5.5 0 00.611.611l4.458-1.495A11.952 11.952 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-2.384 0-4.593-.693-6.46-1.886l-.452-.287-2.648.888.888-2.648-.287-.452A9.956 9.956 0 012 12C2 6.486 6.486 2 12 2s10 4.486 10 10-4.486 10-10 10z" />
                     </svg>
                     <span>Discuter sur WhatsApp</span>
                 </a>
@@ -270,7 +292,8 @@
                         <span class="logo-icon">✦</span>
                         <span>Aminata Store</span>
                     </a>
-                    <p class="footer-desc">Votre destination pour des tissus africains premium. Qualité, élégance et authenticité depuis 2020.</p>
+                    <p class="footer-desc">Votre destination pour des tissus africains premium. Qualité, élégance et
+                        authenticité depuis 2020.</p>
                 </div>
                 <div class="footer-links">
                     <h4>Navigation</h4>
@@ -290,8 +313,10 @@
                     <h4>Contact</h4>
                     <a href="https://wa.me/221769214015" target="_blank" class="footer-whatsapp">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
-                            <path d="M12 0C5.373 0 0 5.373 0 12c0 2.625.846 5.059 2.284 7.034L.789 23.492a.5.5 0 00.611.611l4.458-1.495A11.952 11.952 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-2.384 0-4.593-.693-6.46-1.886l-.452-.287-2.648.888.888-2.648-.287-.452A9.956 9.956 0 012 12C2 6.486 6.486 2 12 2s10 4.486 10 10-4.486 10-10 10z"/>
+                            <path
+                                d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" />
+                            <path
+                                d="M12 0C5.373 0 0 5.373 0 12c0 2.625.846 5.059 2.284 7.034L.789 23.492a.5.5 0 00.611.611l4.458-1.495A11.952 11.952 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-2.384 0-4.593-.693-6.46-1.886l-.452-.287-2.648.888.888-2.648-.287-.452A9.956 9.956 0 012 12C2 6.486 6.486 2 12 2s10 4.486 10 10-4.486 10-10 10z" />
                         </svg>
                         <span>+221 76 921 40 15</span>
                     </a>
@@ -310,7 +335,8 @@
     <aside class="cart-sidebar" id="cartSidebar">
         <div class="cart-header">
             <h3>
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
                     <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"></path>
                     <line x1="3" y1="6" x2="21" y2="6"></line>
                     <path d="M16 10a4 4 0 01-8 0"></path>
@@ -319,7 +345,8 @@
                 <span class="cart-header-count" id="cartHeaderCount">(0)</span>
             </h3>
             <button class="cart-close" id="cartClose" aria-label="Fermer le panier">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
                     <line x1="18" y1="6" x2="6" y2="18"></line>
                     <line x1="6" y1="6" x2="18" y2="18"></line>
                 </svg>
@@ -332,7 +359,8 @@
 
         <div class="cart-empty" id="cartEmpty">
             <div class="cart-empty-icon">
-                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" opacity="0.3">
+                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"
+                    stroke-linecap="round" stroke-linejoin="round" opacity="0.3">
                     <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"></path>
                     <line x1="3" y1="6" x2="21" y2="6"></line>
                     <path d="M16 10a4 4 0 01-8 0"></path>
@@ -350,7 +378,8 @@
             </div>
             <button class="btn btn-checkout" id="checkoutBtn">
                 <span>Commander</span>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
                     <line x1="5" y1="12" x2="19" y2="12"></line>
                     <polyline points="12 5 19 12 12 19"></polyline>
                 </svg>
@@ -362,7 +391,8 @@
     <div class="modal-overlay" id="checkoutOverlay"></div>
     <div class="checkout-modal" id="checkoutModal">
         <button class="modal-close" id="checkoutClose" aria-label="Fermer">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
                 <line x1="18" y1="6" x2="6" y2="18"></line>
                 <line x1="6" y1="6" x2="18" y2="18"></line>
             </svg>
@@ -402,7 +432,9 @@
             <div class="form-group">
                 <label for="clientPhone">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"></path>
+                        <path
+                            d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z">
+                        </path>
                     </svg>
                     Numéro WhatsApp (avec indicatif) <span class="required">*</span>
                 </label>
@@ -448,13 +480,17 @@
                     </svg>
                     Commentaire ou instructions <span class="optional">(optionnel)</span>
                 </label>
-                <textarea id="clientCommentaire" placeholder="Précisez une couleur préférée, un lieu de livraison, quantité en yards..." rows="2"></textarea>
+                <textarea id="clientCommentaire"
+                    placeholder="Précisez une couleur préférée, un lieu de livraison, quantité en yards..."
+                    rows="2"></textarea>
             </div>
 
             <button type="submit" class="btn btn-whatsapp-order" id="submitOrderBtn">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
-                    <path d="M12 0C5.373 0 0 5.373 0 12c0 2.625.846 5.059 2.284 7.034L.789 23.492a.5.5 0 00.611.611l4.458-1.495A11.952 11.952 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-2.384 0-4.593-.693-6.46-1.886l-.452-.287-2.648.888.888-2.648-.287-.452A9.956 9.956 0 012 12C2 6.486 6.486 2 12 2s10 4.486 10 10-4.486 10-10 10z"/>
+                    <path
+                        d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" />
+                    <path
+                        d="M12 0C5.373 0 0 5.373 0 12c0 2.625.846 5.059 2.284 7.034L.789 23.492a.5.5 0 00.611.611l4.458-1.495A11.952 11.952 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-2.384 0-4.593-.693-6.46-1.886l-.452-.287-2.648.888.888-2.648-.287-.452A9.956 9.956 0 012 12C2 6.486 6.486 2 12 2s10 4.486 10 10-4.486 10-10 10z" />
                 </svg>
                 <span>Confirmer et Commander sur WhatsApp</span>
             </button>
@@ -465,7 +501,8 @@
     <div class="modal-overlay" id="quickViewOverlay"></div>
     <div class="quickview-modal" id="quickViewModal">
         <button class="modal-close" id="quickViewClose" aria-label="Fermer">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
                 <line x1="18" y1="6" x2="6" y2="18"></line>
                 <line x1="6" y1="6" x2="18" y2="18"></line>
             </svg>
@@ -489,7 +526,7 @@
                 <h3 class="quickview-name" id="quickViewName"></h3>
                 <p class="quickview-description" id="quickViewDescription"></p>
                 <p class="quickview-price" id="quickViewPrice"></p>
-                
+
                 <!-- Color Classification & Variant Selector -->
                 <div class="quickview-colors-section" id="qvColorsSection">
                     <label class="quickview-label">Couleurs / Variantes disponibles :</label>
@@ -506,7 +543,8 @@
                     </div>
                 </div>
                 <button class="btn btn-primary btn-add-quickview" id="qvAddToCart">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
                         <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"></path>
                         <line x1="3" y1="6" x2="21" y2="6"></line>
                         <path d="M16 10a4 4 0 01-8 0"></path>
@@ -522,7 +560,8 @@
     <div class="modal-overlay" id="loginOverlay"></div>
     <div class="login-modal" id="loginModal">
         <button class="modal-close" id="loginClose" aria-label="Fermer">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
                 <line x1="18" y1="6" x2="6" y2="18"></line>
                 <line x1="6" y1="6" x2="18" y2="18"></line>
             </svg>
@@ -534,13 +573,15 @@
         <!-- Login Tabs -->
         <div class="login-tabs">
             <button class="login-tab active" data-tab="proprietaire">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;margin-right:4px;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;margin-right:4px;">
                     <path d="M2 4l3 12h14l3-12-6 7-4-7-4 7-6-7z"></path>
                 </svg>
                 <span>Propriétaire</span>
             </button>
             <button class="login-tab" data-tab="client">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;margin-right:4px;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;margin-right:4px;">
                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                     <circle cx="12" cy="7" r="4"></circle>
                 </svg>
@@ -598,16 +639,19 @@
                                 <option value="34">🇪🇸 +34 (Espagne)</option>
                                 <option value="other">🌐 Autre (+)</option>
                             </select>
-                            <input type="tel" id="clientLoginPhone" placeholder="90 12 34 56" required autocomplete="tel">
+                            <input type="tel" id="clientLoginPhone" placeholder="90 12 34 56" required
+                                autocomplete="tel">
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="clientLoginPass">Mot de passe *</label>
-                        <input type="password" id="clientLoginPass" placeholder="••••••••" required autocomplete="current-password">
+                        <input type="password" id="clientLoginPass" placeholder="••••••••" required
+                            autocomplete="current-password">
                     </div>
                     <span class="form-error" id="clientLoginError"></span>
                     <button type="submit" class="btn btn-login btn-client-login">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
                             <polyline points="10 17 15 12 10 7"></polyline>
                             <line x1="15" y1="12" x2="3" y2="12"></line>
@@ -663,15 +707,18 @@
                     </div>
                     <div class="form-group">
                         <label for="regPass">Créer un mot de passe *</label>
-                        <input type="password" id="regPass" placeholder="Min. 4 caractères" required autocomplete="new-password">
+                        <input type="password" id="regPass" placeholder="Min. 4 caractères" required
+                            autocomplete="new-password">
                     </div>
                     <div class="form-group">
                         <label for="regPassConfirm">Confirmer le mot de passe *</label>
-                        <input type="password" id="regPassConfirm" placeholder="Retapez le même mot de passe" required autocomplete="new-password">
+                        <input type="password" id="regPassConfirm" placeholder="Retapez le même mot de passe" required
+                            autocomplete="new-password">
                     </div>
                     <span class="form-error" id="clientRegisterError"></span>
                     <button type="submit" class="btn btn-login btn-client-login">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
                             <circle cx="8.5" cy="7" r="4"></circle>
                             <line x1="20" y1="8" x2="20" y2="14"></line>
@@ -697,7 +744,8 @@
             </div>
             <div class="admin-header-right">
                 <button class="admin-logout-btn" id="adminLogoutBtn" aria-label="Se déconnecter" title="Se déconnecter">
-                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"
+                        stroke-linecap="round" stroke-linejoin="round">
                         <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
                         <polyline points="16 17 21 12 16 7"></polyline>
                         <line x1="21" y1="12" x2="9" y2="12"></line>
@@ -705,7 +753,10 @@
                     <span>Déconnexion</span>
                 </button>
                 <button class="admin-close" id="adminClose" aria-label="Fermer">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
                 </button>
             </div>
         </div>
@@ -713,20 +764,40 @@
         <div class="admin-nav-tabs">
             <button class="admin-nav-tab active" data-admin-tab="orders">📦 Commandes</button>
             <button class="admin-nav-tab" data-admin-tab="products">🏷️ Produits</button>
-            <button class="admin-nav-tab" data-admin-tab="chat">💬 Messages <span class="admin-chat-badge" id="adminChatBadge"></span></button>
+            <button class="admin-nav-tab" data-admin-tab="chat">💬 Messages <span class="admin-chat-badge"
+                    id="adminChatBadge"></span></button>
             <button class="admin-nav-tab" data-admin-tab="marketing">🚀 Marketing & IA</button>
         </div>
         <!-- Orders Tab -->
         <div class="admin-tab-content active" id="adminTabOrders">
             <div class="admin-kpis">
-                <div class="kpi-card"><div class="kpi-icon">📦</div><div class="kpi-value" id="kpiTotalOrders">0</div><div class="kpi-label">Commandes Totales</div></div>
-                <div class="kpi-card kpi-revenue"><div class="kpi-icon">💰</div><div class="kpi-value" id="kpiRevenue">0 FCFA</div><div class="kpi-label">Chiffre d'Affaires</div></div>
-                <div class="kpi-card kpi-pending"><div class="kpi-icon">⏳</div><div class="kpi-value" id="kpiPending">0</div><div class="kpi-label">En Attente</div></div>
-                <div class="kpi-card kpi-delivered"><div class="kpi-icon">✅</div><div class="kpi-value" id="kpiDelivered">0</div><div class="kpi-label">Livrées</div></div>
+                <div class="kpi-card">
+                    <div class="kpi-icon">📦</div>
+                    <div class="kpi-value" id="kpiTotalOrders">0</div>
+                    <div class="kpi-label">Commandes Totales</div>
+                </div>
+                <div class="kpi-card kpi-revenue">
+                    <div class="kpi-icon">💰</div>
+                    <div class="kpi-value" id="kpiRevenue">0 FCFA</div>
+                    <div class="kpi-label">Chiffre d'Affaires</div>
+                </div>
+                <div class="kpi-card kpi-pending">
+                    <div class="kpi-icon">⏳</div>
+                    <div class="kpi-value" id="kpiPending">0</div>
+                    <div class="kpi-label">En Attente</div>
+                </div>
+                <div class="kpi-card kpi-delivered">
+                    <div class="kpi-icon">✅</div>
+                    <div class="kpi-value" id="kpiDelivered">0</div>
+                    <div class="kpi-label">Livrées</div>
+                </div>
             </div>
             <div class="admin-toolbar">
                 <div class="admin-search">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
                     <input type="text" id="adminSearchInput" placeholder="Rechercher par nom ou téléphone...">
                 </div>
                 <div class="admin-filters">
@@ -743,10 +814,24 @@
             </div>
             <div class="admin-orders-container">
                 <table class="admin-orders-table" id="adminOrdersTable">
-                    <thead><tr><th>ID</th><th>Date & Heure</th><th>Client</th><th>WhatsApp</th><th>Montant</th><th>Statut</th><th>Actions</th></tr></thead>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Date & Heure</th>
+                            <th>Client</th>
+                            <th>WhatsApp</th>
+                            <th>Montant</th>
+                            <th>Statut</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
                     <tbody id="adminOrdersBody"></tbody>
                 </table>
-                <div class="admin-empty" id="adminEmpty"><div class="admin-empty-icon">📭</div><p>Aucune commande pour le moment</p><p class="admin-empty-sub">Les nouvelles commandes apparaîtront ici automatiquement.</p></div>
+                <div class="admin-empty" id="adminEmpty">
+                    <div class="admin-empty-icon">📭</div>
+                    <p>Aucune commande pour le moment</p>
+                    <p class="admin-empty-sub">Les nouvelles commandes apparaîtront ici automatiquement.</p>
+                </div>
             </div>
         </div>
         <!-- Products Tab -->
@@ -754,7 +839,6 @@
             <div class="admin-products-header">
                 <h3>🏷️ Gestion des Produits</h3>
                 <div style="display:flex;gap:10px;flex-wrap:wrap;">
-                    <button class="btn btn-secondary" onclick="syncLocalProductsToCloud()">☁️ Synchroniser vers Supabase</button>
                     <button class="btn btn-primary btn-add-product" id="addProductBtn">+ Ajouter un Produit</button>
                 </div>
             </div>
@@ -782,7 +866,11 @@
                         <div class="admin-chat-input-bar">
                             <input type="text" id="adminChatInput" placeholder="Écrire un message...">
                             <button class="admin-chat-send" id="adminChatSend">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <line x1="22" y1="2" x2="11" y2="13"></line>
+                                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                                </svg>
                             </button>
                         </div>
                     </div>
@@ -804,7 +892,8 @@
                         </div>
                         <div class="pixel-summary-right">
                             <span class="pixel-status-badge" id="pixelStatusBadge">✅ Pixel Actif</span>
-                            <button type="button" class="btn btn-secondary btn-toggle-pixel-editor" id="btnTogglePixelEditor">
+                            <button type="button" class="btn btn-secondary btn-toggle-pixel-editor"
+                                id="btnTogglePixelEditor">
                                 ⚙️ Changer le pixel
                             </button>
                         </div>
@@ -817,7 +906,8 @@
                                 <label for="metaPixelCodeInput">
                                     Code Source complet du Meta Pixel (Facebook Ads) :
                                 </label>
-                                <textarea id="metaPixelCodeInput" class="pixel-code-textarea" rows="6" placeholder="Collez ici le code source complet de votre Pixel Meta (avec les balises <script>...)"></textarea>
+                                <textarea id="metaPixelCodeInput" class="pixel-code-textarea" rows="6"
+                                    placeholder="Collez ici le code source complet de votre Pixel Meta (avec les balises <script>...)"></textarea>
                                 <div class="pixel-actions-row">
                                     <button type="submit" class="btn btn-primary btn-save-pixel" id="btnSavePixel">
                                         💾 Enregistrer le nouveau Pixel
@@ -830,7 +920,10 @@
                                     </button>
                                 </div>
                                 <small class="form-hint">
-                                    💡 Collez le code fourni par Facebook Ads Manager. Les événements de suivi e-commerce (<strong>PageView</strong>, <strong>AddToCart</strong>, <strong>InitiateCheckout</strong>, <strong>Purchase</strong>) sont trackés automatiquement.
+                                    💡 Collez le code fourni par Facebook Ads Manager. Les événements de suivi
+                                    e-commerce (<strong>PageView</strong>, <strong>AddToCart</strong>,
+                                    <strong>InitiateCheckout</strong>, <strong>Purchase</strong>) sont trackés
+                                    automatiquement.
                                 </small>
                             </div>
                         </form>
@@ -843,10 +936,12 @@
                         <div class="marketing-card-icon">✨</div>
                         <div>
                             <h3>Assistant IA Marketing — Abraham</h3>
-                            <p>Conseiller stratégique et copywriter personnel d'Aminata pour booster les ventes de tissus.</p>
+                            <p>Conseiller stratégique et copywriter personnel d'Aminata pour booster les ventes de
+                                tissus.</p>
                         </div>
                         <div class="ai-header-actions">
-                            <button type="button" class="btn-clear-ai-history" id="btnClearAiHistory" title="Effacer l'historique et démarrer une nouvelle conversation">
+                            <button type="button" class="btn-clear-ai-history" id="btnClearAiHistory"
+                                title="Effacer l'historique et démarrer une nouvelle conversation">
                                 🔄 Nouvelle discussion
                             </button>
                         </div>
@@ -894,17 +989,23 @@
                             <div class="ai-msg ai-msg-bot">
                                 <div class="ai-msg-avatar">🤖</div>
                                 <div class="ai-msg-content">
-                                    <p><strong>Bonjour Aminata !</strong> Je suis Abraham votre assistant IA en marketing e-commerce et publicités Facebook Ads pour vendre vos articles Aminata Store.</p>
-                                    <p>Sélectionnez un tissu ci-dessus et cliquez sur un bouton d'action rapide, ou posez-moi n'importe quelle question sur votre business ! 🚀</p>
+                                    <p><strong>Bonjour Aminata !</strong> Je suis Abraham votre assistant IA en
+                                        marketing e-commerce et publicités Facebook Ads pour vendre vos articles Aminata
+                                        Store.</p>
+                                    <p>Sélectionnez un tissu ci-dessus et cliquez sur un bouton d'action rapide, ou
+                                        posez-moi n'importe quelle question sur votre business ! 🚀</p>
                                 </div>
                             </div>
                         </div>
 
                         <div class="ai-chat-input-bar">
-                            <input type="text" id="aiMarketingInput" placeholder="Posez une question ou demandez une stratégie pour un produit..." autocomplete="off">
+                            <input type="text" id="aiMarketingInput"
+                                placeholder="Posez une question ou demandez une stratégie pour un produit..."
+                                autocomplete="off">
                             <button type="button" class="btn btn-primary btn-ai-send" id="btnSendAiMarketing">
                                 <span>Envoyer</span>
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
                                     <line x1="22" y1="2" x2="11" y2="13"></line>
                                     <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
                                 </svg>
@@ -920,7 +1021,10 @@
     <div class="modal-overlay" id="orderDetailOverlay"></div>
     <div class="order-detail-modal" id="orderDetailModal">
         <button class="modal-close" id="orderDetailClose" aria-label="Fermer">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
         </button>
         <div class="order-detail-header">
             <h3 id="orderDetailTitle">Détails Commande</h3>
@@ -933,7 +1037,10 @@
     <div class="modal-overlay" id="productModalOverlay"></div>
     <div class="product-form-modal" id="productFormModal">
         <button class="modal-close" id="productFormClose" aria-label="Fermer">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
         </button>
         <div class="product-form-header">
             <h3 id="productFormTitle">Ajouter un Produit</h3>
@@ -945,7 +1052,8 @@
             </div>
             <div class="form-group">
                 <label for="prodSlug">URL du produit / Slug (ex: wax-hollandais-premium)</label>
-                <input type="text" id="prodSlug" placeholder="Ex: wax-hollandais-premium (généré automatiquement si vide)">
+                <input type="text" id="prodSlug"
+                    placeholder="Ex: wax-hollandais-premium (généré automatiquement si vide)">
                 <small style="color:var(--color-muted); font-size:0.8rem; margin-top:3px; display:block;">
                     🔗 Lien unique pour vos publicités Meta (Facebook/Instagram) et WhatsApp.
                 </small>
@@ -985,7 +1093,7 @@
                     </select>
                 </div>
             </div>
-            
+
             <!-- Primary Photo -->
             <div class="form-group">
                 <label>Photo Principale *</label>
@@ -1049,8 +1157,10 @@
                 <p class="admin-subtitle" id="clientWelcome">Bienvenue</p>
             </div>
             <div class="admin-header-right">
-                <button class="admin-logout-btn" id="clientLogoutBtn" aria-label="Se déconnecter" title="Se déconnecter">
-                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                <button class="admin-logout-btn" id="clientLogoutBtn" aria-label="Se déconnecter"
+                    title="Se déconnecter">
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"
+                        stroke-linecap="round" stroke-linejoin="round">
                         <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
                         <polyline points="16 17 21 12 16 7"></polyline>
                         <line x1="21" y1="12" x2="9" y2="12"></line>
@@ -1058,13 +1168,17 @@
                     <span>Déconnexion</span>
                 </button>
                 <button class="admin-close" id="clientPanelClose" aria-label="Fermer">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
                 </button>
             </div>
         </div>
         <div class="client-nav-tabs">
             <button class="admin-nav-tab active" data-client-tab="history">📦 Mes Commandes</button>
-            <button class="admin-nav-tab" data-client-tab="chat">💬 Chat <span class="client-chat-badge" id="clientChatBadge"></span></button>
+            <button class="admin-nav-tab" data-client-tab="chat">💬 Chat <span class="client-chat-badge"
+                    id="clientChatBadge"></span></button>
             <button class="admin-nav-tab" data-client-tab="settings">⚙️ Paramètres</button>
         </div>
         <!-- Order History -->
@@ -1080,7 +1194,11 @@
                 <div class="admin-chat-input-bar">
                     <input type="text" id="clientChatInput" placeholder="Écrire un message au propriétaire...">
                     <button class="admin-chat-send" id="clientChatSend">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <line x1="22" y1="2" x2="11" y2="13"></line>
+                            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                        </svg>
                     </button>
                 </div>
             </div>
@@ -1101,15 +1219,18 @@
                     <form id="changePasswordForm" class="settings-form" novalidate>
                         <div class="form-group">
                             <label for="oldPass">Mot de passe actuel *</label>
-                            <input type="password" id="oldPass" placeholder="Votre mot de passe actuel" required autocomplete="current-password">
+                            <input type="password" id="oldPass" placeholder="Votre mot de passe actuel" required
+                                autocomplete="current-password">
                         </div>
                         <div class="form-group">
                             <label for="newPass">Nouveau mot de passe *</label>
-                            <input type="password" id="newPass" placeholder="Min. 4 caractères" required autocomplete="new-password">
+                            <input type="password" id="newPass" placeholder="Min. 4 caractères" required
+                                autocomplete="new-password">
                         </div>
                         <div class="form-group">
                             <label for="confirmNewPass">Confirmer le nouveau mot de passe *</label>
-                            <input type="password" id="confirmNewPass" placeholder="Retapez le nouveau mot de passe" required autocomplete="new-password">
+                            <input type="password" id="confirmNewPass" placeholder="Retapez le nouveau mot de passe"
+                                required autocomplete="new-password">
                         </div>
                         <div class="form-error" id="changePassError"></div>
                         <button type="submit" class="btn btn-primary btn-save-password">
@@ -1132,6 +1253,7 @@
 
     <!-- ===== Supabase & JavaScript ===== -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="app.js?v=2.5"></script>
+    <script src="app.js?v=2.6"></script>
 </body>
+
 </html>

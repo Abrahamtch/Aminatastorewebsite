@@ -4369,6 +4369,18 @@ img { max-width: 100%; display: block; }
   display: block;
 }
 
+/* Button Instant Touch/Click Feedback Optimization */
+button, .btn, .product-card, .admin-product-card, .order-action-btn, .btn-copy-link-admin, .btn-copy-url-icon {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  cursor: pointer;
+}
+
+button:active, .btn:active, .order-action-btn:active {
+  transform: scale(0.96) !important;
+  opacity: 0.9;
+}
+
 
 
 

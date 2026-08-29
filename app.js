@@ -185,6 +185,7 @@ const DB = {
   },
 
   async purgeDefaultMockProducts() {
+    const mockIds = [1, 2, 3, 4, 5, 6, 7, 8];
     const mockNames = [
       'Wax Hollandais Premium',
       'Basin Riche Doré',
@@ -198,8 +199,11 @@ const DB = {
     const sb = getSupabase();
     if (sb) {
       try {
-        await sb.from('products').delete().in('name', mockNames);
-        await sb.from('products').delete().in('id', [1, 2, 3, 4, 5, 6, 7, 8]);
+        await sb.from('products').delete().in('id', mockIds);
+        await sb.from('products').delete().lte('id', 8);
+        for (const name of mockNames) {
+          await sb.from('products').delete().ilike('name', `%${name}%`);
+        }
       } catch (err) {
         console.warn('Supabase purge notice:', err);
       }
@@ -209,7 +213,7 @@ const DB = {
       const raw = localStorage.getItem('aminata_store_products');
       if (raw) {
         let list = JSON.parse(raw) || [];
-        list = list.filter(p => p && !mockNames.includes(p.name) && !([1, 2, 3, 4, 5, 6, 7, 8].includes(Number(p.id))));
+        list = list.filter(p => p && !mockIds.includes(Number(p.id)) && !mockNames.some(m => p.name && p.name.includes(m)));
         localStorage.setItem('aminata_store_products', JSON.stringify(list));
       }
     } catch (e) {}
@@ -1204,7 +1208,15 @@ function closeCart() { $('#cartSidebar')?.classList.remove('open'); $('#cartOver
 // ══════════════════════════════════════════════
 let qvQty = 1;
 function openQuickView(pid) {
-  const p = products.find(x => x.id === pid); if (!p) return;
+  const prodList = (products && products.length > 0) ? products : [];
+  const p = prodList.find(x => String(x.id) === String(pid) || Number(x.id) === Number(pid));
+  if (!p) return;
+
+  // Open modal instantly FIRST for 0ms visual response!
+  $('#quickViewOverlay')?.classList.add('open');
+  $('#quickViewModal')?.classList.add('open');
+  document.body.style.overflow = 'hidden';
+
   qvQty = 1;
   selectedColorVariant = null;
   
@@ -1635,34 +1647,19 @@ async function renderAdminProducts() {
   const grid = $('#adminProductsGrid'); if (!grid) return;
   const prods = await DB.getAll('products');
 
-  const syncBannerHTML = `
-    <div class="admin-sync-banner" style="grid-column: 1 / -1; background: linear-gradient(135deg, #4f46e5, #7c3aed); color: white; padding: 16px 20px; border-radius: 14px; margin-bottom: 15px; display: flex; align-items: center; justify-content: space-between; gap: 15px; box-shadow: 0 4px 15px rgba(79,70,229,0.3);">
-      <div style="display:flex; align-items:center; gap:12px;">
-        <span style="font-size: 1.8rem;">☁️</span>
-        <div>
-          <h4 style="margin:0; font-size:1.05rem; font-weight:700; color:#fff;">Synchroniser tous les produits vers Supabase</h4>
-          <p style="margin:4px 0 0 0; font-size:0.85rem; opacity:0.9;">Cliquez ici pour transférer vos produits locaux vers la base de données cloud.</p>
-        </div>
-      </div>
-      <button onclick="syncLocalProductsToCloud(false)" style="background:#ffffff; color:#4f46e5; font-weight:800; border:none; padding:10px 22px; border-radius:30px; cursor:pointer; white-space:nowrap; font-size:0.9rem; transition:transform 0.2s;" onmouseover="this.style.transform='scale(1.04)'" onmouseout="this.style.transform='scale(1)'">
-        🚀 Lancer la Synchronisation
-      </button>
-    </div>
-  `;
-
   if (!prods || prods.length === 0) {
-    grid.innerHTML = syncBannerHTML + `
+    grid.innerHTML = `
       <div class="empty-favorites-card" style="grid-column: 1 / -1; padding: 40px 20px; text-align: center;">
         <div style="font-size: 2.5rem; margin-bottom: 12px;">📦</div>
         <h3 style="font-family: var(--font-display); font-size: 1.2rem; font-weight: 700; color: var(--color-dark); margin-bottom: 8px;">Aucun produit dans la base de données</h3>
-        <p style="color: var(--color-muted); font-size: 0.85rem; margin-bottom: 16px;">Cliquez sur le bouton ci-dessous pour ajouter votre premier vrai tissu !</p>
+        <p style="color: var(--color-muted); font-size: 0.85rem; margin-bottom: 16px;">Cliquez sur le bouton ci-dessous pour ajouter votre premier tissu !</p>
         <button class="btn btn-primary" onclick="openProductForm()" style="margin: 0 auto; display: inline-flex; align-items: center; gap: 8px;">➕ Ajouter un Produit</button>
       </div>
     `;
     return;
   }
 
-  grid.innerHTML = syncBannerHTML + prods.map(p => {
+  grid.innerHTML = prods.map(p => {
     const feat = isFeatured(p);
     const prodUrl = getProductUrl(p);
     return `
