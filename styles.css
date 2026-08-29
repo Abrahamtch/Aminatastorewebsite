@@ -4541,20 +4541,38 @@ button:active, .btn:active, .order-action-btn:active {
   font-size: 1.4rem;
 }
 
+/* Quick View Actions Grid (Side-by-side buttons) */
+.qv-actions-stack {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 10px !important;
+  margin-top: 18px !important;
+  width: 100% !important;
+  align-items: center !important;
+}
+
+.qv-actions-stack .btn-add-quickview,
+.qv-actions-stack .btn-whatsapp-direct-qv {
+  margin-top: 0 !important;
+  width: 100% !important;
+  height: 48px !important;
+  padding: 0 14px !important;
+  font-size: 0.88rem !important;
+  font-weight: 700 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  border-radius: var(--radius-xl) !important;
+  white-space: nowrap !important;
+  box-sizing: border-box !important;
+}
+
 /* WhatsApp Direct Order Button in Quick View */
 .btn-whatsapp-direct-qv {
   background: linear-gradient(135deg, #25d366, #128c7e);
   color: white;
   border: none;
-  width: 100%;
-  padding: 13px 20px;
-  border-radius: var(--radius-md);
-  font-weight: 700;
-  font-size: 0.95rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
   cursor: pointer;
   transition: all 0.2s ease;
   box-shadow: 0 4px 12px rgba(37, 211, 102, 0.25);
@@ -4564,6 +4582,19 @@ button:active, .btn:active, .order-action-btn:active {
   background: linear-gradient(135deg, #128c7e, #075e54);
   transform: translateY(-2px);
   box-shadow: 0 6px 16px rgba(37, 211, 102, 0.35);
+}
+
+@media (max-width: 480px) {
+  .qv-actions-stack {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 8px !important;
+  }
+  .qv-actions-stack .btn-add-quickview,
+  .qv-actions-stack .btn-whatsapp-direct-qv {
+    font-size: 0.8rem !important;
+    padding: 0 8px !important;
+    height: 44px !important;
+  }
 }
 
 
