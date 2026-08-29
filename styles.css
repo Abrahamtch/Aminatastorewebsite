@@ -4381,6 +4381,191 @@ button:active, .btn:active, .order-action-btn:active {
   opacity: 0.9;
 }
 
+/* ══════════════════════════════════════════════
+   QUICK VIEW EXPAND & FULL PAGE MODE STYLES
+   ══════════════════════════════════════════════ */
+.quickview-modal-actions {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  z-index: 20;
+}
+
+.modal-expand-btn {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  color: var(--color-dark);
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.modal-expand-btn:hover {
+  background: var(--color-primary);
+  color: #fff;
+  border-color: var(--color-primary);
+  transform: scale(1.04);
+}
+
+/* Full Page Mode */
+.quickview-modal.full-page-mode {
+  width: 96vw !important;
+  max-width: 1240px !important;
+  max-height: 94vh !important;
+  border-radius: var(--radius-xl) !important;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.35) !important;
+  padding: 40px !important;
+  overflow-y: auto !important;
+}
+
+.quickview-modal.full-page-mode .quickview-content {
+  grid-template-columns: 1.15fr 1fr;
+  gap: 40px;
+  align-items: start;
+}
+
+@media (max-width: 992px) {
+  .quickview-modal.full-page-mode {
+    width: 98vw !important;
+    padding: 24px 16px !important;
+  }
+  .quickview-modal.full-page-mode .quickview-content {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+}
+
+.expanded-pitch-container {
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px dashed var(--color-border);
+  animation: fadeIn 0.35s ease;
+}
+
+.pitch-badge-banner {
+  background: linear-gradient(135deg, rgba(200, 169, 110, 0.15), rgba(79, 70, 229, 0.1));
+  color: var(--color-primary-dark);
+  padding: 10px 16px;
+  border-radius: var(--radius-md);
+  font-weight: 800;
+  font-size: 0.85rem;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-left: 4px solid var(--color-primary);
+}
+
+.pitch-heading {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--color-dark);
+  margin-bottom: 16px;
+}
+
+.pitch-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.pitch-card {
+  background: rgba(248, 245, 240, 0.75);
+  padding: 14px;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(200, 169, 110, 0.25);
+  transition: all 0.2s ease;
+}
+
+.pitch-card:hover {
+  transform: translateY(-2px);
+  background: #ffffff;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+}
+
+.pitch-icon {
+  font-size: 1.5rem;
+  margin-bottom: 6px;
+}
+
+.pitch-card h5 {
+  margin: 0 0 4px 0;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--color-dark);
+}
+
+.pitch-card p {
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--color-muted);
+  line-height: 1.45;
+}
+
+.pitch-guarantee-box {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  padding: 12px 16px;
+  border-radius: var(--radius-md);
+  color: #166534;
+  font-size: 0.83rem;
+  line-height: 1.4;
+}
+
+.pitch-guarantee-box strong {
+  display: block;
+  font-size: 0.88rem;
+  margin-bottom: 2px;
+}
+
+.pitch-guarantee-box p {
+  margin: 0;
+}
+
+.pitch-guarantee-box .guarantee-icon {
+  font-size: 1.4rem;
+}
+
+/* WhatsApp Direct Order Button in Quick View */
+.btn-whatsapp-direct-qv {
+  background: linear-gradient(135deg, #25d366, #128c7e);
+  color: white;
+  border: none;
+  width: 100%;
+  padding: 13px 20px;
+  border-radius: var(--radius-md);
+  font-weight: 700;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(37, 211, 102, 0.25);
+}
+
+.btn-whatsapp-direct-qv:hover {
+  background: linear-gradient(135deg, #128c7e, #075e54);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(37, 211, 102, 0.35);
+}
+
 
 
 

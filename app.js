@@ -1467,6 +1467,76 @@ function closeCart() { $('#cartSidebar')?.classList.remove('open'); $('#cartOver
 //  QUICK VIEW (Gallery, Zoom & Colors)
 // ══════════════════════════════════════════════
 let qvQty = 1;
+function getExtendedProductPitch(product) {
+  if (!product) return '';
+  const pName = product.name || 'ce Tissu d\'Exception';
+  const pCat = product.category || 'Tissu';
+
+  return `
+    <div class="expanded-pitch-container">
+      <div class="pitch-badge-banner">
+        🔥 <span>Succès Garanti pour vos Événements — Qualité Haute Couture Exclusive</span>
+      </div>
+
+      <h4 class="pitch-heading">✨ Pourquoi vous allez adorer le ${pName} :</h4>
+      
+      <div class="pitch-grid">
+        <div class="pitch-card">
+          <div class="pitch-icon">👑</div>
+          <h5>Éclat & Drapé Majestueux</h5>
+          <p>Un tissage noble et serré d'une finition irréprochable. Ce ${pCat} capte magnifiquement la lumière pour vous offrir un rendu digne des plus grands événements et cérémonies VIP.</p>
+        </div>
+
+        <div class="pitch-card">
+          <div class="pitch-icon">🌿</div>
+          <h5>Toucher Soyeux & Respirant</h5>
+          <p>Profitez d'un confort absolu sous le soleil. La fibre naturelle garantit une douceur remarquable sur la peau et une tenue impeccable qui ne se déforme jamais au lavage.</p>
+        </div>
+
+        <div class="pitch-card">
+          <div class="pitch-icon">✂️</div>
+          <h5>Sublime Tous vos Modèles</h5>
+          <p>Que ce soit pour un grand boubou traditionnel, une tenue de mariée sur-mesure ou une création moderne chic, ce tissu se prête magnifiquement à toutes les coupes coutures.</p>
+        </div>
+
+        <div class="pitch-card">
+          <div class="pitch-icon">🚚</div>
+          <h5>Expédition Express & Stock Limité</h5>
+          <p>Commandez en toute tranquillité ! Nos pièces sont préparées avec le plus grand soin et expédiées rapidement. Les stocks s'épuisent vite lors des réapprovisionnements.</p>
+        </div>
+      </div>
+
+      <div class="pitch-guarantee-box">
+        <span class="guarantee-icon">🛡️</span>
+        <div>
+          <strong>Garantie Authenticité & Satisfait Aminata Store :</strong>
+          <p>Tissu authentique contrôlé avant expédition. Vous recevez exactement la même nuance brillante et la qualité supérieure présentée dans nos galeries et vidéos !</p>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function toggleQuickViewExpand() {
+  const modal = $('#quickViewModal');
+  const btn = $('#quickViewExpand');
+  if (!modal) return;
+  const isFull = modal.classList.toggle('full-page-mode');
+  
+  if (btn) {
+    btn.innerHTML = isFull 
+      ? `<span class="expand-icon">↙</span><span class="expand-text">Réduire</span>` 
+      : `<span class="expand-icon">⛶</span><span class="expand-text">Fiche Complète</span>`;
+  }
+  
+  const pitchContainer = $('#qvPitchContainer');
+  if (pitchContainer) {
+    pitchContainer.style.display = isFull ? 'block' : 'none';
+  }
+}
+window.getExtendedProductPitch = getExtendedProductPitch;
+window.toggleQuickViewExpand = toggleQuickViewExpand;
+
 function openQuickView(pid) {
   const prodList = (products && products.length > 0) ? products : [];
   const p = prodList.find(x => String(x.id) === String(pid) || Number(x.id) === Number(pid));
@@ -1609,6 +1679,23 @@ function openQuickView(pid) {
   $('#qvQtyPlus').onclick = () => { if (qvQty < 99) { qvQty++; $('#qvQtyInput').value = qvQty; } };
   $('#qvQtyInput').oninput = (e) => { let v = parseInt(e.target.value) || 1; v = Math.max(1, Math.min(99, v)); qvQty = v; e.target.value = v; };
 
+  // Populate extended pitch
+  const pitchContainer = $('#qvPitchContainer');
+  if (pitchContainer) {
+    pitchContainer.innerHTML = getExtendedProductPitch(p);
+  }
+
+  // Direct WhatsApp Order Button
+  const directWaBtn = $('#qvDirectWhatsApp');
+  if (directWaBtn) {
+    directWaBtn.onclick = () => {
+      const variant = selectedColorVariant && selectedColorVariant !== 'Standard' ? ` (Variante: ${selectedColorVariant})` : '';
+      const text = `Bonjour Aminata Store ! ✨ Je souhaite commander le tissu :\n👉 *${p.name}*${variant}\n📏 Quantité : ${qvQty} yard(s)\n💰 Prix Total : ${formatPrice(p.price * qvQty)}\n\nPouvez-vous me confirmer la disponibilité et la livraison ? Merci !`;
+      const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
+      window.open(url, '_blank');
+    };
+  }
+
   $('#quickViewOverlay')?.classList.add('open');
   $('#quickViewModal')?.classList.add('open');
   document.body.style.overflow = 'hidden';
@@ -1632,8 +1719,19 @@ function setQuickViewMainMedia(m) {
 }
 
 function closeQuickView() { 
+  const modal = $('#quickViewModal');
+  if (modal) {
+    modal.classList.remove('open');
+    modal.classList.remove('full-page-mode');
+  }
+  const expandBtn = $('#quickViewExpand');
+  if (expandBtn) {
+    expandBtn.innerHTML = `<span class="expand-icon">⛶</span><span class="expand-text">Fiche Complète</span>`;
+  }
+  const pitchContainer = $('#qvPitchContainer');
+  if (pitchContainer) pitchContainer.style.display = 'none';
+
   $('#quickViewOverlay')?.classList.remove('open'); 
-  $('#quickViewModal')?.classList.remove('open'); 
   document.body.style.overflow = ''; 
   const vid = $('#quickViewVideo');
   if (vid) vid.pause();

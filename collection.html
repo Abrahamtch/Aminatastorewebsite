@@ -351,9 +351,15 @@
     <!-- ===== QUICK VIEW MODAL ===== -->
     <div class="modal-overlay" id="quickViewOverlay"></div>
     <div class="quickview-modal" id="quickViewModal">
-        <button class="modal-close" id="quickViewClose" aria-label="Fermer">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-        </button>
+        <div class="quickview-modal-actions">
+            <button class="modal-expand-btn" id="quickViewExpand" onclick="toggleQuickViewExpand()" title="Agrandir en Fiche Produit Complète (Mode Plein Écran)">
+                <span class="expand-icon">⛶</span>
+                <span class="expand-text">Fiche Complète</span>
+            </button>
+            <button class="modal-close" id="quickViewClose" aria-label="Fermer">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+        </div>
         <div class="quickview-content">
             <div class="quickview-media-section">
                 <div class="quickview-main-media zoom-container" id="qvMainMediaBox">
@@ -386,9 +392,18 @@
                         <button class="qty-btn" id="qvQtyPlus">+</button>
                     </div>
                 </div>
-                <button class="btn btn-primary btn-add-quickview" id="qvAddToCart">
-                    <span>Ajouter au Panier</span>
-                </button>
+                
+                <div class="qv-actions-stack" style="display:flex; flex-direction:column; gap:10px; margin-top:15px;">
+                    <button class="btn btn-primary btn-add-quickview" id="qvAddToCart">
+                        <span>Ajouter au Panier</span>
+                    </button>
+                    <button type="button" class="btn-whatsapp-direct-qv" id="qvDirectWhatsApp">
+                        💬 Commander Directement sur WhatsApp
+                    </button>
+                </div>
+
+                <!-- Extended Sales Pitch for Full Page Mode -->
+                <div id="qvPitchContainer" style="display:none;"></div>
             </div>
         </div>
     </div>
@@ -987,6 +1002,6 @@
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="app.js?v=2.9"></script>
+    <script src="app.js?v=3.0"></script>
 </body>
 </html>
