@@ -13,8 +13,253 @@ const DB_VERSION = 2;
 const ADMIN_USER = 'ADMIN';
 const ADMIN_PASS = 'ADMIN';
 
-// ── Default Products (Empty by default — Admin managed only) ──
-const DEFAULT_PRODUCTS = [];
+// ── Real Products from Produits Directory ──
+const STORE_PRODUCTS = [
+  {
+    id: 1,
+    name: 'Basin riche 100% coton',
+    slug: 'basin-riche-100-coton',
+    category: 'Basin',
+    price: 25000,
+    description: 'Basin riche authentique 100% coton de qualité supérieure. Éclat brillant exceptionnel, tombé rigide parfait et motifs damassés raffinés. Idéal pour les grands boubous de cérémonie et tenues traditionnelles de prestige.',
+    image: 'Produits/1- Basin riche 100% coton/Bleu.jpeg',
+    media: [
+      { type: 'image', url: 'Produits/1- Basin riche 100% coton/Bleu.jpeg' },
+      { type: 'image', url: 'Produits/1- Basin riche 100% coton/Bleu ciel.jpeg' },
+      { type: 'image', url: 'Produits/1- Basin riche 100% coton/Bleu foncé.jpeg' },
+      { type: 'image', url: 'Produits/1- Basin riche 100% coton/Jaune.jpeg' },
+      { type: 'image', url: 'Produits/1- Basin riche 100% coton/Maron.jpeg' },
+      { type: 'image', url: 'Produits/1- Basin riche 100% coton/Orange.jpeg' },
+      { type: 'image', url: 'Produits/1- Basin riche 100% coton/Rose.jpeg' },
+      { type: 'image', url: 'Produits/1- Basin riche 100% coton/Rouge.jpeg' },
+      { type: 'image', url: 'Produits/1- Basin riche 100% coton/Vert.jpeg' },
+      { type: 'image', url: 'Produits/1- Basin riche 100% coton/Violet.jpeg' }
+    ],
+    colors: [
+      { name: 'Bleu Royal', hex: '#1E3A8A' },
+      { name: 'Bleu Ciel', hex: '#38BDF8' },
+      { name: 'Jaune Solaire', hex: '#EAB308' },
+      { name: 'Marron', hex: '#78350F' },
+      { name: 'Orange', hex: '#EA580C' },
+      { name: 'Rose', hex: '#EC4899' },
+      { name: 'Rouge Rubis', hex: '#DC2626' },
+      { name: 'Vert Émeraude', hex: '#059669' },
+      { name: 'Violet Impérial', hex: '#7C3AED' }
+    ],
+    badge: 'Top Vente',
+    badgeType: 'premium',
+    featured: true
+  },
+  {
+    id: 2,
+    name: 'Gezner qualité premium',
+    slug: 'gezner-qualite-premium',
+    category: 'Basin',
+    price: 35000,
+    description: 'Véritable Getzner autrichien qualité premium au lustre incomparable. Tissu damassé d\'exception, d\'une douceur veloutée et d\'une brillance permanente. Le choix de prédilection des confections de prestige.',
+    image: 'Produits/2- Gezner qualité premium/Blanc 1.jpeg',
+    media: [
+      { type: 'image', url: 'Produits/2- Gezner qualité premium/Blanc 1.jpeg' },
+      { type: 'image', url: 'Produits/2- Gezner qualité premium/Bleu.jpeg' },
+      { type: 'image', url: 'Produits/2- Gezner qualité premium/Cyan.jpeg' },
+      { type: 'image', url: 'Produits/2- Gezner qualité premium/Gris.jpeg' },
+      { type: 'image', url: 'Produits/2- Gezner qualité premium/Jaune.jpeg' },
+      { type: 'image', url: 'Produits/2- Gezner qualité premium/Maron.jpeg' },
+      { type: 'image', url: 'Produits/2- Gezner qualité premium/Noir.jpeg' },
+      { type: 'image', url: 'Produits/2- Gezner qualité premium/Orange.jpeg' },
+      { type: 'image', url: 'Produits/2- Gezner qualité premium/Rose.jpeg' },
+      { type: 'image', url: 'Produits/2- Gezner qualité premium/Violet.jpeg' }
+    ],
+    colors: [
+      { name: 'Blanc Pur', hex: '#FFFFFF' },
+      { name: 'Bleu Prestige', hex: '#1D4ED8' },
+      { name: 'Cyan Lagon', hex: '#06B6D4' },
+      { name: 'Gris Perle', hex: '#9CA3AF' },
+      { name: 'Jaune Or', hex: '#F59E0B' },
+      { name: 'Marron Chaud', hex: '#92400E' },
+      { name: 'Noir Ébène', hex: '#18181B' },
+      { name: 'Orange', hex: '#F97316' },
+      { name: 'Rose Bonbon', hex: '#F472B6' },
+      { name: 'Violet', hex: '#8B5CF6' }
+    ],
+    badge: 'Luxe',
+    badgeType: 'premium',
+    featured: true
+  },
+  {
+    id: 3,
+    name: 'Thioub VIP',
+    slug: 'thioub-vip',
+    category: 'Thioub',
+    price: 18000,
+    description: 'Thioub d\'exception qualité VIP aux teintures artisanales éclatantes. Motifs uniques et finitions soignées apportant une touche de grâce et de noblesse à vos tenues traditionnelles et modernes.',
+    image: 'Produits/3- Thioub VIP/01.jpeg',
+    media: [
+      { type: 'image', url: 'Produits/3- Thioub VIP/01.jpeg' },
+      { type: 'image', url: 'Produits/3- Thioub VIP/02.jpeg' },
+      { type: 'image', url: 'Produits/3- Thioub VIP/03.jpeg' },
+      { type: 'image', url: 'Produits/3- Thioub VIP/04.jpeg' },
+      { type: 'image', url: 'Produits/3- Thioub VIP/05.jpeg' },
+      { type: 'image', url: 'Produits/3- Thioub VIP/06.jpeg' },
+      { type: 'image', url: 'Produits/3- Thioub VIP/07.jpeg' },
+      { type: 'image', url: 'Produits/3- Thioub VIP/08.jpeg' },
+      { type: 'image', url: 'Produits/3- Thioub VIP/09.jpeg' },
+      { type: 'image', url: 'Produits/3- Thioub VIP/10.jpeg' }
+    ],
+    colors: [
+      { name: 'Bleu Artisanal', hex: '#2563EB' },
+      { name: 'Vert Bazin', hex: '#10B981' },
+      { name: 'Bordeaux VIP', hex: '#881337' },
+      { name: 'Violet Solaire', hex: '#6D28D9' }
+    ],
+    badge: 'Nouveau',
+    badgeType: 'new',
+    featured: true
+  },
+  {
+    id: 4,
+    name: 'Thioub léger',
+    slug: 'thioub-leger',
+    category: 'Thioub',
+    price: 12000,
+    description: 'Tissu Thioub léger et fluide, parfait pour le quotidien comme pour les fêtes. Matière respirante et agréable à porter offrant un confort absolu tout en restant raffiné.',
+    image: 'Produits/4- Thioub léger/01.jpeg',
+    media: [
+      { type: 'image', url: 'Produits/4- Thioub léger/01.jpeg' },
+      { type: 'image', url: 'Produits/4- Thioub léger/02.jpeg' },
+      { type: 'image', url: 'Produits/4- Thioub léger/03.jpeg' },
+      { type: 'image', url: 'Produits/4- Thioub léger/04.jpeg' },
+      { type: 'image', url: 'Produits/4- Thioub léger/05.jpeg' },
+      { type: 'image', url: 'Produits/4- Thioub léger/06.jpeg' },
+      { type: 'image', url: 'Produits/4- Thioub léger/07.jpeg' },
+      { type: 'image', url: 'Produits/4- Thioub léger/08.jpeg' }
+    ],
+    colors: [
+      { name: 'Multicolore Teint', hex: '#0EA5E9' },
+      { name: 'Rose Pastel', hex: '#F472B6' },
+      { name: 'Jaune Doux', hex: '#FBBF24' }
+    ],
+    badge: 'Meilleur Prix',
+    badgeType: '',
+    featured: false
+  },
+  {
+    id: 5,
+    name: 'Fil à fil italien qualité premium',
+    slug: 'fil-a-fil-italien-qualite-premium',
+    category: 'Coton',
+    price: 15000,
+    description: 'Sublime fil à fil tissé en Italie avec les meilleures fibres de coton. Texture fine, toucher soyeux et tenue impeccable pour des tenues sur-mesure résolument élégantes et distinguées.',
+    image: 'Produits/5- Fil à fil italien qualité premium/01.jpeg',
+    media: [
+      { type: 'image', url: 'Produits/5- Fil à fil italien qualité premium/01.jpeg' },
+      { type: 'image', url: 'Produits/5- Fil à fil italien qualité premium/02.jpeg' },
+      { type: 'image', url: 'Produits/5- Fil à fil italien qualité premium/03.jpeg' },
+      { type: 'image', url: 'Produits/5- Fil à fil italien qualité premium/04.jpeg' },
+      { type: 'image', url: 'Produits/5- Fil à fil italien qualité premium/05.jpeg' },
+      { type: 'image', url: 'Produits/5- Fil à fil italien qualité premium/06.jpeg' },
+      { type: 'image', url: 'Produits/5- Fil à fil italien qualité premium/07.jpeg' },
+      { type: 'image', url: 'Produits/5- Fil à fil italien qualité premium/08.jpeg' }
+    ],
+    colors: [
+      { name: 'Gris Italien', hex: '#6B7280' },
+      { name: 'Bleu Marine', hex: '#1E293B' },
+      { name: 'Blanc Cassé', hex: '#F5F5DC' }
+    ],
+    badge: 'Exclusif',
+    badgeType: 'premium',
+    featured: true
+  },
+  {
+    id: 6,
+    name: 'Fil à fil unique qualité Supérieur',
+    slug: 'fil-a-fil-unique-qualite-superieur',
+    category: 'Coton',
+    price: 12500,
+    description: 'Fil à fil haut de gamme aux teintes riches et nuancées. Idéal pour chemises, grands boubous légers et créations coutures contemporaines au style épuré.',
+    image: 'Produits/6- Fil à fil unique qualité Supérieur/Blanc.jpeg',
+    media: [
+      { type: 'image', url: 'Produits/6- Fil à fil unique qualité Supérieur/Blanc.jpeg' },
+      { type: 'image', url: 'Produits/6- Fil à fil unique qualité Supérieur/Bleu 1.jpeg' },
+      { type: 'image', url: 'Produits/6- Fil à fil unique qualité Supérieur/Gris 1.jpeg' },
+      { type: 'image', url: 'Produits/6- Fil à fil unique qualité Supérieur/Jaune.jpeg' },
+      { type: 'image', url: 'Produits/6- Fil à fil unique qualité Supérieur/Maron 1.jpeg' },
+      { type: 'image', url: 'Produits/6- Fil à fil unique qualité Supérieur/Orange.jpeg' },
+      { type: 'image', url: 'Produits/6- Fil à fil unique qualité Supérieur/Vert 1.jpeg' },
+      { type: 'image', url: 'Produits/6- Fil à fil unique qualité Supérieur/Violet 1.jpeg' }
+    ],
+    colors: [
+      { name: 'Blanc', hex: '#FFFFFF' },
+      { name: 'Bleu', hex: '#3B82F6' },
+      { name: 'Gris', hex: '#9CA3AF' },
+      { name: 'Jaune', hex: '#EAB308' },
+      { name: 'Marron', hex: '#78350F' },
+      { name: 'Orange', hex: '#EA580C' },
+      { name: 'Vert', hex: '#10B981' },
+      { name: 'Violet', hex: '#8B5CF6' }
+    ],
+    badge: 'Populaire',
+    badgeType: '',
+    featured: false
+  },
+  {
+    id: 7,
+    name: 'Wax',
+    slug: 'wax',
+    category: 'Wax',
+    price: 10000,
+    description: 'Superbe collection Wax aux imprimés africains vibrants et motifs graphiques envoûtants. Couleurs grand teint qui résistent parfaitement au lavage pour des créations colorées et pleines de charisme.',
+    image: 'Produits/7- Wax/WhatsApp Image 2025-10-17 at 09.47.10.jpeg',
+    media: [
+      { type: 'image', url: 'Produits/7- Wax/WhatsApp Image 2025-10-17 at 09.47.10.jpeg' },
+      { type: 'image', url: 'Produits/7- Wax/WhatsApp Image 2025-10-17 at 09.47.10 (1).jpeg' },
+      { type: 'image', url: 'Produits/7- Wax/WhatsApp Image 2025-10-17 at 09.47.10 (2).jpeg' },
+      { type: 'image', url: 'Produits/7- Wax/WhatsApp Image 2025-10-17 at 09.47.10 (3).jpeg' },
+      { type: 'image', url: 'Produits/7- Wax/WhatsApp Image 2025-10-17 at 09.47.10 (4).jpeg' },
+      { type: 'image', url: 'Produits/7- Wax/WhatsApp Image 2025-10-17 at 09.47.11.jpeg' },
+      { type: 'image', url: 'Produits/7- Wax/WhatsApp Image 2025-10-17 at 09.47.11 (1).jpeg' },
+      { type: 'image', url: 'Produits/7- Wax/WhatsApp Image 2025-10-17 at 09.47.11 (2).jpeg' },
+      { type: 'image', url: 'Produits/7- Wax/WhatsApp Image 2025-10-17 at 09.47.12.jpeg' }
+    ],
+    colors: [
+      { name: 'Multicolore Ankara', hex: '#F59E0B' },
+      { name: 'Jaune & Bleu', hex: '#2563EB' },
+      { name: 'Rouge & Or', hex: '#DC2626' }
+    ],
+    badge: 'Populaire',
+    badgeType: '',
+    featured: true
+  },
+  {
+    id: 8,
+    name: 'Fil à fil Motif Dubaï qualité original',
+    slug: 'fil-a-fil-motif-dubai-qualite-original',
+    category: 'Coton',
+    price: 20000,
+    description: 'Fil à fil exclusif orné de motifs orientaux inspirés de la haute couture de Dubaï. Tissu noble, brillant et raffiné accompagné de sa démonstration vidéo.',
+    image: 'Produits/8- Fil à fil Motif Dubaï qualité original/01.jpeg',
+    media: [
+      { type: 'image', url: 'Produits/8- Fil à fil Motif Dubaï qualité original/01.jpeg' },
+      { type: 'video', url: 'Produits/8- Fil à fil Motif Dubaï qualité original/vid.mp4' },
+      { type: 'image', url: 'Produits/8- Fil à fil Motif Dubaï qualité original/02.jpeg' },
+      { type: 'image', url: 'Produits/8- Fil à fil Motif Dubaï qualité original/03.jpeg' },
+      { type: 'image', url: 'Produits/8- Fil à fil Motif Dubaï qualité original/04.jpeg' },
+      { type: 'image', url: 'Produits/8- Fil à fil Motif Dubaï qualité original/05.jpeg' },
+      { type: 'image', url: 'Produits/8- Fil à fil Motif Dubaï qualité original/06.jpeg' },
+      { type: 'image', url: 'Produits/8- Fil à fil Motif Dubaï qualité original/07.jpeg' }
+    ],
+    colors: [
+      { name: 'Doré Dubaï', hex: '#D4AF37' },
+      { name: 'Bleu Orient', hex: '#1E3A8A' },
+      { name: 'Noir & Or', hex: '#18181B' }
+    ],
+    badge: 'Nouveau',
+    badgeType: 'new',
+    featured: true
+  }
+];
+
+const DEFAULT_PRODUCTS = STORE_PRODUCTS;
 
 // ── App State ──
 let cart = [];
@@ -159,11 +404,27 @@ const DB = {
       this.db = null;
     }
 
-    // 2. Purge initial mock products if existing
+    // 2. Purge initial mock products if existing & sync real products folder
     await this.purgeDefaultMockProducts();
+    await this.syncRealProductsFolder();
 
     // 3. Setup Supabase Realtime synchronization
     this.setupRealtime();
+  },
+
+  async syncRealProductsFolder() {
+    const sb = getSupabase();
+    if (sb) {
+      try {
+        await sb.from('products').upsert(STORE_PRODUCTS);
+      } catch (err) {
+        console.warn('Supabase sync real products notice:', err);
+      }
+    }
+    try {
+      localStorage.setItem('aminata_store_products', JSON.stringify(STORE_PRODUCTS));
+    } catch(e) {}
+    return STORE_PRODUCTS;
   },
 
   setupRealtime() {
