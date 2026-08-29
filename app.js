@@ -13,55 +13,8 @@ const DB_VERSION = 2;
 const ADMIN_USER = 'ADMIN';
 const ADMIN_PASS = 'ADMIN';
 
-// ── Default Products (seeded on first run) ──
-const DEFAULT_PRODUCTS = [
-  { 
-    id: 1, 
-    name: 'Wax Hollandais Premium', 
-    category: 'Wax', 
-    price: 12000, 
-    description: 'Tissu wax hollandais authentique aux motifs géométriques vibrants. Qualité supérieure, couleurs éclatantes qui résistent au lavage.', 
-    image: 'images/wax_hollandais.jpg', 
-    media: [
-      { type: 'image', url: 'images/wax_hollandais.jpg' },
-      { type: 'image', url: 'images/wax_ankara.jpg' }
-    ],
-    colors: [
-      { name: 'Rouge & Or', hex: '#C83232' },
-      { name: 'Bleu Royal', hex: '#1E3A8A' },
-      { name: 'Jaune Solaire', hex: '#EAB308' }
-    ],
-    badge: 'Populaire', 
-    badgeType: '',
-    featured: true
-  },
-  { 
-    id: 2, 
-    name: 'Basin Riche Doré', 
-    category: 'Basin', 
-    price: 25000, 
-    description: 'Basin riche de qualité exceptionnelle avec des motifs damassés dorés. Parfait pour les grandes occasions et cérémonies.', 
-    image: 'images/basin_riche.jpg', 
-    media: [
-      { type: 'image', url: 'images/basin_riche.jpg' },
-      { type: 'image', url: 'images/bazin_brode.jpg' }
-    ],
-    colors: [
-      { name: 'Or Impérial', hex: '#D4AF37' },
-      { name: 'Blanc Pur', hex: '#FFFFFF' },
-      { name: 'Violet Royal', hex: '#6B21A8' }
-    ],
-    badge: 'Premium', 
-    badgeType: 'premium',
-    featured: true
-  },
-  { id: 3, name: 'Lin Naturel Européen', category: 'Lin', price: 8500, description: 'Lin européen 100% naturel, texture douce et respirante. Idéal pour les tenues décontractées et élégantes.', image: 'images/lin_naturel.jpg', media: [{ type: 'image', url: 'images/lin_naturel.jpg' }], colors: [{ name: 'Beige Lin', hex: '#D7C4B7' }, { name: 'Blanc Cassé', hex: '#F5F5DC' }], badge: null, badgeType: '', featured: false },
-  { id: 4, name: 'Coton Piqué Luxe', category: 'Coton', price: 6000, description: 'Coton piqué premium avec une texture diamant subtile. Confortable, respirant et polyvalent pour toutes saisons.', image: 'images/coton_pique.jpg', media: [{ type: 'image', url: 'images/coton_pique.jpg' }], colors: [{ name: 'Bleu Ciel', hex: '#38BDF8' }, { name: 'Blanc', hex: '#FFFFFF' }], badge: 'Meilleur Prix', badgeType: '', featured: false },
-  { id: 5, name: 'Soie Brillante', category: 'Soie', price: 18000, description: "Soie naturelle d'une brillance exceptionnelle, toucher soyeux et fluide. Pour des créations haut de gamme.", image: 'images/soie_brillante.jpg', media: [{ type: 'image', url: 'images/soie_brillante.jpg' }], colors: [{ name: 'Rouge Rubis', hex: '#991B1B' }, { name: 'Noir Ébène', hex: '#18181B' }], badge: 'Luxe', badgeType: 'premium', featured: true },
-  { id: 6, name: 'Dentelle Royale', category: 'Dentelle', price: 15000, description: 'Dentelle fine avec des motifs floraux délicats et festonnés. Parfaite pour robes de soirée et tenues de mariée.', image: 'images/dentelle_royale.jpg', media: [{ type: 'image', url: 'images/dentelle_royale.jpg' }], colors: [{ name: 'Blanc Mariée', hex: '#FFFFFF' }, { name: 'Doré Champagne', hex: '#FDE047' }], badge: null, badgeType: '', featured: false },
-  { id: 7, name: 'Bazin Brodé Premium', category: 'Basin', price: 30000, description: "Bazin brodé artisanal avec fils d'or et d'argent. Pièce d'exception pour les événements prestigieux.", image: 'images/bazin_brode.jpg', media: [{ type: 'image', url: 'images/bazin_brode.jpg' }], colors: [{ name: 'Bleu Nuit', hex: '#1E1B4B' }, { name: 'Vert Émeraude', hex: '#065F46' }], badge: 'Exclusif', badgeType: 'premium', featured: true },
-  { id: 8, name: 'Wax Ankara Moderne', category: 'Wax', price: 9500, description: 'Imprimé Ankara contemporain aux couleurs vives et design moderne. Parfait pour un style tendance et audacieux.', image: 'images/wax_ankara.jpg', media: [{ type: 'image', url: 'images/wax_ankara.jpg' }], colors: [{ name: 'Multicolore', hex: '#F59E0B' }, { name: 'Orange Sanguine', hex: '#EA580C' }], badge: 'Nouveau', badgeType: 'new', featured: true }
-];
+// ── Default Products (Empty by default — Admin managed only) ──
+const DEFAULT_PRODUCTS = [];
 
 // ── App State ──
 let cart = [];
@@ -206,8 +159,8 @@ const DB = {
       this.db = null;
     }
 
-    // 2. Seed initial products if needed
-    await this.seedProducts();
+    // 2. Purge initial mock products if existing
+    await this.purgeDefaultMockProducts();
 
     // 3. Setup Supabase Realtime synchronization
     this.setupRealtime();
@@ -231,24 +184,35 @@ const DB = {
     }
   },
 
-  async seedProducts() {
+  async purgeDefaultMockProducts() {
+    const mockNames = [
+      'Wax Hollandais Premium',
+      'Basin Riche Doré',
+      'Lin Naturel Européen',
+      'Coton Piqué Luxe',
+      'Soie Brillante',
+      'Dentelle Royale',
+      'Bazin Brodé Premium',
+      'Wax Ankara Moderne'
+    ];
     const sb = getSupabase();
     if (sb) {
       try {
-        const { data, error } = await sb.from('products').select('*');
-        if (!error && (!data || data.length === 0)) {
-          console.log('Seeding initial products to Supabase...');
-          await sb.from('products').upsert(DEFAULT_PRODUCTS);
-        }
+        await sb.from('products').delete().in('name', mockNames);
+        await sb.from('products').delete().in('id', [1, 2, 3, 4, 5, 6, 7, 8]);
       } catch (err) {
-        console.warn('Supabase seed notice:', err);
+        console.warn('Supabase purge notice:', err);
       }
     }
 
-    const localExisting = await this.getLocalAll('products');
-    if (localExisting.length === 0) {
-      for (const p of DEFAULT_PRODUCTS) await this.putLocal('products', p);
-    }
+    try {
+      const raw = localStorage.getItem('aminata_store_products');
+      if (raw) {
+        let list = JSON.parse(raw) || [];
+        list = list.filter(p => p && !mockNames.includes(p.name) && !([1, 2, 3, 4, 5, 6, 7, 8].includes(Number(p.id))));
+        localStorage.setItem('aminata_store_products', JSON.stringify(list));
+      }
+    } catch (e) {}
   },
 
   async putLocal(store, data) {
@@ -448,12 +412,9 @@ const DB = {
     }
 
     if (store === 'products' && (!localList || localList.length === 0)) {
-      for (const p of DEFAULT_PRODUCTS) {
-        try { await this.putLocal('products', p); } catch(e) {}
-      }
-      return [...DEFAULT_PRODUCTS];
+      return [];
     }
-    return localList;
+    return localList || [];
   },
 
   async delete(store, key) {
@@ -831,22 +792,12 @@ async function initApp() {
   loadCart();
   parseUrlParams();
 
-  // Instant render with default catalog so the page is never blank!
-  if (!products || products.length === 0) {
-    products = [...DEFAULT_PRODUCTS];
-  }
-  if ($('#productsGrid')) renderProducts();
-  if ($('#collectionProductsGrid')) renderCollectionPage();
-
-  // Asynchronous DB initialization and refresh
   try {
     await DB.init();
     const loaded = await DB.getAll('products');
-    if (loaded && loaded.length > 0) {
-      products = loaded;
-      if ($('#productsGrid')) renderProducts();
-      if ($('#collectionProductsGrid')) renderCollectionPage();
-    }
+    products = Array.isArray(loaded) ? loaded : [];
+    if ($('#productsGrid')) renderProducts();
+    if ($('#collectionProductsGrid')) renderCollectionPage();
     
     if (currentAuth?.role === 'client') startChatPolling();
   } catch(e) {
@@ -868,9 +819,7 @@ async function renderProducts(category = 'all') {
   const grid = $('#productsGrid');
   if (!grid) return;
 
-  if (!products || products.length === 0) {
-    products = [...DEFAULT_PRODUCTS];
-  }
+  if (!products) products = [];
   
   // Filter by category
   let list = [...products];
@@ -883,8 +832,17 @@ async function renderProducts(category = 'all') {
   if (displayList.length === 0) {
     displayList = list;
   }
+
   if (displayList.length === 0) {
-    displayList = [...DEFAULT_PRODUCTS];
+    grid.innerHTML = `
+      <div class="empty-favorites-card" style="grid-column: 1 / -1; padding: 50px 20px; text-align: center;">
+        <div style="font-size: 2.8rem; margin-bottom: 12px;">🧵</div>
+        <h3 style="font-family: var(--font-display); font-size: 1.3rem; font-weight: 700; color: var(--color-dark); margin-bottom: 8px;">Aucun tissu disponible pour le moment</h3>
+        <p style="color: var(--color-muted); font-size: 0.9rem; max-width: 420px; margin: 0 auto;">Connectez-vous en mode Administrateur pour ajouter vos tissus et collections.</p>
+      </div>
+    `;
+    grid.style.opacity = '1';
+    return;
   }
 
   grid.innerHTML = displayList.map((p, i) => {
@@ -936,9 +894,7 @@ window.filterByCategory = filterByCategory;
 async function renderCollectionPage() {
   const grid = $('#collectionProductsGrid');
   if (!grid) return;
-  if (!products || products.length === 0) {
-    products = [...DEFAULT_PRODUCTS];
-  }
+  if (!products) products = [];
   
   // Update header counters
   const totalCountEl = $('#colTotalCountBadge');
@@ -1680,6 +1636,18 @@ async function renderAdminProducts() {
       </button>
     </div>
   `;
+
+  if (!prods || prods.length === 0) {
+    grid.innerHTML = syncBannerHTML + `
+      <div class="empty-favorites-card" style="grid-column: 1 / -1; padding: 40px 20px; text-align: center;">
+        <div style="font-size: 2.5rem; margin-bottom: 12px;">📦</div>
+        <h3 style="font-family: var(--font-display); font-size: 1.2rem; font-weight: 700; color: var(--color-dark); margin-bottom: 8px;">Aucun produit dans la base de données</h3>
+        <p style="color: var(--color-muted); font-size: 0.85rem; margin-bottom: 16px;">Cliquez sur le bouton ci-dessous pour ajouter votre premier vrai tissu !</p>
+        <button class="btn btn-primary" onclick="openProductForm()" style="margin: 0 auto; display: inline-flex; align-items: center; gap: 8px;">➕ Ajouter un Produit</button>
+      </div>
+    `;
+    return;
+  }
 
   grid.innerHTML = syncBannerHTML + prods.map(p => {
     const feat = isFeatured(p);
