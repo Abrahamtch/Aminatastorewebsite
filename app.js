@@ -106,6 +106,66 @@ const $ = (s) => document.querySelector(s);
 const $$ = (s) => document.querySelectorAll(s);
 function genId(prefix = 'ID') { return prefix + '-' + Math.random().toString(36).substr(2, 6).toUpperCase(); }
 
+function slugify(text) {
+  if (!text) return '';
+  return text
+    .toString()
+    .toLowerCase()
+    .trim()
+    .normalize('NFD')
+    .replace(/[\u0300-\u06ff]/g, '')
+    .replace(/[^\w\s-]/g, '')
+    .replace(/[\s_-]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+function getProductSlug(p) {
+  if (!p) return '';
+  if (p.slug && p.slug.trim()) return p.slug.trim();
+  return slugify(p.name) || String(p.id);
+}
+
+function getProductUrl(p) {
+  if (!p) return window.location.href;
+  const slug = getProductSlug(p);
+  const baseUrl = window.location.origin + window.location.pathname;
+  return `${baseUrl}?product=${encodeURIComponent(slug)}`;
+}
+
+function copyProductUrl(pid) {
+  const prodList = (products && products.length > 0) ? products : DEFAULT_PRODUCTS;
+  const p = prodList.find(x => String(x.id) === String(pid));
+  if (!p) return;
+  const url = getProductUrl(p);
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(url).then(() => {
+      showToast(`📋 Lien du produit copié ! (${url})`, 'success', 5000);
+    }).catch(() => {
+      prompt('Copiez ce lien pour vos publicités Meta :', url);
+    });
+  } else {
+    prompt('Copiez ce lien pour vos publicités Meta :', url);
+  }
+}
+
+function openProductNewTab(e, pid) {
+  const prodList = (products && products.length > 0) ? products : DEFAULT_PRODUCTS;
+  const p = prodList.find(x => String(x.id) === String(pid));
+  if (!p) return;
+  const prodUrl = getProductUrl(p);
+  if (e && (e.ctrlKey || e.metaKey || e.button === 1)) {
+    return;
+  }
+  if (e) e.preventDefault();
+  window.open(prodUrl, '_blank');
+}
+
+window.slugify = slugify;
+window.getProductSlug = getProductSlug;
+window.getProductUrl = getProductUrl;
+window.copyProductUrl = copyProductUrl;
+window.openProductNewTab = openProductNewTab;
+
 // ── Supabase Cloud Database ──
 const SUPABASE_URL = 'https://nglihypdaiyftfutjqoo.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable__wfinp2_RVVYznuD3_aMMg_L8FNgoXq';
@@ -827,28 +887,38 @@ async function renderProducts(category = 'all') {
     displayList = [...DEFAULT_PRODUCTS];
   }
 
-  grid.innerHTML = displayList.map((p, i) => `
+  grid.innerHTML = displayList.map((p, i) => {
+    const prodUrl = getProductUrl(p);
+    return `
     <div class="product-card" data-id="${p.id}" style="animation-delay: ${i * 0.08}s">
-      <div class="product-image-container" onclick="openQuickView(${p.id})">
-        ${p.badge ? `<span class="product-badge-label ${p.badgeType || ''}">${p.badge}</span>` : ''}
-        <img src="${p.image}" alt="${p.name}" loading="lazy">
-        <div class="product-overlay">
-          <button class="btn-add-cart" onclick="event.stopPropagation(); addToCart(${p.id}, this)">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 01-8 0"></path></svg>
-            Ajouter au panier
+      <a href="${prodUrl}" target="_blank" class="product-card-link" onclick="openProductNewTab(event, ${p.id})">
+        <div class="product-image-container">
+          ${p.badge ? `<span class="product-badge-label ${p.badgeType || ''}">${p.badge}</span>` : ''}
+          <img src="${p.image}" alt="${p.name}" loading="lazy">
+          <div class="product-overlay">
+            <button class="btn-add-cart" onclick="event.stopPropagation(); event.preventDefault(); addToCart(${p.id}, this)">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 01-8 0"></path></svg>
+              Ajouter au panier
+            </button>
+          </div>
+        </div>
+      </a>
+      <div class="product-info">
+        <span class="product-category-tag">${p.category}</span>
+        <h3 class="product-name">
+          <a href="${prodUrl}" target="_blank" style="color:inherit; text-decoration:none;" onclick="openProductNewTab(event, ${p.id})">${p.name}</a>
+        </h3>
+        <p class="product-desc-short">${p.description || ''}</p>
+        <div class="product-bottom" style="display:flex; justify-content:space-between; align-items:center;">
+          <span class="product-price">${formatPrice(p.price)}<span class="product-price-unit"> /yard</span></span>
+          <button class="btn-copy-url-icon" onclick="event.stopPropagation(); event.preventDefault(); copyProductUrl(${p.id})" title="Copier le lien publicitaire (Meta Ads / WhatsApp)">
+            📋 Lien
           </button>
         </div>
       </div>
-      <div class="product-info">
-        <span class="product-category-tag">${p.category}</span>
-        <h3 class="product-name">${p.name}</h3>
-        <p class="product-desc-short">${p.description || ''}</p>
-        <div class="product-bottom">
-          <span class="product-price">${formatPrice(p.price)}<span class="product-price-unit"> /yard</span></span>
-        </div>
-      </div>
     </div>
-  `).join('');
+  `;
+  }).join('');
   grid.style.opacity = '1';
 }
 window.renderProducts = renderProducts;
@@ -927,28 +997,38 @@ async function renderCollectionPage() {
       </div>
     `;
   } else {
-    grid.innerHTML = list.map((p, i) => `
+    grid.innerHTML = list.map((p, i) => {
+      const prodUrl = getProductUrl(p);
+      return `
       <div class="product-card" data-id="${p.id}" style="animation-delay: ${i * 0.05}s">
-        <div class="product-image-container" onclick="openQuickView(${p.id})">
-          ${p.badge ? `<span class="product-badge-label ${p.badgeType || ''}">${p.badge}</span>` : ''}
-          <img src="${p.image}" alt="${p.name}" loading="lazy">
-          <div class="product-overlay">
-            <button class="btn-add-cart" onclick="event.stopPropagation(); addToCart(${p.id}, this)">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 01-8 0"></path></svg>
-              Ajouter au panier
+        <a href="${prodUrl}" target="_blank" class="product-card-link" onclick="openProductNewTab(event, ${p.id})">
+          <div class="product-image-container">
+            ${p.badge ? `<span class="product-badge-label ${p.badgeType || ''}">${p.badge}</span>` : ''}
+            <img src="${p.image}" alt="${p.name}" loading="lazy">
+            <div class="product-overlay">
+              <button class="btn-add-cart" onclick="event.stopPropagation(); event.preventDefault(); addToCart(${p.id}, this)">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 01-8 0"></path></svg>
+                Ajouter au panier
+              </button>
+            </div>
+          </div>
+        </a>
+        <div class="product-info">
+          <span class="product-category-tag">${p.category}</span>
+          <h3 class="product-name">
+            <a href="${prodUrl}" target="_blank" style="color:inherit; text-decoration:none;" onclick="openProductNewTab(event, ${p.id})">${p.name}</a>
+          </h3>
+          <p class="product-desc-short">${p.description || ''}</p>
+          <div class="product-bottom" style="display:flex; justify-content:space-between; align-items:center;">
+            <span class="product-price">${formatPrice(p.price)}<span class="product-price-unit"> /yard</span></span>
+            <button class="btn-copy-url-icon" onclick="event.stopPropagation(); event.preventDefault(); copyProductUrl(${p.id})" title="Copier le lien publicitaire (Meta Ads / WhatsApp)">
+              📋 Lien
             </button>
           </div>
         </div>
-        <div class="product-info">
-          <span class="product-category-tag">${p.category}</span>
-          <h3 class="product-name">${p.name}</h3>
-          <p class="product-desc-short">${p.description || ''}</p>
-          <div class="product-bottom">
-            <span class="product-price">${formatPrice(p.price)}<span class="product-price-unit"> /yard</span></span>
-          </div>
-        </div>
       </div>
-    `).join('');
+    `;
+    }).join('');
   }
   grid.style.opacity = '1';
 }
@@ -993,6 +1073,26 @@ function parseUrlParams() {
   const cat = urlParams.get('category');
   if (cat) {
     collectionCategory = cat;
+  }
+
+  const prodParam = urlParams.get('product') || urlParams.get('p') || urlParams.get('slug');
+  if (prodParam) {
+    const targetSlug = decodeURIComponent(prodParam).trim().toLowerCase();
+    const checkProductParam = () => {
+      const prodList = (products && products.length > 0) ? products : DEFAULT_PRODUCTS;
+      const matched = prodList.find(p => 
+        String(p.id) === targetSlug || 
+        (p.slug && p.slug.toLowerCase() === targetSlug) || 
+        slugify(p.name) === targetSlug
+      );
+
+      if (matched) {
+        openQuickView(matched.id);
+        document.title = `${matched.name} - ${formatPrice(matched.price)} | Aminata Store`;
+      }
+    };
+    setTimeout(checkProductParam, 300);
+    setTimeout(checkProductParam, 1200);
   }
 }
 
@@ -1182,6 +1282,17 @@ function openQuickView(pid) {
         if (mediaList[idx]) setQuickViewMainMedia(mediaList[idx]);
       };
     });
+  }
+
+
+
+  const copyBtnContainer = $('#quickViewCopyBtnContainer');
+  if (copyBtnContainer) {
+    copyBtnContainer.innerHTML = `
+      <button type="button" class="btn btn-outline" onclick="copyProductUrl(${p.id})" style="margin-top:12px; width:100%; display:flex; align-items:center; justify-content:center; gap:8px; font-weight:700;">
+        📋 Copier le lien publicitaire de ce produit (Meta Ads / WhatsApp)
+      </button>
+    `;
   }
 
   // Hover Zoom mouse tracking
@@ -1572,11 +1683,12 @@ async function renderAdminProducts() {
 
   grid.innerHTML = syncBannerHTML + prods.map(p => {
     const feat = isFeatured(p);
+    const prodUrl = getProductUrl(p);
     return `
     <div class="admin-product-card">
       <img src="${p.image}" alt="${p.name}" class="admin-product-img">
       <div class="admin-product-info">
-        <h4>${p.name}</h4>
+        <h4><a href="${prodUrl}" target="_blank" style="color:inherit;text-decoration:none;" title="Ouvrir la page du produit">${p.name} ↗</a></h4>
         <span class="product-category-tag">${p.category}</span>
         <p class="admin-product-price">${formatPrice(p.price)}/yard</p>
         <button class="admin-featured-btn ${feat ? 'active' : ''}" onclick="toggleAdminFeatured(${p.id})" title="${feat ? 'Cliquer pour retirer de l\'accueil' : 'Cliquer pour afficher sur l\'accueil'}">
@@ -1585,6 +1697,7 @@ async function renderAdminProducts() {
         ${p.badge ? `<span class="product-badge-label ${p.badgeType || ''}" style="position:static;margin-top:6px;display:inline-block;">${p.badge}</span>` : ''}
       </div>
       <div class="admin-product-actions">
+        <button class="btn-copy-link-admin" onclick="copyProductUrl(${p.id})" title="Copier l'URL publicitaire Meta/WhatsApp">📋 Lien Pub</button>
         <button class="order-action-btn" onclick="editProduct(${p.id})" title="Modifier">✏️</button>
         <button class="order-action-btn order-action-delete" onclick="deleteProduct(${p.id})" title="Supprimer">🗑️</button>
       </div>
@@ -1602,6 +1715,7 @@ function openProductForm(editId = null) {
 
   if (!editId) { 
     $('#productForm')?.reset(); 
+    if ($('#prodSlug')) $('#prodSlug').value = '';
     $('#imagePreview').style.display = 'none'; 
     $('#imageUploadPlaceholder').style.display = 'flex'; 
     const featCheckbox = $('#prodFeatured');
@@ -1618,6 +1732,7 @@ async function editProduct(id) {
   const p = await DB.get('products', id); if (!p) return;
   openProductForm(id);
   $('#prodName').value = p.name; 
+  if ($('#prodSlug')) $('#prodSlug').value = p.slug || slugify(p.name);
   $('#prodCategory').value = p.category; 
   $('#prodPrice').value = p.price;
   $('#prodDesc').value = p.description || ''; 
@@ -1873,9 +1988,14 @@ async function saveProduct(e) {
     const id = editId || await DB.getNextProductId();
     const validColors = editingColorVariants.filter(c => c && c.name && c.name.trim() !== '');
 
+    const slugInput = $('#prodSlug');
+    const rawSlug = slugInput ? slugInput.value.trim() : '';
+    const slug = rawSlug ? slugify(rawSlug) : slugify(name);
+
     const productRecord = { 
       id: Number(id), 
       name, 
+      slug,
       category, 
       price: Number(price), 
       description, 

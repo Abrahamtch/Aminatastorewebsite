@@ -386,6 +386,7 @@
                 <button class="btn btn-primary btn-add-quickview" id="qvAddToCart">
                     <span>Ajouter au Panier</span>
                 </button>
+                <div id="quickViewCopyBtnContainer"></div>
             </div>
         </div>
     </div>
@@ -791,6 +792,13 @@
                 <label for="prodName">Nom du produit *</label>
                 <input type="text" id="prodName" placeholder="Ex: Wax Hollandais Premium" required>
             </div>
+            <div class="form-group">
+                <label for="prodSlug">URL du produit / Slug (ex: wax-hollandais-premium)</label>
+                <input type="text" id="prodSlug" placeholder="Ex: wax-hollandais-premium (généré automatiquement si vide)">
+                <small style="color:var(--color-muted); font-size:0.8rem; margin-top:3px; display:block;">
+                    🔗 Lien unique pour vos publicités Meta (Facebook/Instagram) et WhatsApp.
+                </small>
+            </div>
             <div class="form-row">
                 <div class="form-group">
                     <label for="prodCategory">Catégorie *</label>
@@ -978,6 +986,6 @@
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="app.js?v=2.2"></script>
+    <script src="app.js?v=2.3"></script>
 </body>
 </html>
