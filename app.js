@@ -260,6 +260,34 @@ const STORE_PRODUCTS = [
 ];
 
 const DEFAULT_PRODUCTS = STORE_PRODUCTS;
+const CATALOG_REVISION = 34;
+
+function mergeCatalogPrices(list) {
+  if (!Array.isArray(list) || list.length === 0) return STORE_PRODUCTS;
+  
+  const merged = list.map(item => {
+    const master = STORE_PRODUCTS.find(sp => Number(sp.id) === Number(item.id));
+    if (master) {
+      return {
+        ...item,
+        price: master.price,
+        image: master.image,
+        media: master.media,
+        category: master.category || item.category,
+        name: master.name || item.name
+      };
+    }
+    return item;
+  });
+
+  STORE_PRODUCTS.forEach(master => {
+    if (!merged.some(m => Number(m.id) === Number(master.id))) {
+      merged.push(master);
+    }
+  });
+
+  return merged;
+}
 
 // ── App State ──
 let cart = [];
@@ -1063,16 +1091,21 @@ async function initApp() {
   loadAuth();
   loadCart();
 
-  // ⚡ INSTANT 0ms RENDER FROM LOCAL CACHE OR STORE_PRODUCTS ⚡
+  // Enforce catalog revision refresh in localStorage
+  try {
+    const curRev = Number(localStorage.getItem('aminata_catalog_rev') || 0);
+    if (curRev < CATALOG_REVISION) {
+      localStorage.setItem('aminata_store_products', JSON.stringify(STORE_PRODUCTS));
+      localStorage.setItem('aminata_catalog_rev', String(CATALOG_REVISION));
+    }
+  } catch(e) {}
+
+  // ⚡ INSTANT 0ms RENDER FROM STORE_PRODUCTS / LOCAL CACHE ⚡
   try {
     const cached = localStorage.getItem('aminata_store_products');
     if (cached) {
       const parsed = JSON.parse(cached);
-      if (Array.isArray(parsed) && parsed.length > 0) {
-        products = parsed;
-      } else {
-        products = STORE_PRODUCTS;
-      }
+      products = mergeCatalogPrices(parsed);
     } else {
       products = STORE_PRODUCTS;
     }
@@ -1090,7 +1123,8 @@ async function initApp() {
     await DB.init();
     const loaded = await DB.getAll('products');
     if (Array.isArray(loaded) && loaded.length > 0) {
-      products = loaded;
+      products = mergeCatalogPrices(loaded);
+      try { localStorage.setItem('aminata_store_products', JSON.stringify(products)); } catch(e) {}
       if ($('#productsGrid')) renderProducts();
       if ($('#collectionProductsGrid')) renderCollectionPage();
       parseUrlParams();
