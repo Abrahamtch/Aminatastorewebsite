@@ -1153,11 +1153,8 @@ async function renderProducts(category = 'all') {
           <a href="${prodUrl}" target="_blank" style="color:inherit; text-decoration:none;" onclick="openProductNewTab(event, ${p.id})">${p.name}</a>
         </h3>
         <p class="product-desc-short">${p.description || ''}</p>
-        <div class="product-bottom" style="display:flex; justify-content:space-between; align-items:center;">
+        <div class="product-bottom">
           <span class="product-price">${formatPrice(p.price)}<span class="product-price-unit"> /yard</span></span>
-          <button class="btn-copy-url-icon" onclick="event.stopPropagation(); event.preventDefault(); copyProductUrl(${p.id})" title="Copier le lien publicitaire (Meta Ads / WhatsApp)">
-            📋 Lien
-          </button>
         </div>
       </div>
     </div>
@@ -1262,11 +1259,8 @@ async function renderCollectionPage() {
             <a href="${prodUrl}" target="_blank" style="color:inherit; text-decoration:none;" onclick="openProductNewTab(event, ${p.id})">${p.name}</a>
           </h3>
           <p class="product-desc-short">${p.description || ''}</p>
-          <div class="product-bottom" style="display:flex; justify-content:space-between; align-items:center;">
+          <div class="product-bottom">
             <span class="product-price">${formatPrice(p.price)}<span class="product-price-unit"> /yard</span></span>
-            <button class="btn-copy-url-icon" onclick="event.stopPropagation(); event.preventDefault(); copyProductUrl(${p.id})" title="Copier le lien publicitaire (Meta Ads / WhatsApp)">
-              📋 Lien
-            </button>
           </div>
         </div>
       </div>
@@ -1533,14 +1527,7 @@ function openQuickView(pid) {
 
 
 
-  const copyBtnContainer = $('#quickViewCopyBtnContainer');
-  if (copyBtnContainer) {
-    copyBtnContainer.innerHTML = `
-      <button type="button" class="btn btn-outline" onclick="copyProductUrl(${p.id})" style="margin-top:12px; width:100%; display:flex; align-items:center; justify-content:center; gap:8px; font-weight:700;">
-        📋 Copier le lien publicitaire de ce produit (Meta Ads / WhatsApp)
-      </button>
-    `;
-  }
+
 
   // Hover Zoom mouse tracking
   const mainBox = $('#qvMainMediaBox');
